@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class LoginTextBox extends StatelessWidget {
-  const LoginTextBox({super.key, required this.text, required this.obscure});
+  LoginTextBox(
+      {super.key,
+      required this.text,
+      required this.obscure,
+      required this.controller});
 
   final String text;
   final bool obscure;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
