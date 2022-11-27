@@ -8,6 +8,8 @@ import 'package:wflowapp/login/ui/login_title.dart';
 import 'package:wflowapp/login/rest/LoginClient.dart';
 import 'package:wflowapp/login/rest/LoginResponse.dart';
 
+import '../../register/ui/RegisterPage.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -64,12 +66,29 @@ class _LoginPageState extends State<LoginPage> {
             // Login button
             buildLoginButton(),
             SizedBox(height: 15.0),
-            const Text('Not registered? Click here',
-                style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14.0,
-                )),
+            // Register text
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Not registered yet?',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()));
+                  },
+                  child: Text(
+                    ' Click here',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blue),
+                  ),
+                )
+              ],
+            ),
             SizedBox(height: 60.0),
             if (_futureLogin != null) buildFutureBuilder(),
           ],
