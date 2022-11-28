@@ -1,13 +1,9 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
-import 'package:wflowapp/login/ui/login_text_box.dart';
 import 'package:wflowapp/login/ui/login_title.dart';
 import 'package:wflowapp/login/rest/LoginClient.dart';
 import 'package:wflowapp/login/rest/LoginResponse.dart';
 
+import '../../mainpage/ui/MainPage.dart';
 import '../../register/ui/RegisterPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,6 +20,8 @@ class _LoginPageState extends State<LoginPage> {
       url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
       path: '/user/login');
   Future<LoginResponse>? _futureLogin;
+  String emailErrorText = '';
+  String passwordErrorText = '';
 
   @override
   void dispose() {
@@ -44,23 +42,37 @@ class _LoginPageState extends State<LoginPage> {
             LoginTitle(text: 'wFlow'),
             SizedBox(height: 60.0),
             // Email
-            TextField(
-              controller: emailController,
-              obscureText: false,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Email",
-                  hintText: "Email"),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(emailErrorText, style: TextStyle(color: Colors.red)),
+                SizedBox(height: 8.0),
+                TextField(
+                  controller: emailController,
+                  obscureText: false,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Email",
+                      hintText: "Email"),
+                ),
+              ],
             ),
-            SizedBox(height: 30.0),
+            SizedBox(height: 10.0),
             // Password
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Password",
-                  hintText: "Password"),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(passwordErrorText, style: TextStyle(color: Colors.red)),
+                SizedBox(height: 8.0),
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Password",
+                      hintText: "Password"),
+                ),
+              ],
             ),
             SizedBox(height: 30.0),
             // Login button
@@ -113,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               String email = emailController.text;
               String password = passwordController.text;
+              if (!validateInputs(email, password)) return;
               _futureLogin = client.login(email, password);
             });
           },
@@ -120,12 +133,30 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  bool validateInputs(String email, String password) {
+    bool ret = true;
+    if (email.isEmpty) {
+      emailErrorText = 'Email required';
+      ret = false;
+    } else {
+      emailErrorText = '';
+    }
+    if (password.isEmpty) {
+      passwordErrorText = 'Password required';
+      ret = false;
+    } else {
+      passwordErrorText = '';
+    }
+    return ret;
+  }
+
   FutureBuilder<LoginResponse> buildFutureBuilder() {
     return FutureBuilder<LoginResponse>(
       future: _futureLogin,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data!.message);
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const MainPage()));
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',
               style: const TextStyle(
