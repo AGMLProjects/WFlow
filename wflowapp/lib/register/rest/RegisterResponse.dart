@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-class LoginResponse {
+class RegisterResponse {
   final int code;
   final String token;
   final String message;
 
-  const LoginResponse(
+  const RegisterResponse(
       {required this.code, required this.token, required this.message});
 
-  factory LoginResponse.fromResponse(Response response) {
+  factory RegisterResponse.fromResponse(Response response) {
     dynamic json = jsonDecode(response.body);
-    return LoginResponse(
+    return RegisterResponse(
       code: response.statusCode,
       token: json['token'],
       message: json['message'],

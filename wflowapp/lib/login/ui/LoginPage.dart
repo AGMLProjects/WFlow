@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final LoginClient client = LoginClient(
+  final LoginClient client = const LoginClient(
       url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
       path: '/user/login');
   Future<LoginResponse>? _futureLogin;
@@ -88,10 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()));
+                    Navigator.pushNamed(context, 'register');
                   },
                   child: Text(
                     ' Click here',
@@ -155,8 +152,15 @@ class _LoginPageState extends State<LoginPage> {
       future: _futureLogin,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MainPage()));
+          if (snapshot.data!.code != 200) {
+            return Text(snapshot.data!.message,
+                style: const TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ));
+          }
+          Navigator.pushNamed(context, 'main');
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',
               style: const TextStyle(

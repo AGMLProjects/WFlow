@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/login/ui/login_title.dart';
-import 'package:wflowapp/login/rest/LoginClient.dart';
-import 'package:wflowapp/login/rest/LoginResponse.dart';
 
-import '../../login/ui/LoginPage.dart';
-import '../../register/ui/RegisterPage.dart';
+import '../rest/RegisterClient.dart';
+import '../rest/RegisterResponse.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -17,10 +15,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final LoginClient client = LoginClient(
+  final RegisterClient client = const RegisterClient(
       url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
       path: '/user/register');
-  Future<LoginResponse>? _futureLogin;
+  Future<RegisterResponse>? _futureRegister;
   String emailErrorText = '';
   String passwordErrorText = '';
   String confirmPasswordErrorText = '';
@@ -109,10 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
+                    Navigator.pushNamed(context, 'login');
                   },
                   child: Text(
                     ' Click here',
@@ -123,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ],
             ),
             SizedBox(height: 60.0),
-            if (_futureLogin != null) buildFutureBuilder(),
+            if (_futureRegister != null) buildFutureBuilder(),
           ],
         ),
       ),
@@ -150,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
               if (!validateInputs(email, password, confirmPassword)) {
                 return;
               }
-              _futureLogin = client.login(email, password);
+              _futureRegister = client.register(email, password);
             });
           },
           child: const Text('REGISTER')),
@@ -186,12 +181,20 @@ class _RegisterPageState extends State<RegisterPage> {
     return ret;
   }
 
-  FutureBuilder<LoginResponse> buildFutureBuilder() {
-    return FutureBuilder<LoginResponse>(
-      future: _futureLogin,
+  FutureBuilder<RegisterResponse> buildFutureBuilder() {
+    return FutureBuilder<RegisterResponse>(
+      future: _futureRegister,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data!.message);
+          if (snapshot.data!.code != 200) {
+            return Text(snapshot.data!.message,
+                style: const TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ));
+          }
+          Navigator.pushNamed(context, 'main');
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',
               style: const TextStyle(

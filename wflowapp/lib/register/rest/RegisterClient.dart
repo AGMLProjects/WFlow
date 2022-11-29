@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'LoginResponse.dart';
+import 'RegisterResponse.dart';
 
-class LoginClient {
+class RegisterClient {
   final String url;
   final String path;
 
-  const LoginClient({required this.url, required this.path});
+  const RegisterClient({required this.url, required this.path});
 
-  Future<LoginResponse> login(String email, String password) async {
+  Future<RegisterResponse> register(String email, String password) async {
     final response = await http.post(
       Uri.parse(url + path),
       headers: <String, String>{
@@ -18,6 +18,6 @@ class LoginClient {
       body: jsonEncode(<String, String>{'email': email, 'password': password}),
     );
 
-    return LoginResponse.fromResponse(response);
+    return RegisterResponse.fromResponse(response);
   }
 }

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wflowapp/login/ui/login_title.dart';
-import 'package:wflowapp/login/rest/LoginClient.dart';
-import 'package:wflowapp/login/rest/LoginResponse.dart';
 
-import '../../register/ui/RegisterPage.dart';
 import '../home/ui/HomePage.dart';
 
 class MainPage extends StatefulWidget {
