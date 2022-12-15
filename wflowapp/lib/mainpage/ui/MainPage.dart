@@ -30,6 +30,9 @@ class _MainPageState extends State<MainPage> {
         child: _pages.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        iconSize: 28.0,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: ''),
@@ -38,6 +41,20 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
+      floatingActionButton: buildFAB(),
     );
+  }
+
+  Widget? buildFAB() {
+    if (_selectedIndex == 0) {
+      return FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, 'main');
+        },
+        tooltip: 'Add home',
+        child: const Icon(Icons.add),
+      );
+    }
+    return null;
   }
 }
