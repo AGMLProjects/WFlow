@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class HouseWidget extends StatelessWidget {
-  const HouseWidget({super.key, this.title = ""});
+  HouseWidget({super.key, this.title = ""});
 
   final String title;
+  final Color color = HouseWidget._pickRandomColor();
 
   static Set<Color> colors = {
     Colors.amber[200]!,
@@ -38,7 +39,7 @@ class HouseWidget extends StatelessWidget {
     return Container(
       width: 500.0,
       decoration: BoxDecoration(
-          color: _pickRandomColor(), borderRadius: BorderRadius.circular(12.0)),
+          color: color, borderRadius: BorderRadius.circular(12.0)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -54,7 +55,7 @@ class HouseWidget extends StatelessWidget {
     );
   }
 
-  Color _pickRandomColor() {
+  static Color _pickRandomColor() {
     final rnd = Random();
     Color color = colors.elementAt(rnd.nextInt(colors.length));
     colors.remove(color);
