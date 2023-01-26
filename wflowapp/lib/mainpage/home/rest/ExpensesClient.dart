@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:wflowapp/mainpage/home/rest/ExpensesResponse.dart';
 
-import 'HousesResponse.dart';
-
-class HomePageClient {
+class ExpensesClient {
   final String url;
   final String path;
 
-  const HomePageClient({required this.url, required this.path});
+  const ExpensesClient({required this.url, required this.path});
 
-  Future<HousesResponse> getHouses(String token) async {
+  Future<ExpensesResponse> getExpenses(String token) async {
     final response = await http.post(
       Uri.parse(url + path),
       headers: <String, String>{
@@ -17,6 +16,6 @@ class HomePageClient {
       },
       body: jsonEncode(<String, String>{'token': token}),
     );
-    return HousesResponse.fromResponse(response);
+    return ExpensesResponse.fromResponse(response);
   }
 }

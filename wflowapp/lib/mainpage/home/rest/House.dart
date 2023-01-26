@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
-
 class House {
   final String name;
   final double consumes;

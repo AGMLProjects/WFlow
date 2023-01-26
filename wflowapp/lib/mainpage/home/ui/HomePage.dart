@@ -2,12 +2,16 @@ import 'dart:developer';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:wflowapp/mainpage/home/rest/HomePageClient.dart';
+import 'package:wflowapp/mainpage/home/rest/ExpensesResponse.dart';
+import 'package:wflowapp/mainpage/home/rest/HousesClient.dart';
 import 'package:wflowapp/mainpage/home/rest/HousesResponse.dart';
+import 'package:wflowapp/mainpage/home/rest/MonthExpense.dart';
 import 'package:wflowapp/mainpage/home/ui/HouseWidget.dart';
-import 'package:wflowapp/mainpage/home/ui/WaterPieChart.dart';
 
+import '../rest/ExpensesClient.dart';
 import '../rest/House.dart';
+import 'charts/CostLineChart.dart';
+import 'charts/WaterPieChart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,17 +23,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<House> _houses = [];
   List<HouseWidget> _houseWidgets = [];
+  List<MonthExpense> _monthExpenses = [];
 
-  final HomePageClient client = const HomePageClient(
+  final HousesClient housesClient = const HousesClient(
       url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
       path: '/houses');
 
+  final ExpensesClient expensesClient = const ExpensesClient(
+      url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
+      path: '/expenses');
+
   Future<HousesResponse>? _futureHousesResponse;
+  Future<ExpensesResponse>? _futureExpensesResponse;
 
   @override
   Widget build(BuildContext context) {
     setState(() {
-      _futureHousesResponse = client.getHouses("AAAA");
+      _futureHousesResponse = housesClient.getHouses("AAAA");
+      _futureExpensesResponse = expensesClient.getExpenses("AAAA");
     });
 
     return Scaffold(
@@ -40,11 +51,11 @@ class _HomePageState extends State<HomePage> {
 
   AppBar drawAppBar() {
     return AppBar(
-      title: Text('Dashboard'),
+      title: const Text('Dashboard'),
       actions: <Widget>[
         Container(
-          padding: EdgeInsets.all(16.0),
-          child: Icon(
+          padding: const EdgeInsets.all(16.0),
+          child: const Icon(
             Icons.notifications,
             color: Colors.white,
             size: 20.0,
@@ -63,38 +74,12 @@ class _HomePageState extends State<HomePage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  drawHousesTitle(),
-                  SizedBox(height: 16.0),
                   buildHousesCarousel(),
-                  SizedBox(height: 32.0),
-                  drawConsumesTitle(),
-                  SizedBox(height: 24.0),
-                  Text(
-                    '124L',
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 20.0,
-                        color: Colors.black),
-                  ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 32.0),
                   buildWaterPieChart(),
-                  SizedBox(height: 32.0),
-                  /*             
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Expected total cost 💸',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22.0,
-                              color: Colors.black),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 300.0),
-                    Text('data'), 
-                    */
+                  const SizedBox(height: 32.0),
+                  buildCostChart(),
+                  const SizedBox(height: 32.0),
                 ],
               ),
             ),
@@ -108,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'My houses 🏡',
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
@@ -121,11 +106,24 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'My total consumes 💧',
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
         )
+      ],
+    );
+  }
+
+  Widget drawCostTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          'Expected total cost 💸',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 22.0, color: Colors.black),
+        ),
       ],
     );
   }
@@ -136,7 +134,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
           for (House house in snapshot.data!.houses) {
             _houseWidgets.add(HouseWidget(
@@ -145,21 +143,27 @@ class _HomePageState extends State<HomePage> {
             ));
           }
           _houseWidgets.add(HouseWidget(
-            house: House(name: ''),
+            house: const House(name: ''),
             isAdd: true,
           ));
-          log('Found ' + (_houseWidgets.length - 1).toString() + ' house(s)');
-          return CarouselSlider(
-              items: _houseWidgets,
-              options: CarouselOptions(
-                  height: 170.0,
-                  enableInfiniteScroll: false,
-                  autoPlay: false,
-                  enlargeCenterPage: true));
+          log('Found ${_houseWidgets.length - 1} house(s)');
+          return Column(
+            children: [
+              drawHousesTitle(),
+              const SizedBox(height: 16.0),
+              CarouselSlider(
+                  items: _houseWidgets,
+                  options: CarouselOptions(
+                      height: 170.0,
+                      enableInfiniteScroll: false,
+                      autoPlay: false,
+                      enlargeCenterPage: true)),
+            ],
+          );
         } else if (snapshot.hasError) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
-        return const CircularProgressIndicator();
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
@@ -170,23 +174,72 @@ class _HomePageState extends State<HomePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
-          if (_houseWidgets.isEmpty) {
-            for (House house in snapshot.data!.houses) {
-              _houseWidgets.add(HouseWidget(
-                house: house,
-                isAdd: false,
-              ));
-            }
+          double totalConsumes = 0;
+          for (HouseWidget houseWidget in _houseWidgets) {
+            totalConsumes += houseWidget.house.consumes;
           }
-          return WaterPieChart(
-            houseWidgets: _houseWidgets,
+          return Column(
+            children: [
+              drawConsumesTitle(),
+              const SizedBox(height: 24.0),
+              Text(
+                "$totalConsumes L",
+                style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontSize: 20.0,
+                    color: Colors.black),
+              ),
+              const SizedBox(height: 24.0),
+              WaterPieChart(
+                houseWidgets: _houseWidgets,
+              ),
+            ],
           );
         } else if (snapshot.hasError) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
-        return const CircularProgressIndicator();
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  FutureBuilder<ExpensesResponse> buildCostChart() {
+    return FutureBuilder<ExpensesResponse>(
+      future: _futureExpensesResponse,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.code != 200) {
+            return const SizedBox.shrink();
+          }
+          for (MonthExpense month in snapshot.data!.months) {
+            _monthExpenses.add(MonthExpense(
+                date: month.date, cost: month.cost, total: month.total));
+          }
+          log('Found ${_monthExpenses.length} month(s)');
+          double currentPrice = _monthExpenses.last.cost;
+          return Column(
+            children: [
+              drawCostTitle(),
+              const SizedBox(height: 24.0),
+              Text(
+                "$currentPrice \$",
+                style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                    fontSize: 20.0,
+                    color: Colors.black),
+              ),
+              const SizedBox(height: 24.0),
+              CostLineChart(
+                months: _monthExpenses,
+              ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+        return const SizedBox.shrink();
       },
     );
   }
