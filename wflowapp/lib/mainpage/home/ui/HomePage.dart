@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/mainpage/home/rest/HomePageClient.dart';
@@ -15,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //List<HouseWidget> _houses = [];
   List<House> _houses = [];
   List<HouseWidget> _houseWidgets = [];
 
@@ -33,53 +34,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: drawAppBar(),
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    drawHousesTitle(),
-                    SizedBox(height: 16.0),
-                    buildHousesCarousel(),
-                    SizedBox(height: 32.0),
-                    drawConsumesTitle(),
-                    SizedBox(height: 24.0),
-                    Text(
-                      '124L',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 20.0,
-                          color: Colors.black),
-                    ),
-                    SizedBox(height: 24.0),
-                    buildWaterPieChart(),
-                    SizedBox(height: 32.0),
-                    /*             
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Expected total cost 💸',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22.0,
-                              color: Colors.black),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 300.0),
-                    Text('data'), 
-                    */
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: drawBody(),
     );
   }
 
@@ -96,6 +51,56 @@ class _HomePageState extends State<HomePage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget drawBody() {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  drawHousesTitle(),
+                  SizedBox(height: 16.0),
+                  buildHousesCarousel(),
+                  SizedBox(height: 32.0),
+                  drawConsumesTitle(),
+                  SizedBox(height: 24.0),
+                  Text(
+                    '124L',
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 20.0,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 24.0),
+                  buildWaterPieChart(),
+                  SizedBox(height: 32.0),
+                  /*             
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Expected total cost 💸',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22.0,
+                              color: Colors.black),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 300.0),
+                    Text('data'), 
+                    */
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -119,7 +124,7 @@ class _HomePageState extends State<HomePage> {
         Text(
           'My total consumes 💧',
           style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 22.0, color: Colors.black),
+              fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
         )
       ],
     );
@@ -133,14 +138,17 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.data!.code != 200) {
             return SizedBox.shrink();
           }
-          if (_houses.isEmpty) {
-            for (House house in snapshot.data!.houses) {
-              _houseWidgets.add(HouseWidget(
-                title: house.name,
-              ));
-            }
-            _houseWidgets.add(HouseWidget());
+          for (House house in snapshot.data!.houses) {
+            _houseWidgets.add(HouseWidget(
+              house: house,
+              isAdd: false,
+            ));
           }
+          _houseWidgets.add(HouseWidget(
+            house: House(name: ''),
+            isAdd: true,
+          ));
+          log('Found ' + (_houseWidgets.length - 1).toString() + ' house(s)');
           return CarouselSlider(
               items: _houseWidgets,
               options: CarouselOptions(
@@ -151,7 +159,7 @@ class _HomePageState extends State<HomePage> {
         } else if (snapshot.hasError) {
           return SizedBox.shrink();
         }
-        return SizedBox.shrink();
+        return const CircularProgressIndicator();
       },
     );
   }
@@ -164,20 +172,21 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.data!.code != 200) {
             return SizedBox.shrink();
           }
-          if (_houses.isEmpty) {
+          if (_houseWidgets.isEmpty) {
             for (House house in snapshot.data!.houses) {
               _houseWidgets.add(HouseWidget(
-                title: house.name,
+                house: house,
+                isAdd: false,
               ));
             }
           }
           return WaterPieChart(
-            houses: _houseWidgets,
+            houseWidgets: _houseWidgets,
           );
         } else if (snapshot.hasError) {
           return SizedBox.shrink();
         }
-        return SizedBox.shrink();
+        return const CircularProgressIndicator();
       },
     );
   }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class HouseWidget extends StatelessWidget {
-  HouseWidget({super.key, this.title = ""});
+import '../rest/House.dart';
 
-  final String title;
+class HouseWidget extends StatelessWidget {
+  HouseWidget({super.key, required this.house, required this.isAdd});
+
+  final House house;
+  final bool isAdd;
   final Color color = HouseWidget._pickRandomColor();
 
   static Set<Color> colors = {
@@ -21,7 +24,7 @@ class HouseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (title.isEmpty) {
+    if (house.name.isEmpty) {
       return Container(
         width: 500.0,
         decoration: BoxDecoration(
@@ -46,7 +49,7 @@ class HouseWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title,
+              house.name,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
             ),
           ],
@@ -58,7 +61,6 @@ class HouseWidget extends StatelessWidget {
   static Color _pickRandomColor() {
     final rnd = Random();
     Color color = colors.elementAt(rnd.nextInt(colors.length));
-    colors.remove(color);
     return color;
   }
 }

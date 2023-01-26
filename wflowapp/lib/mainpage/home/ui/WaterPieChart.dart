@@ -4,24 +4,37 @@ import 'package:wflowapp/mainpage/home/ui/HouseWidget.dart';
 import 'Indicator.dart';
 
 class WaterPieChart extends StatelessWidget {
-  WaterPieChart({super.key, required this.houses});
+  WaterPieChart({super.key, required this.houseWidgets});
 
-  final List<HouseWidget> houses;
+  final List<HouseWidget> houseWidgets;
 
   @override
   Widget build(BuildContext context) {
-    final List<PieChartSectionData> _sections = [
-      PieChartSectionData(
-          color: houses.elementAt(0).color,
-          value: 75,
-          showTitle: true,
-          title: '75%'),
-      PieChartSectionData(
-          color: houses.elementAt(1).color,
-          value: 25,
-          showTitle: true,
-          title: '25%'),
-    ];
+    List<PieChartSectionData> sections = [];
+    List<Widget> indicators = [];
+
+    for (HouseWidget houseWidget in houseWidgets) {
+      if (!houseWidget.isAdd) {
+        PieChartSectionData sectionData = PieChartSectionData(
+            color: houseWidget.color,
+            value: houseWidget.house.consumes,
+            showTitle: true,
+            title: houseWidget.house.consumes.toString());
+        sections.add(sectionData);
+      }
+    }
+
+    for (HouseWidget houseWidget in houseWidgets) {
+      if (!houseWidget.isAdd) {
+        Indicator indicator = Indicator(
+          color: houseWidget.color,
+          text: houseWidget.house.name,
+          isSquare: true,
+        );
+        indicators.add(indicator);
+      }
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -29,22 +42,12 @@ class WaterPieChart extends StatelessWidget {
           height: 150,
           width: 150,
           child: PieChart(PieChartData(
-            sections: _sections,
+            sections: sections,
           )),
         ),
         SizedBox(width: 50),
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          Indicator(
-            color: houses.elementAt(0).color,
-            text: houses.elementAt(0).title,
-            isSquare: true,
-          ),
-          Indicator(
-            color: houses.elementAt(1).color,
-            text: houses.elementAt(1).title,
-            isSquare: true,
-          ),
-        ])
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: indicators)
       ],
     );
   }

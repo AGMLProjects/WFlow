@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 
 class House {
   final String name;
-  final int consumes;
+  final double consumes;
 
-  const House({required this.name, required this.consumes});
+  const House({required this.name, this.consumes = 0});
 }

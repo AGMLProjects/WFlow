@@ -18,7 +18,7 @@ class HousesResponse {
     List<dynamic> _dhouses = json['houses'];
     List<House> houses = [];
     for (var _dhouse in _dhouses) {
-      House house = House(name: _dhouse['name'], consumes: 0);
+      House house = House(name: _dhouse['name'], consumes: _dhouse['consumes']);
       houses.add(house);
     }
     return HousesResponse(
