@@ -24,7 +24,7 @@ class CostLineChart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       width: double.infinity,
-      height: 300,
+      height: 260,
       child: LineChart(
         LineChartData(
             //lineTouchData: lineTouchData(),
@@ -43,14 +43,14 @@ class CostLineChart extends StatelessWidget {
   LineTouchData lineTouchData() {
     return LineTouchData(
       handleBuiltInTouches: true,
-      touchTooltipData: LineTouchTooltipData(
-        tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-      ),
     );
   }
 
   FlTitlesData titlesData() {
     return FlTitlesData(
+      leftTitles: AxisTitles(
+        sideTitles: leftTitles(),
+      ),
       bottomTitles: AxisTitles(
         sideTitles: bottomTitles(),
       ),
@@ -65,47 +65,30 @@ class CostLineChart extends StatelessWidget {
 
   SideTitles leftTitles() {
     return SideTitles(
-      getTitlesWidget: leftTitleWidgets,
       showTitles: true,
-      interval: 1,
       reservedSize: 40,
+      interval: 10,
+      getTitlesWidget: leftTitleWidgets,
     );
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
-      color: Color(0xff75729e),
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
+      color: Colors.grey,
+      fontSize: 12,
     );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '1m';
-        break;
-      case 2:
-        text = '2m';
-        break;
-      case 3:
-        text = '3m';
-        break;
-      case 4:
-        text = '5m';
-        break;
-      case 5:
-        text = '6m';
-        break;
-      default:
-        return Container();
-    }
-
-    return Text(text, style: style, textAlign: TextAlign.center);
+    Widget text = Text(value.toString(), style: style);
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 15,
+      child: text,
+    );
   }
 
   SideTitles bottomTitles() {
     return SideTitles(
       showTitles: true,
-      reservedSize: 32,
+      reservedSize: 50,
       interval: 1,
       getTitlesWidget: bottomTitleWidgets,
     );
@@ -113,28 +96,19 @@ class CostLineChart extends StatelessWidget {
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
-      color: Color(0xff72719b),
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
+      color: Colors.grey,
+      fontSize: 12,
     );
     Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('SEPT', style: style);
-        break;
-      case 7:
-        text = const Text('OCT', style: style);
-        break;
-      case 12:
-        text = const Text('DEC', style: style);
-        break;
-      default:
-        text = const Text('');
-        break;
+    if (value.toInt() < this.months.length) {
+      MonthExpense month = this.months.elementAt(value.toInt());
+      text = Text(month.parseDate(), style: style);
+    } else {
+      text = const Text('', style: style);
     }
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 10,
+      space: 15,
       child: text,
     );
   }

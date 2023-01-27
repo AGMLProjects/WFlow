@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/mainpage/home/rest/ExpensesResponse.dart';
 import 'package:wflowapp/mainpage/home/rest/HousesClient.dart';
 import 'package:wflowapp/mainpage/home/rest/HousesResponse.dart';
@@ -25,13 +26,11 @@ class _HomePageState extends State<HomePage> {
   List<HouseWidget> _houseWidgets = [];
   List<MonthExpense> _monthExpenses = [];
 
-  final HousesClient housesClient = const HousesClient(
-      url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
-      path: '/houses');
+  final HousesClient housesClient =
+      const HousesClient(url: AppConfig.BASE_URL, path: '/houses');
 
-  final ExpensesClient expensesClient = const ExpensesClient(
-      url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
-      path: '/expenses');
+  final ExpensesClient expensesClient =
+      const ExpensesClient(url: AppConfig.BASE_URL, path: '/expenses');
 
   Future<HousesResponse>? _futureHousesResponse;
   Future<ExpensesResponse>? _futureExpensesResponse;

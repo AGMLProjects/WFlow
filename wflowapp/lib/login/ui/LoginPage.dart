@@ -3,6 +3,7 @@ import 'package:wflowapp/login/ui/login_title.dart';
 import 'package:wflowapp/login/rest/LoginClient.dart';
 import 'package:wflowapp/login/rest/LoginResponse.dart';
 
+import '../../config/AppConfig.dart';
 import '../../mainpage/ui/MainPage.dart';
 import '../../register/ui/RegisterPage.dart';
 
@@ -16,9 +17,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final LoginClient client = const LoginClient(
-      url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
-      path: '/user/login');
+  final LoginClient client =
+      const LoginClient(url: AppConfig.BASE_URL, path: '/user/login');
   Future<LoginResponse>? _futureLogin;
   String emailErrorText = '';
   String passwordErrorText = '';

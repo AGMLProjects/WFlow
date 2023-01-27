@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/login/ui/login_title.dart';
 
+import '../../config/AppConfig.dart';
 import '../rest/RegisterClient.dart';
 import '../rest/RegisterResponse.dart';
 
@@ -15,9 +16,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final RegisterClient client = const RegisterClient(
-      url: 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io',
-      path: '/user/register');
+  final RegisterClient client =
+      const RegisterClient(url: AppConfig.BASE_URL, path: '/user/register');
   Future<RegisterResponse>? _futureRegister;
   String emailErrorText = '';
   String passwordErrorText = '';
