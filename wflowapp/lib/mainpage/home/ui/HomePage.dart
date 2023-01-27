@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 32.0),
                   buildWaterPieChart(),
                   const SizedBox(height: 32.0),
-                  buildCostChart(),
+                  buildExpensesLineChart(),
                   const SizedBox(height: 32.0),
                 ],
               ),
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget drawCostTitle() {
+  Widget drawExpensesTitle() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
             ));
           }
           _houseWidgets.add(HouseWidget(
-            house: const House(name: ''),
+            house: const House(id: -1, name: ''),
             isAdd: true,
           ));
           log('Found ${_houseWidgets.length - 1} house(s)');
@@ -184,7 +184,7 @@ class _HomePageState extends State<HomePage> {
               drawConsumesTitle(),
               const SizedBox(height: 24.0),
               Text(
-                "$totalConsumes L",
+                "Total: $totalConsumes L",
                 style: const TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 20.0,
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  FutureBuilder<ExpensesResponse> buildCostChart() {
+  FutureBuilder<ExpensesResponse> buildExpensesLineChart() {
     return FutureBuilder<ExpensesResponse>(
       future: _futureExpensesResponse,
       builder: (context, snapshot) {
@@ -220,10 +220,10 @@ class _HomePageState extends State<HomePage> {
           double currentPrice = _monthExpenses.last.cost;
           return Column(
             children: [
-              drawCostTitle(),
+              drawExpensesTitle(),
               const SizedBox(height: 24.0),
               Text(
-                "$currentPrice \$",
+                "Current price: $currentPrice €",
                 style: const TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 20.0,

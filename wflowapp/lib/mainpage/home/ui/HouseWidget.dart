@@ -25,34 +25,46 @@ class HouseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (house.name.isEmpty) {
-      return Container(
-        width: 500.0,
-        decoration: BoxDecoration(
-            color: Colors.grey[300], borderRadius: BorderRadius.circular(12.0)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Icon(
-            Icons.add,
-            color: Colors.grey,
-            size: 40.0,
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, 'addHouse');
+        },
+        child: Container(
+          width: 500.0,
+          decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(12.0)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Icon(
+              Icons.add,
+              color: Colors.grey,
+              size: 40.0,
+            ),
           ),
         ),
       );
     }
-    return Container(
-      width: 500.0,
-      decoration: BoxDecoration(
-          color: color, borderRadius: BorderRadius.circular(12.0)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              house.name,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, 'house',
+            arguments: {'id': house.id, 'name': house.name});
+      },
+      child: Container(
+        width: 500.0,
+        decoration: BoxDecoration(
+            color: color, borderRadius: BorderRadius.circular(12.0)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                house.name,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+              ),
+            ],
+          ),
         ),
       ),
     );
