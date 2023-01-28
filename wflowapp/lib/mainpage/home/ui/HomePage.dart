@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/mainpage/home/rest/ExpensesResponse.dart';
 import 'package:wflowapp/mainpage/home/rest/HousesClient.dart';
@@ -38,8 +39,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      _futureHousesResponse = housesClient.getHouses("AAAA");
-      _futureExpensesResponse = expensesClient.getExpenses("AAAA");
+      String token = AppConfig.TOKEN;
+      log('Read token: $token');
+      _futureHousesResponse = housesClient.getHouses(token);
+      _futureExpensesResponse = expensesClient.getExpenses(token);
     });
 
     return Scaffold(
@@ -242,4 +245,6 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
+
+  void loadToken(Future<Null> Function() param0) {}
 }

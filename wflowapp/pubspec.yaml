@@ -39,6 +39,10 @@ dependencies:
   http: ^0.13.5
   carousel_slider: ^4.2.1
   fl_chart: ^0.55.2
+  # flutter_native_splash: ^2.2.17
+  shared_preferences:
+  after_layout:
+  qr_code_scanner: ^1.0.1
 
 dev_dependencies:
   flutter_test:
