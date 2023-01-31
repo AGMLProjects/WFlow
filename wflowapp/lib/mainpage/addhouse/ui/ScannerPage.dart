@@ -52,8 +52,9 @@ class _ScannerPageState extends State<ScannerPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        log('Result: ${result!.code}');
-        Navigator.pushNamed(context, 'main');
+        log('Scanned data: ${result!.code}');
+        Navigator.pushReplacementNamed(context, 'editHouse',
+            arguments: {'deviceID': result!.code});
       });
     });
   }

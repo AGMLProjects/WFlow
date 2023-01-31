@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../../config/AppConfig.dart';
 
@@ -11,10 +10,6 @@ class AddHousePage extends StatefulWidget {
 }
 
 class _AddHousePageState extends State<AddHousePage> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? result;
-  QRViewController? controller;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

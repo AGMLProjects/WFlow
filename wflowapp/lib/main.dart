@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wflowapp/mainpage/addhouse/ui/EditHousePage.dart';
 import 'package:wflowapp/mainpage/addhouse/ui/ScannerPage.dart';
 import 'package:wflowapp/mainpage/home/ui/HomePage.dart';
 import 'package:wflowapp/mainpage/ui/MainPage.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         'main': (context) => const MainPage(),
         'addHouse': (context) => const AddHousePage(),
         'scan': (context) => const ScannerPage(),
+        'editHouse': (context) => const EditHousePage(),
         'house': (context) => const HousePage(),
       },
     );

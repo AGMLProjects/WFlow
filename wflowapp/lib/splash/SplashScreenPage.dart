@@ -22,9 +22,9 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     // TODO: other checks on token...
     if (validToken) {
       AppConfig.TOKEN = savedToken;
-      Navigator.pushNamed(context, 'main');
+      Navigator.pushReplacementNamed(context, 'main');
     } else {
-      Navigator.pushNamed(context, 'login');
+      Navigator.pushReplacementNamed(context, 'login');
     }
   }
 
