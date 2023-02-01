@@ -19,6 +19,7 @@ class _HousePageState extends State<HousePage> {
     return Scaffold(
       appBar: drawAppBar(),
       body: drawBody(),
+      floatingActionButton: drawFAB(),
     );
   }
 
@@ -32,6 +33,16 @@ class _HousePageState extends State<HousePage> {
       child: Column(
         children: [Text('${'House page (' + id.toString()})')],
       ),
+    );
+  }
+
+  Widget drawFAB() {
+    return FloatingActionButton(
+      onPressed: () {
+        Navigator.pushNamed(context, 'addDevice');
+      },
+      tooltip: 'Add Device',
+      child: const Icon(Icons.add),
     );
   }
 }

@@ -43,6 +43,9 @@ dependencies:
   shared_preferences:
   after_layout:
   qr_code_scanner: ^1.0.1
+  geolocator: ^8.2.0
+  geocoding: ^2.0.4
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

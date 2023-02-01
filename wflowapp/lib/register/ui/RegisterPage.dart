@@ -194,7 +194,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   fontSize: 18.0,
                 ));
           }
-          Navigator.pushNamed(context, 'main');
+          Future.delayed(Duration.zero, () {
+            Navigator.pushNamed(context, 'main');
+          });
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',
               style: const TextStyle(

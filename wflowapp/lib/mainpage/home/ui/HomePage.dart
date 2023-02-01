@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage> {
 
   AppBar drawAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: const Text('Dashboard'),
       actions: <Widget>[
         Container(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wflowapp/mainpage/addhouse/ui/EditHousePage.dart';
-import 'package:wflowapp/mainpage/addhouse/ui/ScannerPage.dart';
-import 'package:wflowapp/mainpage/home/ui/HomePage.dart';
+import 'package:wflowapp/mainpage/house/device/ui/ScannerPage.dart';
+import 'package:wflowapp/mainpage/house/device/ui/AddDevicePage.dart';
 import 'package:wflowapp/mainpage/ui/MainPage.dart';
 import 'package:wflowapp/register/ui/RegisterPage.dart';
 import 'package:wflowapp/splash/SplashScreenPage.dart';
@@ -20,8 +19,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreenPage(),
-      initialRoute: 'splash',
+      home: const LoginPage(),
+      initialRoute: 'login',
       routes: {
         'splash': (context) => const SplashScreenPage(),
         'login': (context) => const LoginPage(),
@@ -29,8 +28,8 @@ class MyApp extends StatelessWidget {
         'main': (context) => const MainPage(),
         'addHouse': (context) => const AddHousePage(),
         'scan': (context) => const ScannerPage(),
-        'editHouse': (context) => const EditHousePage(),
         'house': (context) => const HousePage(),
+        'addDevice': (context) => const AddDevicePage()
       },
     );
   }
