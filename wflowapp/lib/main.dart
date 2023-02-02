@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/mainpage/house/device/ui/ScannerPage.dart';
 import 'package:wflowapp/mainpage/house/device/ui/AddDevicePage.dart';
+import 'package:wflowapp/mainpage/house/edithouse/ui/EditHousePage.dart';
 import 'package:wflowapp/mainpage/ui/MainPage.dart';
 import 'package:wflowapp/register/ui/RegisterPage.dart';
 import 'package:wflowapp/splash/SplashScreenPage.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         'addHouse': (context) => const AddHousePage(),
         'scan': (context) => const ScannerPage(),
         'house': (context) => const HousePage(),
+        'editHouse': (context) => const EditHousePage(),
         'addDevice': (context) => const AddDevicePage()
       },
     );

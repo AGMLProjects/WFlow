@@ -41,24 +41,21 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadConfig();
-    _fetchData();
   }
 
-  void _loadConfig() async {
+  Future _fetchData() async {
     prefs = await SharedPreferences.getInstance();
     prefs.setString('token', 'AAAA'); // TODO: remove
     token = prefs.getString('token')!;
     log('Token: $token');
   }
 
-  void _fetchData() async {
-    _futureHousesResponse = housesClient.getHouses(token);
-    _futureExpensesResponse = expensesClient.getExpenses(token);
-  }
-
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      _futureHousesResponse = housesClient.getHouses(token);
+      _futureExpensesResponse = expensesClient.getExpenses(token);
+    });
     return Scaffold(
       appBar: drawAppBar(),
       body: drawBody(),

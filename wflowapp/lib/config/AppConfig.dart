@@ -1,7 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter/material.dart';
+
 class AppConfig {
   static const String BASE_URL =
-      'https://f8498739-a374-404b-aa9c-490860d6dda4.mock.pstmn.io';
-  static const int COLOR_DEFAULT = 0xFF90CAF9;
+      'https://bbe03b05-83e9-4e16-84f8-a571e078f2a3.mock.pstmn.io';
+  static const int COLOR_DEFAULT = 0xFF009688;
 }
