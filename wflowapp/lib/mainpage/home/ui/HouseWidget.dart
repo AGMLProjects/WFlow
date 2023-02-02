@@ -4,15 +4,13 @@ import 'dart:math';
 import '../rest/House.dart';
 
 class HouseWidget extends StatelessWidget {
-  HouseWidget({super.key, required this.house, required this.isAdd});
+  HouseWidget({super.key, required this.house});
 
   final House house;
-  final bool isAdd;
-  final Color color = HouseWidget._pickRandomColor();
 
   static Set<Color> colors = {
     Colors.amber[200]!,
-    Colors.blue[200]!,
+    const Color(0xFF90CAF9),
     Colors.green[200]!,
     Colors.purple[200]!,
     Colors.orangeAccent[200]!,
@@ -53,7 +51,8 @@ class HouseWidget extends StatelessWidget {
       child: Container(
         width: 500.0,
         decoration: BoxDecoration(
-            color: color, borderRadius: BorderRadius.circular(12.0)),
+            color: Color(house.color),
+            borderRadius: BorderRadius.circular(12.0)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -68,11 +67,5 @@ class HouseWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  static Color _pickRandomColor() {
-    final rnd = Random();
-    Color color = colors.elementAt(rnd.nextInt(colors.length));
-    return color;
   }
 }

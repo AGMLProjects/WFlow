@@ -1,7 +1,14 @@
+import 'package:wflowapp/config/AppConfig.dart';
+
 class House {
-  final int id;
+  final String id;
   final String name;
   final double consumes;
+  int color;
 
-  const House({required this.id, required this.name, this.consumes = 0});
+  House(
+      {required this.id,
+      required this.name,
+      this.consumes = 0,
+      this.color = AppConfig.COLOR_DEFAULT});
 }

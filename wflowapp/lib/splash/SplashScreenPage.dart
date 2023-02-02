@@ -11,25 +11,26 @@ class SplashScreenPage extends StatefulWidget {
   State<SplashScreenPage> createState() => _SplashScreenPageState();
 }
 
-class _SplashScreenPageState extends State<SplashScreenPage>
-    with AfterLayoutMixin<SplashScreenPage> {
-  Future checkToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', 'AAAA');
+class _SplashScreenPageState extends State<SplashScreenPage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadConfig();
+  }
+
+  void _loadConfig() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', 'AAAA'); // TODO: remove
     String? savedToken = prefs.getString('token');
     log('Read saved token: $savedToken');
     bool validToken = savedToken != null;
     // TODO: other checks on token...
     if (validToken) {
-      AppConfig.TOKEN = savedToken;
       Navigator.pushReplacementNamed(context, 'main');
     } else {
       Navigator.pushReplacementNamed(context, 'login');
     }
   }
-
-  @override
-  void afterFirstLayout(BuildContext context) => checkToken();
 
   @override
   Widget build(BuildContext context) {

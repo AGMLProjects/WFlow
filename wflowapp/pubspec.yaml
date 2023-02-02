@@ -40,7 +40,7 @@ dependencies:
   carousel_slider: ^4.2.1
   fl_chart: ^0.55.2
   # flutter_native_splash: ^2.2.17
-  shared_preferences:
+  shared_preferences: ^2.0.17
   after_layout:
   qr_code_scanner: ^1.0.1
   geolocator: ^8.2.0

@@ -8,7 +8,7 @@ class HousePage extends StatefulWidget {
 }
 
 class _HousePageState extends State<HousePage> {
-  int id = -1;
+  String id = '';
   String name = '';
 
   @override

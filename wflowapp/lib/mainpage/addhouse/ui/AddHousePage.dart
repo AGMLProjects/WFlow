@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wflowapp/mainpage/addhouse/rest/AddHouseClient.dart';
 import 'package:wflowapp/mainpage/addhouse/rest/AddHouseResponse.dart';
 
@@ -17,6 +18,9 @@ class AddHousePage extends StatefulWidget {
 }
 
 class _AddHousePageState extends State<AddHousePage> {
+  late SharedPreferences prefs;
+  String token = '';
+
   Color houseColor = Colors.blue;
   String? _currentAddress;
   Position? _currentPosition;
@@ -27,6 +31,19 @@ class _AddHousePageState extends State<AddHousePage> {
       const AddHouseClient(url: AppConfig.BASE_URL, path: '/houses/add');
 
   Future<AddHouseResponse>? _futureAddHouseResponse;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadConfig();
+  }
+
+  void _loadConfig() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', 'AAAA'); // TODO: remove
+    token = prefs.getString('token')!;
+    log('Token: $token');
+  }
 
   @override
   void dispose() {
@@ -140,7 +157,7 @@ class _AddHousePageState extends State<AddHousePage> {
       String name = nameController.text;
       String location = locationController.text;
       _futureAddHouseResponse = addHousesClient.addHouse(
-          AppConfig.TOKEN, name, location, houseColor.toString());
+          token, name, location, houseColor.toString());
     });
   }
 

@@ -23,9 +23,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<House> _houses = [];
-  List<HouseWidget> _houseWidgets = [];
-  List<MonthExpense> _monthExpenses = [];
+  late SharedPreferences prefs;
+  String token = '';
+
+  final List<HouseWidget> _houseWidgets = [];
+  final List<MonthExpense> _monthExpenses = [];
 
   final HousesClient housesClient =
       const HousesClient(url: AppConfig.BASE_URL, path: '/houses');
@@ -37,14 +39,26 @@ class _HomePageState extends State<HomePage> {
   Future<ExpensesResponse>? _futureExpensesResponse;
 
   @override
-  Widget build(BuildContext context) {
-    setState(() {
-      String token = AppConfig.TOKEN;
-      log('Read token: $token');
-      _futureHousesResponse = housesClient.getHouses(token);
-      _futureExpensesResponse = expensesClient.getExpenses(token);
-    });
+  void initState() {
+    super.initState();
+    _loadConfig();
+    _fetchData();
+  }
 
+  void _loadConfig() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', 'AAAA'); // TODO: remove
+    token = prefs.getString('token')!;
+    log('Token: $token');
+  }
+
+  void _fetchData() async {
+    _futureHousesResponse = housesClient.getHouses(token);
+    _futureExpensesResponse = expensesClient.getExpenses(token);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: drawAppBar(),
       body: drawBody(),
@@ -140,16 +154,16 @@ class _HomePageState extends State<HomePage> {
             return const SizedBox.shrink();
           }
           for (House house in snapshot.data!.houses) {
-            _houseWidgets.add(HouseWidget(
-              house: house,
-              isAdd: false,
-            ));
+            log('Found "${house.name}" (ID: ${house.id})');
+            int? color = prefs.getInt(house.id + '.color');
+            if (color == null) {
+              color = AppConfig.COLOR_DEFAULT;
+            }
+            prefs.setInt('${house.id}.color', color);
+            house.color = color;
+            _houseWidgets.add(HouseWidget(house: house));
           }
-          _houseWidgets.add(HouseWidget(
-            house: const House(id: -1, name: ''),
-            isAdd: true,
-          ));
-          log('Found ${_houseWidgets.length - 1} house(s)');
+          _houseWidgets.add(HouseWidget(house: House(id: '', name: '')));
           return Column(
             children: [
               drawHousesTitle(),
@@ -246,6 +260,4 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-
-  void loadToken(Future<Null> Function() param0) {}
 }
