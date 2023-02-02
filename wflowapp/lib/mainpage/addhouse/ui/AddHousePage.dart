@@ -18,31 +18,24 @@ class AddHousePage extends StatefulWidget {
 }
 
 class _AddHousePageState extends State<AddHousePage> {
-  late SharedPreferences prefs;
-  String token = '';
+  String? token;
 
-  Color houseColor = Colors.blue;
+  Color houseColor = AppConfig.getDefaultColor();
   String? _currentAddress;
   Position? _currentPosition;
   final nameController = TextEditingController();
   final locationController = TextEditingController();
 
   final AddHouseClient addHousesClient =
-      const AddHouseClient(url: AppConfig.BASE_URL, path: '/houses/add');
+      AddHouseClient(url: AppConfig.getBaseUrl(), path: '/houses/add');
 
   Future<AddHouseResponse>? _futureAddHouseResponse;
 
   @override
   void initState() {
     super.initState();
-    _loadConfig();
-  }
-
-  void _loadConfig() async {
-    prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', 'AAAA'); // TODO: remove
-    token = prefs.getString('token')!;
-    log('Token: $token');
+    token = AppConfig.getUserToken();
+    log(name: 'CONFIG', 'Token: ${token!}');
   }
 
   @override
@@ -73,7 +66,7 @@ class _AddHousePageState extends State<AddHousePage> {
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Name',
                   hintText: 'Name'),
@@ -85,65 +78,65 @@ class _AddHousePageState extends State<AddHousePage> {
                 Expanded(
                   child: TextField(
                     controller: locationController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Location',
                         hintText: 'Location'),
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 ElevatedButton(
                   onPressed: getCurrentPosition,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: const Icon(
+                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
                       Icons.location_on,
                       color: Colors.white,
                       size: 20.0,
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'House color: ',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 ElevatedButton(
                   onPressed: () => showColorPickerDialog(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                  ),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all(CircleBorder()),
                     padding: MaterialStateProperty.all(EdgeInsets.all(16.0)),
                     backgroundColor: MaterialStateProperty.all(houseColor),
                   ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 70.0),
+            const SizedBox(height: 70.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () => performRequest(),
-                  child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
+                  child: const Padding(
+                      padding: EdgeInsets.all(10.0),
                       child: Text(
                         'Done',
                         style: TextStyle(fontSize: 20.0),
                       )),
-                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             if (_futureAddHouseResponse != null) drawAddHouseResponse(),
           ],
         ),
@@ -156,8 +149,8 @@ class _AddHousePageState extends State<AddHousePage> {
       //validate
       String name = nameController.text;
       String location = locationController.text;
-      _futureAddHouseResponse = addHousesClient.addHouse(
-          token, name, location, houseColor.toString());
+      _futureAddHouseResponse =
+          addHousesClient.addHouse(token!, name, location);
     });
   }
 
@@ -174,7 +167,8 @@ class _AddHousePageState extends State<AddHousePage> {
                   fontSize: 18.0,
                 ));
           }
-          log('New house ID: ${snapshot.data!.house}');
+          log(name: 'DEBUG', 'New house ID: ${snapshot.data!.house}');
+          AppConfig.setHouseColor(snapshot.data!.house, houseColor);
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, 'main');
           });

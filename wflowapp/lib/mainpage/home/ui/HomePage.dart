@@ -23,17 +23,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late SharedPreferences prefs;
-  String token = '';
-
   final List<HouseWidget> _houseWidgets = [];
   final List<MonthExpense> _monthExpenses = [];
 
   final HousesClient housesClient =
-      const HousesClient(url: AppConfig.BASE_URL, path: '/houses');
+      HousesClient(url: AppConfig.getBaseUrl(), path: '/houses');
 
   final ExpensesClient expensesClient =
-      const ExpensesClient(url: AppConfig.BASE_URL, path: '/expenses');
+      ExpensesClient(url: AppConfig.getBaseUrl(), path: '/expenses');
 
   Future<HousesResponse>? _futureHousesResponse;
   Future<ExpensesResponse>? _futureExpensesResponse;
@@ -41,21 +38,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-  }
-
-  Future _fetchData() async {
-    prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', 'AAAA'); // TODO: remove
-    token = prefs.getString('token')!;
-    log('Token: $token');
+    AppConfig.setUserToken('AAAA'); // TODO: remove this
+    String? token = AppConfig.getUserToken();
+    log(name: 'CONFIG', 'Token: ${token!}');
+    _futureHousesResponse = housesClient.getHouses(token);
+    _futureExpensesResponse = expensesClient.getExpenses(token);
   }
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      _futureHousesResponse = housesClient.getHouses(token);
-      _futureExpensesResponse = expensesClient.getExpenses(token);
-    });
     return Scaffold(
       appBar: drawAppBar(),
       body: drawBody(),
@@ -151,12 +142,12 @@ class _HomePageState extends State<HomePage> {
             return const SizedBox.shrink();
           }
           for (House house in snapshot.data!.houses) {
-            log('Found "${house.name}" (ID: ${house.id})');
-            int? color = prefs.getInt(house.id + '.color');
+            log(name: 'DEBUG', 'Found "${house.name}" (ID: ${house.id})');
+            Color? color = AppConfig.getHouseColor(house.id);
             if (color == null) {
-              color = AppConfig.COLOR_DEFAULT;
+              color = AppConfig.getDefaultColor();
             }
-            prefs.setInt('${house.id}.color', color);
+            AppConfig.setHouseColor(house.id, color);
             house.color = color;
             _houseWidgets.add(HouseWidget(house: house));
           }
@@ -231,7 +222,7 @@ class _HomePageState extends State<HomePage> {
             _monthExpenses.add(MonthExpense(
                 date: month.date, cost: month.cost, total: month.total));
           }
-          log('Found ${_monthExpenses.length} month(s)');
+          log(name: 'DEBUG', 'Found ${_monthExpenses.length} month(s)');
           double currentPrice = _monthExpenses.last.cost;
           return Column(
             children: [

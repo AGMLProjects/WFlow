@@ -15,20 +15,19 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   @override
   void initState() {
     super.initState();
-    _loadConfig();
-  }
-
-  void _loadConfig() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', 'AAAA'); // TODO: remove
-    String? savedToken = prefs.getString('token');
-    log('Read saved token: $savedToken');
+    AppConfig.setUserToken('AAAA'); // TODO: remove this
+    String? savedToken = AppConfig.getUserToken();
+    log(name: 'CONFIG', 'Read saved token: $savedToken');
     bool validToken = savedToken != null;
     // TODO: other checks on token...
     if (validToken) {
-      Navigator.pushReplacementNamed(context, 'main');
+      Future.delayed(Duration.zero, () {
+        Navigator.pushReplacementNamed(context, 'main');
+      });
     } else {
-      Navigator.pushReplacementNamed(context, 'login');
+      Future.delayed(Duration.zero, () {
+        Navigator.pushReplacementNamed(context, 'login');
+      });
     }
   }
 

@@ -5,11 +5,14 @@ import 'package:wflowapp/mainpage/house/edithouse/ui/EditHousePage.dart';
 import 'package:wflowapp/mainpage/ui/MainPage.dart';
 import 'package:wflowapp/register/ui/RegisterPage.dart';
 import 'package:wflowapp/splash/SplashScreenPage.dart';
+import 'config/AppConfig.dart';
 import 'login/ui/LoginPage.dart';
 import 'mainpage/addhouse/ui/AddHousePage.dart';
 import 'mainpage/house/ui/HousePage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.init();
   runApp(const MyApp());
 }
 

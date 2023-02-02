@@ -51,8 +51,7 @@ class HouseWidget extends StatelessWidget {
       child: Container(
         width: 500.0,
         decoration: BoxDecoration(
-            color: Color(house.color),
-            borderRadius: BorderRadius.circular(12.0)),
+            color: house.color, borderRadius: BorderRadius.circular(12.0)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

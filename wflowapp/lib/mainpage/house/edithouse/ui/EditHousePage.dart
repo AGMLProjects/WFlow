@@ -31,7 +31,7 @@ class _EditHousePageState extends State<EditHousePage> {
   final locationController = TextEditingController();
 
   final AddHouseClient addHousesClient =
-      const AddHouseClient(url: AppConfig.BASE_URL, path: '/houses/add');
+      AddHouseClient(url: AppConfig.getBaseUrl(), path: '/houses/add');
 
   Future<AddHouseResponse>? _futureAddHouseResponse;
 
@@ -159,8 +159,7 @@ class _EditHousePageState extends State<EditHousePage> {
       //validate
       String name = nameController.text;
       String location = locationController.text;
-      _futureAddHouseResponse = addHousesClient.addHouse(
-          token, name, location, colorToHex.toString());
+      _futureAddHouseResponse = addHousesClient.addHouse(token, name, location);
     });
   }
 

@@ -17,7 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final RegisterClient client =
-      const RegisterClient(url: AppConfig.BASE_URL, path: '/user/register');
+      RegisterClient(url: AppConfig.getBaseUrl(), path: '/user/register');
   Future<RegisterResponse>? _futureRegister;
   String emailErrorText = '';
   String passwordErrorText = '';

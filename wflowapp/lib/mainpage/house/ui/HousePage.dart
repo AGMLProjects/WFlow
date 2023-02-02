@@ -23,7 +23,7 @@ class _HousePageState extends State<HousePage> {
   String name = '';
 
   final HouseClient houseClient =
-      const HouseClient(url: AppConfig.BASE_URL, path: '/house');
+      HouseClient(url: AppConfig.getBaseUrl(), path: '/house');
 
   Future<HouseResponse>? _futureHouseResponse;
 

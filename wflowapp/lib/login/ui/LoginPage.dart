@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final LoginClient client =
-      const LoginClient(url: AppConfig.BASE_URL, path: '/user/login');
+      LoginClient(url: AppConfig.getBaseUrl(), path: '/user/login');
   Future<LoginResponse>? _futureLogin;
   String emailErrorText = '';
   String passwordErrorText = '';

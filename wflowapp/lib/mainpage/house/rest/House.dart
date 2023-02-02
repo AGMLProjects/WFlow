@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 
 class House {
@@ -6,12 +7,12 @@ class House {
   final double totalConsumes;
   final String location;
   // other stuffs
-  int color;
+  Color? color;
 
   House(
       {required this.id,
       required this.name,
       this.totalConsumes = 0,
       required this.location,
-      this.color = AppConfig.COLOR_DEFAULT});
+      this.color});
 }

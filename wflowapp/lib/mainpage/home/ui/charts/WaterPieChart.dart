@@ -16,7 +16,7 @@ class WaterPieChart extends StatelessWidget {
     for (HouseWidget houseWidget in houseWidgets) {
       if (houseWidget.house.id.isNotEmpty) {
         PieChartSectionData sectionData = PieChartSectionData(
-            color: Color(houseWidget.house.color),
+            color: houseWidget.house.color,
             value: houseWidget.house.consumes,
             showTitle: true,
             title: houseWidget.house.consumes.toString());
@@ -27,7 +27,7 @@ class WaterPieChart extends StatelessWidget {
     for (HouseWidget houseWidget in houseWidgets) {
       if (houseWidget.house.id.isNotEmpty) {
         Indicator indicator = Indicator(
-          color: Color(houseWidget.house.color),
+          color: houseWidget.house.color!,
           text: houseWidget.house.name,
           isSquare: true,
         );
