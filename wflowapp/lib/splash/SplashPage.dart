@@ -20,11 +20,11 @@ class _SplashPageState extends State<SplashPage> {
     // TODO: other checks on token...
     if (validToken) {
       Future.delayed(Duration.zero, () {
-        Navigator.pushReplacementNamed(context, 'main');
+        Navigator.pushReplacementNamed(context, '/main');
       });
     } else {
       Future.delayed(Duration.zero, () {
-        Navigator.pushReplacementNamed(context, 'login');
+        Navigator.pushReplacementNamed(context, '/login');
       });
     }
   }

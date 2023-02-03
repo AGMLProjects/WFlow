@@ -51,7 +51,7 @@ class _ScannerPageState extends State<ScannerPage> {
       setState(() {
         result = scanData;
         log('Scanned data: ${result!.code}');
-        Navigator.pushReplacementNamed(context, 'editHouse',
+        Navigator.pushReplacementNamed(context, '/editHouse',
             arguments: {'deviceID': result!.code});
       });
     });

@@ -110,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, 'login');
+                    Navigator.pushNamed(context, '/login');
                   },
                   child: Text(
                     ' Click here',
@@ -198,7 +198,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ));
           }
           Future.delayed(Duration.zero, () {
-            Navigator.pushNamed(context, 'main');
+            Navigator.pushNamed(context, '/main');
           });
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',

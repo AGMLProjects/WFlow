@@ -168,7 +168,7 @@ class _AddHousePageState extends State<AddHousePage> {
           log(name: 'DEBUG', 'New house ID: ${snapshot.data!.house}');
           AppConfig.setHouseColor(snapshot.data!.house, houseColor);
           Future.delayed(Duration.zero, () {
-            Navigator.pushReplacementNamed(context, 'main');
+            Navigator.pushReplacementNamed(context, '/main');
           });
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',

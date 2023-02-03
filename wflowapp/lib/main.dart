@@ -24,17 +24,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const SplashPage(),
-      initialRoute: 'splash',
+      initialRoute: '/splash',
       routes: {
-        'splash': (context) => const SplashPage(),
-        'login': (context) => const LoginPage(),
-        'register': (context) => const RegisterPage(),
-        'main': (context) => const MainPage(),
-        'addHouse': (context) => const AddHousePage(),
-        'addDevice': (context) => const AddDevicePage(),
-        'scan': (context) => const ScannerPage(),
-        'house': (context) => const HousePage(),
-        'editHouse': (context) => const EditHousePage()
+        '/splash': (context) => const SplashPage(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+        '/main': (context) => const MainPage(),
+        '/addHouse': (context) => const AddHousePage(),
+        '/addDevice': (context) => const AddDevicePage(),
+        '/scan': (context) => const ScannerPage(),
+        '/house': (context) => const HousePage(),
+        '/editHouse': (context) => const EditHousePage()
       },
     );
   }

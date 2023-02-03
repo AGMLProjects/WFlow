@@ -178,7 +178,7 @@ class _EditHousePageState extends State<EditHousePage> {
           }
           log('New house ID: ${snapshot.data!.house}');
           Future.delayed(Duration.zero, () {
-            Navigator.pushReplacementNamed(context, 'main');
+            Navigator.pushReplacementNamed(context, '/main');
           });
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',

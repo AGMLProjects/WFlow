@@ -29,7 +29,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, 'scan');
+                Navigator.pushNamed(context, '/scan');
               },
               child: Padding(
                 padding: const EdgeInsets.all(12.0),

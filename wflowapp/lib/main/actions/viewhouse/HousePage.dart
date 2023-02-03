@@ -68,7 +68,7 @@ class _HousePageState extends State<HousePage> {
             size: 20.0,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, 'editHouse',
+            Navigator.pushNamed(context, '/editHouse',
                 arguments: {'id': id, 'name': name});
           },
         ),
@@ -104,7 +104,7 @@ class _HousePageState extends State<HousePage> {
   Widget drawFAB() {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushNamed(context, 'addDevice');
+        Navigator.pushNamed(context, '/addDevice');
       },
       tooltip: 'Add Device',
       child: const Icon(Icons.add),

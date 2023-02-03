@@ -23,7 +23,7 @@ class HouseWidget extends StatelessWidget {
     if (house.name.isEmpty) {
       return GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, 'addHouse');
+          Navigator.pushNamed(context, '/addHouse');
         },
         child: Container(
           width: 500.0,
@@ -43,7 +43,7 @@ class HouseWidget extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, 'house',
+        Navigator.pushNamed(context, '/house',
             arguments: {'id': house.id, 'name': house.name});
       },
       child: Container(

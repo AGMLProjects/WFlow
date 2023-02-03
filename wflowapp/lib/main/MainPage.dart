@@ -48,7 +48,7 @@ class _MainPageState extends State<MainPage> {
     if (_selectedIndex == 0) {
       return FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, 'addHouse');
+          Navigator.pushNamed(context, '/addHouse');
         },
         tooltip: 'Add home',
         child: const Icon(Icons.add),
