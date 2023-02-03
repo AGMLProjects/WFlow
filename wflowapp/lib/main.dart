@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:wflowapp/mainpage/house/device/ui/ScannerPage.dart';
-import 'package:wflowapp/mainpage/house/device/ui/AddDevicePage.dart';
-import 'package:wflowapp/mainpage/house/edithouse/ui/EditHousePage.dart';
-import 'package:wflowapp/mainpage/ui/MainPage.dart';
-import 'package:wflowapp/register/ui/RegisterPage.dart';
-import 'package:wflowapp/splash/SplashScreenPage.dart';
-import 'config/AppConfig.dart';
-import 'login/ui/LoginPage.dart';
-import 'mainpage/addhouse/ui/AddHousePage.dart';
-import 'mainpage/house/ui/HousePage.dart';
+import 'package:wflowapp/config/AppConfig.dart';
+import 'package:wflowapp/main/actions/adddevice/AddDevicePage.dart';
+import 'package:wflowapp/main/actions/adddevice/ScannerPage.dart';
+import 'package:wflowapp/main/actions/addhouse/AddHousePage.dart';
+import 'package:wflowapp/main/actions/edithouse/EditHousePage.dart';
+import 'package:wflowapp/main/MainPage.dart';
+import 'package:wflowapp/main/actions/viewhouse/HousePage.dart';
+import 'package:wflowapp/splash/SplashPage.dart';
+import 'package:wflowapp/user/LoginPage.dart';
+import 'package:wflowapp/user/RegisterPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,18 +23,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreenPage(),
+      home: const SplashPage(),
       initialRoute: 'splash',
       routes: {
-        'splash': (context) => const SplashScreenPage(),
+        'splash': (context) => const SplashPage(),
         'login': (context) => const LoginPage(),
         'register': (context) => const RegisterPage(),
         'main': (context) => const MainPage(),
         'addHouse': (context) => const AddHousePage(),
+        'addDevice': (context) => const AddDevicePage(),
         'scan': (context) => const ScannerPage(),
         'house': (context) => const HousePage(),
-        'editHouse': (context) => const EditHousePage(),
-        'addDevice': (context) => const AddDevicePage()
+        'editHouse': (context) => const EditHousePage()
       },
     );
   }
