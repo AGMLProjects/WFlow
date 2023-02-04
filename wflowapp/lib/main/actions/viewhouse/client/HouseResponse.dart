@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart';
 
 import 'House.dart';
@@ -13,12 +14,12 @@ class HouseResponse {
 
   factory HouseResponse.fromResponse(Response response) {
     dynamic json = jsonDecode(response.body);
-    dynamic _dhouse = json['house'];
+    dynamic dhouse = json['house'];
     House house = House(
-        id: _dhouse['id'],
-        name: _dhouse['name'],
-        totalConsumes: _dhouse['totalConsumes'],
-        location: _dhouse['location']);
+        id: dhouse['id'],
+        name: dhouse['name'],
+        totalConsumes: dhouse['totalConsumes'],
+        location: dhouse['location']);
     return HouseResponse(
       code: response.statusCode,
       house: house,

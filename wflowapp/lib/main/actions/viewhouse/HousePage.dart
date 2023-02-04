@@ -15,10 +15,8 @@ class HousePage extends StatefulWidget {
 }
 
 class _HousePageState extends State<HousePage> {
-  late SharedPreferences prefs;
-  String token = '';
+  String? token;
   Color? color;
-
   String id = '';
   String name = '';
 
@@ -30,18 +28,16 @@ class _HousePageState extends State<HousePage> {
   @override
   void initState() {
     super.initState();
-    _fetchData();
-  }
-
-  void _fetchData() async {
-    prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', 'AAAA'); // TODO: remove
-    token = prefs.getString('token')!;
-    log('Token: $token');
-    color = Color(prefs.getInt('$id.color')!);
-    final futureHouseResponse = houseClient.getHouse(token, id);
-    setState(() {
-      _futureHouseResponse = futureHouseResponse;
+    String? token;
+    Future.delayed(Duration.zero, () {
+      AppConfig.setUserToken('AAAA'); // TODO: remove this
+      token = AppConfig.getUserToken();
+      log(name: 'CONFIG', 'Token: ${token!}');
+      log(name: 'CONFIG', 'House ID: $id');
+      color = AppConfig.getHouseColor(id);
+      setState(() {
+        _futureHouseResponse = houseClient.getHouse(token!, id);
+      });
     });
   }
 

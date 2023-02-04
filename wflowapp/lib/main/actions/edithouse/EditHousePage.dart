@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wflowapp/main/actions/addhouse/client/AddHouseClient.dart';
-import 'package:wflowapp/main/actions/addhouse/client/AddHouseResponse.dart';
+import 'package:wflowapp/main/actions/edithouse/client/EditHouseClient.dart';
+import 'package:wflowapp/main/actions/edithouse/client/EditHouseResponse.dart';
 
 import '../../../config/AppConfig.dart';
 
@@ -18,7 +17,6 @@ class EditHousePage extends StatefulWidget {
 }
 
 class _EditHousePageState extends State<EditHousePage> {
-  late SharedPreferences prefs;
   String token = '';
   Color? color;
 
@@ -30,10 +28,10 @@ class _EditHousePageState extends State<EditHousePage> {
   final nameController = TextEditingController();
   final locationController = TextEditingController();
 
-  final AddHouseClient addHousesClient =
-      AddHouseClient(url: AppConfig.getBaseUrl(), path: '/houses/add');
+  final EditHouseClient editHousesClient =
+      EditHouseClient(url: AppConfig.getBaseUrl(), path: '/houses/edit');
 
-  Future<AddHouseResponse>? _futureAddHouseResponse;
+  Future<EditHouseResponse>? _futureEditHouseResponse;
 
   @override
   void initState() {
@@ -42,10 +40,9 @@ class _EditHousePageState extends State<EditHousePage> {
   }
 
   void _loadConfig() async {
-    prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', 'AAAA'); // TODO: remove
+    /*prefs.setString('token', 'AAAA'); // TODO: remove
     token = prefs.getString('token')!;
-    color = Color(prefs.getInt('$id.color')!);
+    color = Color(prefs.getInt('$id.color')!); */
   }
 
   @override
@@ -64,7 +61,7 @@ class _EditHousePageState extends State<EditHousePage> {
   }
 
   AppBar drawAppBar() {
-    return AppBar(title: const Text('Add House'));
+    return AppBar(title: const Text('Edit House'));
   }
 
   Widget drawBody() {
@@ -147,7 +144,7 @@ class _EditHousePageState extends State<EditHousePage> {
               ],
             ),
             SizedBox(height: 20.0),
-            if (_futureAddHouseResponse != null) drawAddHouseResponse(),
+            if (_futureEditHouseResponse != null) drawAddHouseResponse(),
           ],
         ),
       ),
@@ -159,13 +156,14 @@ class _EditHousePageState extends State<EditHousePage> {
       //validate
       String name = nameController.text;
       String location = locationController.text;
-      _futureAddHouseResponse = addHousesClient.addHouse(token, name, location);
+      _futureEditHouseResponse =
+          editHousesClient.editHouse(token, id, name, location);
     });
   }
 
-  FutureBuilder<AddHouseResponse> drawAddHouseResponse() {
-    return FutureBuilder<AddHouseResponse>(
-      future: _futureAddHouseResponse,
+  FutureBuilder<EditHouseResponse> drawAddHouseResponse() {
+    return FutureBuilder<EditHouseResponse>(
+      future: _futureEditHouseResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
@@ -176,7 +174,7 @@ class _EditHousePageState extends State<EditHousePage> {
                   fontSize: 18.0,
                 ));
           }
-          log('New house ID: ${snapshot.data!.house}');
+          log(name: 'DEBUG', 'House ID: ${snapshot.data!.house}');
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, '/main');
           });
