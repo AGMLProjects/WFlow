@@ -9,7 +9,7 @@ class AppConfig {
   }
 
   static String getBaseUrl() {
-    return 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.i';
+    return 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io';
   }
 
   static Color getDefaultColor() {

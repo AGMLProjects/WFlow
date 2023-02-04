@@ -163,18 +163,42 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       emailErrorText = '';
     }
+
+    if (email.isNotEmpty) {
+      RegExp regex = RegExp(
+          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+      if (!regex.hasMatch(email)) {
+        emailErrorText = 'Not an email';
+        ret = false;
+      }
+    }
+
     if (password.isEmpty) {
       passwordErrorText = 'Password required';
       ret = false;
     } else {
       passwordErrorText = '';
     }
-    if (confirmPassword.isEmpty) {
-      confirmPasswordErrorText = 'Password confirmation required';
-      ret = false;
-    } else {
-      confirmPasswordErrorText = '';
+
+    if (password.isNotEmpty) {
+      RegExp regex = RegExp(
+          r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@=#\$&*~]).{8,}$');
+      if (!regex.hasMatch(password)) {
+        passwordErrorText =
+            'Password must be at least 8 characters, contain upper and lower characters, numbers and a special character !,@,=,#,\$,&,*,~';
+        ret = false;
+      }
     }
+
+    if (password.isNotEmpty) {
+      if (confirmPassword.isEmpty) {
+        confirmPasswordErrorText = 'Password confirmation required';
+        ret = false;
+      } else {
+        confirmPasswordErrorText = '';
+      }
+    }
+
     if (ret == true) {
       if (password != confirmPassword) {
         confirmPasswordErrorText = 'The passwords don\'t match';
