@@ -17,11 +17,11 @@ class EditHousePage extends StatefulWidget {
 }
 
 class _EditHousePageState extends State<EditHousePage> {
-  String token = '';
-  Color? color;
-
+  String? token;
   String id = '';
   String name = '';
+  String location = '';
+  Color? houseColor;
 
   String? _currentAddress;
   Position? _currentPosition;
@@ -29,20 +29,24 @@ class _EditHousePageState extends State<EditHousePage> {
   final locationController = TextEditingController();
 
   final EditHouseClient editHousesClient =
-      EditHouseClient(url: AppConfig.getBaseUrl(), path: '/houses/edit');
+      EditHouseClient(url: AppConfig.getBaseUrl(), path: '/house/edit');
 
   Future<EditHouseResponse>? _futureEditHouseResponse;
 
   @override
   void initState() {
     super.initState();
-    _loadConfig();
-  }
-
-  void _loadConfig() async {
-    /*prefs.setString('token', 'AAAA'); // TODO: remove
-    token = prefs.getString('token')!;
-    color = Color(prefs.getInt('$id.color')!); */
+    Future.delayed(Duration.zero, () {
+      AppConfig.setUserToken('AAAA'); // TODO: remove this
+      token = AppConfig.getUserToken();
+      log(name: 'CONFIG', 'Token: ${token!}');
+      log(name: 'CONFIG', 'House ID: $id');
+      log(name: 'CONFIG', 'Current house name: $name');
+      log(name: 'CONFIG', 'Current house location: $location');
+      houseColor = AppConfig.getHouseColor(id);
+      nameController.text = name;
+      locationController.text = location;
+    });
   }
 
   @override
@@ -54,6 +58,12 @@ class _EditHousePageState extends State<EditHousePage> {
 
   @override
   Widget build(BuildContext context) {
+    final arg = ModalRoute.of(context)!.settings.arguments as Map;
+    id = arg['id'];
+    name = arg['name'];
+    location = arg['location'];
+    houseColor ??= AppConfig.getHouseColor(id);
+
     return Scaffold(
       appBar: drawAppBar(),
       body: drawBody(),
@@ -73,77 +83,78 @@ class _EditHousePageState extends State<EditHousePage> {
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Name',
                   hintText: 'Name'),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: TextField(
                     controller: locationController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Location',
                         hintText: 'Location'),
                   ),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 ElevatedButton(
                   onPressed: getCurrentPosition,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: const Icon(
+                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(
                       Icons.location_on,
                       color: Colors.white,
                       size: 20.0,
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'House color: ',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 ElevatedButton(
                   onPressed: () => showColorPickerDialog(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                  ),
                   style: ButtonStyle(
-                    shape: MaterialStateProperty.all(CircleBorder()),
-                    padding: MaterialStateProperty.all(EdgeInsets.all(16.0)),
-                    backgroundColor: MaterialStateProperty.all(color),
+                    shape: MaterialStateProperty.all(const CircleBorder()),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(16.0)),
+                    backgroundColor: MaterialStateProperty.all(houseColor),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 70.0),
+            const SizedBox(height: 70.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () => performRequest(),
-                  child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                  child: const Padding(
+                      padding: EdgeInsets.all(10.0),
                       child: Text(
                         'Done',
                         style: TextStyle(fontSize: 20.0),
                       )),
-                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                 ),
               ],
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             if (_futureEditHouseResponse != null) drawAddHouseResponse(),
           ],
         ),
@@ -157,7 +168,7 @@ class _EditHousePageState extends State<EditHousePage> {
       String name = nameController.text;
       String location = locationController.text;
       _futureEditHouseResponse =
-          editHousesClient.editHouse(token, id, name, location);
+          editHousesClient.editHouse(token!, id, name, location);
     });
   }
 
@@ -174,7 +185,7 @@ class _EditHousePageState extends State<EditHousePage> {
                   fontSize: 18.0,
                 ));
           }
-          log(name: 'DEBUG', 'House ID: ${snapshot.data!.house}');
+          AppConfig.setHouseColor(snapshot.data!.house, houseColor!);
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, '/main');
           });
@@ -197,13 +208,13 @@ class _EditHousePageState extends State<EditHousePage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Pick a color!'),
+              title: const Text('Pick a color!'),
               content: SingleChildScrollView(
                 child: MaterialPicker(
-                  pickerColor: color!,
+                  pickerColor: houseColor!,
                   onColorChanged: (Color picked) {
                     setState(() {
-                      color = picked;
+                      houseColor = picked;
                     });
                   },
                 ),

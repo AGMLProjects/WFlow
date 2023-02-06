@@ -19,6 +19,7 @@ class _HousePageState extends State<HousePage> {
   Color? color;
   String id = '';
   String name = '';
+  String location = '';
 
   final HouseClient houseClient =
       HouseClient(url: AppConfig.getBaseUrl(), path: '/house');
@@ -65,7 +66,7 @@ class _HousePageState extends State<HousePage> {
           ),
           onPressed: () {
             Navigator.pushNamed(context, '/editHouse',
-                arguments: {'id': id, 'name': name});
+                arguments: {'id': id, 'name': name, 'location': location});
           },
         ),
       )
@@ -86,6 +87,7 @@ class _HousePageState extends State<HousePage> {
             return const SizedBox.shrink();
           }
           String houseName = snapshot.data!.house.name;
+          location = snapshot.data!.house.location;
           return Container(
             child: Text('$houseName'),
           );

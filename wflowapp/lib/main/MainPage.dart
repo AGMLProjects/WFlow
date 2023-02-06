@@ -50,7 +50,7 @@ class _MainPageState extends State<MainPage> {
         onPressed: () {
           Navigator.pushNamed(context, '/addHouse');
         },
-        tooltip: 'Add home',
+        tooltip: 'Add House',
         child: const Icon(Icons.add),
       );
     }
