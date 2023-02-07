@@ -31,8 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
-
+    # BASIC
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'wflow',
+    # DJ-REST-AUTH
+    'rest_framework',
+    'rest_framework.authtoken',
+
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
+    # OUR APPs
+    'wflow',        # MAIN APP
+    'users',        # USERS MANAGEMENT
 ]
 
 MIDDLEWARE = [
@@ -125,3 +136,40 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# DJ-REST-AUTH CONFIGURATION
+AUTH_USER_MODEL = "users.CustomUser"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
+}
+
+SITE_ID = 1
+
+# REST_USE_JWT = True
+
+# JWT_AUTH_COOKIE = 'my-app-auth'
+
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+# LOGIN_URL = 'http://localhost:8000/users/login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DATE_INPUT_FORMATS = ['%d/%m/%Y']

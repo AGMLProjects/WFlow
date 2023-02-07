@@ -14,15 +14,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from wflow import views
+from django.urls import path, include
+from wflow import views as wflow_views
 from rest_framework.urlpatterns import format_suffix_patterns
 
+from users import views as users_views
+
+from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
+
 urlpatterns = [
+    # server management endpoint for administrator
     path('admin/', admin.site.urls),
 
-    path('testobjects/', views.testobject_list),
-    path('testobjects/<int:id>', views.testobject_detail),
+    # test endpoints
+    path('testobjects/', wflow_views.testobject_list),
+    path('testobjects/<int:id>', wflow_views.testobject_detail),
+
+    # autentication endpoints with django-rest-auth
+    path('users/', include('users.urls')),
+    path('password-reset/', PasswordResetView.as_view()),
+    path('password-reset-confirm/<uidb64>/<token>/',
+         PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
