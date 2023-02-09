@@ -29,25 +29,37 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
+      resizeToAvoidBottomInset: false,
+      appBar: drawAppBar(),
+      body: drawBody(),
+    );
+  }
+
+  AppBar drawAppBar() {
+    return AppBar(title: const Text('Login'));
+  }
+
+  Widget drawBody() {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      child: Center(
         child: Column(
           children: [
             // Logo
-            SizedBox(height: 40.0),
+            const SizedBox(height: 40.0),
             const Text('wFlow',
                 style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
                   fontSize: 32.0,
                 )),
-            SizedBox(height: 60.0),
+            const SizedBox(height: 60.0),
             // Email
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(emailErrorText, style: TextStyle(color: Colors.red)),
-                SizedBox(height: 8.0),
+                Text(emailErrorText, style: const TextStyle(color: Colors.red)),
+                const SizedBox(height: 8.0),
                 TextField(
                   controller: emailController,
                   obscureText: false,
@@ -58,13 +70,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             // Password
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(passwordErrorText, style: TextStyle(color: Colors.red)),
-                SizedBox(height: 8.0),
+                Text(passwordErrorText,
+                    style: const TextStyle(color: Colors.red)),
+                const SizedBox(height: 8.0),
                 TextField(
                   controller: passwordController,
                   obscureText: true,
@@ -75,15 +88,15 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
-            SizedBox(height: 30.0),
+            const SizedBox(height: 30.0),
             // Login button
             buildLoginButton(),
-            SizedBox(height: 15.0),
+            const SizedBox(height: 15.0),
             // Register text
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Not registered yet?',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
@@ -91,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     Navigator.pushNamed(context, '/register');
                   },
-                  child: Text(
+                  child: const Text(
                     ' Click here',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.blue),
@@ -99,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                 )
               ],
             ),
-            SizedBox(height: 60.0),
+            const SizedBox(height: 60.0),
             if (_futureLogin != null) buildFutureBuilder(),
           ],
         ),
@@ -118,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Colors.blue)))),
+                      side: const BorderSide(color: Colors.blue)))),
           onPressed: () {
             setState(() {
               String email = emailController.text;

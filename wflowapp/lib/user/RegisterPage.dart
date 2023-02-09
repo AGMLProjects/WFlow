@@ -32,98 +32,109 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            // Logo
-            SizedBox(height: 40.0),
-            const Text('wFlow',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 32.0,
-                )),
-            SizedBox(height: 60.0),
-            // Email
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(emailErrorText, style: TextStyle(color: Colors.red)),
-                SizedBox(height: 8.0),
-                TextField(
-                  controller: emailController,
-                  obscureText: false,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Email",
-                      hintText: "Email"),
+      resizeToAvoidBottomInset: false,
+      appBar: drawAppBar(),
+      body: drawBody(),
+    );
+  }
+
+  AppBar drawAppBar() {
+    return AppBar(title: const Text('Register'));
+  }
+
+  Widget drawBody() {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        children: [
+          // Logo
+          const SizedBox(height: 40.0),
+          const Text('wFlow',
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                fontSize: 32.0,
+              )),
+          const SizedBox(height: 60.0),
+          // Email
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(emailErrorText, style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 8.0),
+              TextField(
+                controller: emailController,
+                obscureText: false,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Email",
+                    hintText: "Email"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          // Password
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(passwordErrorText,
+                  style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 8.0),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Password",
+                    hintText: "Password"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          // Confirm password
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(confirmPasswordErrorText,
+                  style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 8.0),
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Confirm password",
+                    hintText: "Confirm password"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 30.0),
+          // Register button
+          buildRegisterButton(),
+          const SizedBox(height: 15.0),
+          // Login text
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Already have an account?',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: const Text(
+                  ' Click here',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.blue),
                 ),
-              ],
-            ),
-            SizedBox(height: 10.0),
-            // Password
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(passwordErrorText, style: TextStyle(color: Colors.red)),
-                SizedBox(height: 8.0),
-                TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Password",
-                      hintText: "Password"),
-                ),
-              ],
-            ),
-            SizedBox(height: 10.0),
-            // Confirm password
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(confirmPasswordErrorText,
-                    style: TextStyle(color: Colors.red)),
-                SizedBox(height: 8.0),
-                TextField(
-                  controller: confirmPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Confirm password",
-                      hintText: "Confirm password"),
-                ),
-              ],
-            ),
-            SizedBox(height: 30.0),
-            // Register button
-            buildRegisterButton(),
-            SizedBox(height: 15.0),
-            // Login text
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Already have an account?',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: Text(
-                    ' Click here',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.blue),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(height: 60.0),
-            if (_futureRegister != null) buildFutureBuilder(),
-          ],
-        ),
+              )
+            ],
+          ),
+          const SizedBox(height: 60.0),
+          if (_futureRegister != null) buildFutureBuilder(),
+        ],
       ),
     );
   }
@@ -139,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Colors.blue)))),
+                      side: const BorderSide(color: Colors.blue)))),
           onPressed: () {
             setState(() {
               String email = emailController.text;
