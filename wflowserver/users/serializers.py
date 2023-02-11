@@ -1,16 +1,18 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from .models import CustomUser
-
+from dj_rest_auth.models import TokenModel
 # get_adapter in save method to get an instance of our user model
 from allauth.account.adapter import get_adapter
+
+from .models import CustomUser
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password',
+        fields = ('email', 'username', 'first_name', 'last_name',
                   'age', 'occupation', 'date_of_birth', 'city',)
+        read_only_fields = ('email',)
 
 
 class CustomRegisterSerializer(RegisterSerializer):

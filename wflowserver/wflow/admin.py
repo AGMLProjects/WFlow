@@ -1,4 +1,10 @@
 from django.contrib import admin
-from .models import TestObject
+from .models import House
 
-admin.site.register(TestObject)
+
+class HouseAdmin(admin.ModelAdmin):
+    list_display = ('house_id', 'user_id', 'name',
+                    'address', 'total_expenses', 'city')
+
+
+admin.site.register(House, HouseAdmin)

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-6pcn-8$4ekv=ti5m8rxo3bu268k-h^uac27#pgcqs-4ig$_ryj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['65.21.49.16', 'wflow', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -150,6 +150,11 @@ REST_FRAMEWORK = {
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
+}
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserSerializer',
+    # 'TOKEN_SERIALIZER': 'users.serializers.CustomTokenSerializer',
 }
 
 SITE_ID = 1

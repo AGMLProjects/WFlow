@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from wflow import views as wflow_views
+from wflow import views as APIviews
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from users import views as users_views
@@ -26,15 +26,18 @@ urlpatterns = [
     # server management endpoint for administrator
     path('admin/', admin.site.urls),
 
-    # test endpoints
-    path('testobjects/', wflow_views.testobject_list),
-    path('testobjects/<int:id>', wflow_views.testobject_detail),
-
-    # autentication endpoints with django-rest-auth
+    # AUTH endpoints with django-rest-auth
     path('users/', include('users.urls')),
     path('password-reset/', PasswordResetView.as_view()),
     path('password-reset-confirm/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    # API endpoints
+    # path('API/houses/', APIviews.ListCreateHousesAPIView.as_view()),
+    path('API/houses/list', APIviews.ListHousesAPIView.as_view()),
+    path('API/houses/add', APIviews.CreateHouseAPIView.as_view()),
+    path('API/houses/<int:house_id>', APIviews.HousesDetailAPIView.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

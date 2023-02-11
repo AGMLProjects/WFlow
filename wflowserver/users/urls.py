@@ -1,16 +1,13 @@
 from django.urls import path, re_path
 from dj_rest_auth.registration.views import RegisterView, VerifyEmailView
-from dj_rest_auth.views import LoginView, LogoutView
+from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 
-from .views import UserDetail, UserList
+from .views import UserDetail
 
 urlpatterns = [
 
-    # see all the users when logged in TODO:remove only for testing
-    path('', UserList.as_view()),
-
     # see user specific information once logged in
-    path('<int:id>', UserDetail.as_view()),
+    path('', UserDetailsView.as_view()),
 
     # authentication endpoints
     path('register/', RegisterView.as_view()),

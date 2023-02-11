@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .models import TestObject
+from .models import House
 
 
-class TestObjectSerializer(serializers.ModelSerializer):
+class HouseSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = TestObject
-        fields = ['id', 'name', 'description']
+        model = House
+        fields = ('name', 'total_expenses', 'address', 'city')
