@@ -31,7 +31,7 @@ class _HousePageState extends State<HousePage> {
     super.initState();
     String? token;
     Future.delayed(Duration.zero, () {
-      AppConfig.setUserToken('AAAA'); // TODO: remove this
+      AppConfig.setUserKey('AAAA'); // TODO: remove this
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
       log(name: 'CONFIG', 'House ID: $id');

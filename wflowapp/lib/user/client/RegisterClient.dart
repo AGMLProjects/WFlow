@@ -15,9 +15,11 @@ class RegisterClient {
         jsonEncode(<String, String>{'email': email, 'password': '***'});
     String body =
         jsonEncode(<String, String>{'email': email, 'password': password});
-    log(name: 'HTTP', 'Calling $path with body: $bodyForDebug');
+    Uri uri = Uri.https(url, path);
+    log(name: 'HTTP', 'Calling $uri');
+    log(name: 'HTTP', 'Body: $bodyForDebug');
     final response = await http.post(
-      Uri.parse(url + path),
+      uri,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

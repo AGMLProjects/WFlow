@@ -10,7 +10,7 @@ class ExpensesClient {
   const ExpensesClient({required this.url, required this.path});
 
   Future<ExpensesResponse> getExpenses(String token) async {
-    String body = jsonEncode(<String, String>{'token': token});
+    String body = jsonEncode(<String, String>{'key': token});
     log(name: 'HTTP', 'Calling $path with body: $body');
     final response = await http.post(
       Uri.parse(url + path),

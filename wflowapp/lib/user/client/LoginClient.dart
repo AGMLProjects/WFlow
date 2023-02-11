@@ -15,11 +15,12 @@ class LoginClient {
         jsonEncode(<String, String>{'email': email, 'password': '***'});
     String body =
         jsonEncode(<String, String>{'email': email, 'password': password});
-    log(name: 'HTTP', 'Calling $path with body: $bodyForDebug');
-    final response = await http.post(
-      Uri.parse(url + path),
+    Uri uri = Uri.https(url, path);
+    log(name: 'HTTP', 'Calling $uri with body: $bodyForDebug');
+    var response = await http.post(
+      uri,
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json',
       },
       body: body,
     );

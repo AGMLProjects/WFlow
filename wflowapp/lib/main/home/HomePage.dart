@@ -24,8 +24,8 @@ class _HomePageState extends State<HomePage> {
   final List<HouseWidget> _houseWidgets = [];
   final List<MonthExpense> _monthExpenses = [];
 
-  final HousesClient housesClient =
-      HousesClient(url: AppConfig.getBaseUrl(), path: '/houses');
+  final HousesClient housesClient = HousesClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getHousesListPath());
 
   final ExpensesClient expensesClient =
       ExpensesClient(url: AppConfig.getBaseUrl(), path: '/expenses');
@@ -36,11 +36,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    AppConfig.setUserToken('AAAA'); // TODO: remove this
-    String? token = AppConfig.getUserToken();
-    log(name: 'CONFIG', 'Token: ${token!}');
-    _futureHousesResponse = housesClient.getHouses(token);
-    _futureExpensesResponse = expensesClient.getExpenses(token);
+    String? key = AppConfig.getUserToken();
+    log(name: 'CONFIG', 'Read user key from config: ${key!}');
+    _futureHousesResponse = housesClient.getHouses(key);
+    _futureExpensesResponse = expensesClient.getExpenses(key);
   }
 
   @override
@@ -179,7 +178,7 @@ class _HomePageState extends State<HomePage> {
           }
           double totalConsumes = 0;
           for (HouseWidget houseWidget in _houseWidgets) {
-            totalConsumes += houseWidget.house.consumes;
+            totalConsumes += houseWidget.house.total_expenses;
           }
           return Column(
             children: [

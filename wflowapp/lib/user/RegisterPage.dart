@@ -14,8 +14,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final RegisterClient client =
-      RegisterClient(url: AppConfig.getBaseUrl(), path: '/user/register');
+  final RegisterClient client = RegisterClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getRegisterPath());
   Future<RegisterResponse>? _futureRegister;
   String emailErrorText = '';
   String passwordErrorText = '';
@@ -31,6 +31,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: remove this setState method
+    setState(() {
+      emailController.text = 'leela.turanga@iot.com';
+      passwordController.text = 'Password01\$';
+      confirmPasswordController.text = 'Password01\$';
+    });
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: drawAppBar(),
@@ -233,7 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ));
           }
           Future.delayed(Duration.zero, () {
-            Navigator.pushNamed(context, '/main');
+            Navigator.pushReplacementNamed(context, '/main');
           });
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}',

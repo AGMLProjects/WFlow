@@ -9,19 +9,35 @@ class AppConfig {
   }
 
   static String getBaseUrl() {
-    return 'https://49c13ba9-40e6-426b-be3c-21acf8b4f1d4.mock.pstmn.io';
+    return 'wflow.online';
+  }
+
+  static String getUsersPath() {
+    return '/users';
+  }
+
+  static String getLoginPath() {
+    return '${getUsersPath()}/login/';
+  }
+
+  static String getRegisterPath() {
+    return '${getUsersPath()}/register/';
+  }
+
+  static String getHousesListPath() {
+    return '/API/houses/list';
   }
 
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }
 
-  static Future setUserToken(String token) async {
-    return await _preferences.setString('token', token);
+  static Future setUserKey(String key) async {
+    return await _preferences.setString('key', key);
   }
 
   static String? getUserToken() {
-    return _preferences.getString('token');
+    return _preferences.getString('key');
   }
 
   static Future setHouseColor(String id, Color color) async {

@@ -17,9 +17,9 @@ class WaterPieChart extends StatelessWidget {
       if (houseWidget.house.id.isNotEmpty) {
         PieChartSectionData sectionData = PieChartSectionData(
             color: houseWidget.house.color,
-            value: houseWidget.house.consumes,
+            value: houseWidget.house.total_expenses,
             showTitle: true,
-            title: houseWidget.house.consumes.toString());
+            title: houseWidget.house.total_expenses.toString());
         sections.add(sectionData);
       }
     }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/user/client/LoginClient.dart';
@@ -14,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final LoginClient client =
-      LoginClient(url: AppConfig.getBaseUrl(), path: '/user/login');
+      LoginClient(url: AppConfig.getBaseUrl(), path: AppConfig.getLoginPath());
   Future<LoginResponse>? _futureLogin;
   String emailErrorText = '';
   String passwordErrorText = '';
@@ -28,6 +30,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      emailController.text = 'prova1@prova.it';
+      passwordController.text = 'primoprimo';
+    });
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: drawAppBar(),
@@ -174,12 +180,15 @@ class _LoginPageState extends State<LoginPage> {
                   fontSize: 18.0,
                 ));
           }
+          String key = snapshot.data!.key;
+          AppConfig.setUserKey(key);
+          log(name: 'CONFIG', 'Saved key: $key');
           Future.delayed(Duration.zero, () {
-            Navigator.pushNamed(context, '/main');
+            Navigator.pushReplacementNamed(context, '/main');
           });
         } else if (snapshot.hasError) {
-          return Text('${snapshot.error}',
-              style: const TextStyle(
+          return const Text('Generic error',
+              style: TextStyle(
                 color: Colors.redAccent,
                 fontWeight: FontWeight.bold,
                 fontSize: 14.0,

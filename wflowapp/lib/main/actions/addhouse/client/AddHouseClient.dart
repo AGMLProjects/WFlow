@@ -12,7 +12,7 @@ class AddHouseClient {
   Future<AddHouseResponse> addHouse(
       String token, String name, String location) async {
     String body = jsonEncode(
-        <String, String>{'token': token, 'name': name, 'location': location});
+        <String, String>{'key': token, 'name': name, 'location': location});
     log(name: 'HTTP', 'Calling $path with body: $body');
     final response = await http.post(
       Uri.parse(url + path),

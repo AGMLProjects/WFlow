@@ -12,7 +12,7 @@ class EditHouseClient {
   Future<EditHouseResponse> editHouse(
       String token, String id, String name, String location) async {
     String body = jsonEncode(<String, String>{
-      'token': token,
+      'key': token,
       'id': id,
       'name': name,
       'location': location

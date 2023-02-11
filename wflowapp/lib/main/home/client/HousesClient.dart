@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 
@@ -10,15 +9,15 @@ class HousesClient {
 
   const HousesClient({required this.url, required this.path});
 
-  Future<HousesResponse> getHouses(String token) async {
-    String body = jsonEncode(<String, String>{'token': token});
-    log(name: 'HTTP', 'Calling $path with body: $body');
-    final response = await http.post(
-      Uri.parse(url + path),
+  Future<HousesResponse> getHouses(String key) async {
+    Uri uri = Uri.https(url, path);
+    log(name: 'HTTP', 'Calling $uri');
+    final response = await http.get(
+      uri,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Token $key'
       },
-      body: body,
     );
     log(name: 'HTTP', 'Response from $path: ${response.statusCode}');
     return HousesResponse.fromResponse(response);
