@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/main/home/HomePage.dart';
+import 'package:wflowapp/main/profile/ProfilePage.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -12,7 +13,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   static const List<Widget> _pages = [
     HomePage(),
-    Text('Profile'),
+    ProfilePage(),
     Text('Settings')
   ];
 

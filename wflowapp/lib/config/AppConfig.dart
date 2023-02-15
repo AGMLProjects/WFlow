@@ -13,15 +13,15 @@ class AppConfig {
   }
 
   static String getUsersPath() {
-    return '/users';
+    return '/users/';
   }
 
   static String getLoginPath() {
-    return '${getUsersPath()}/login/';
+    return '${getUsersPath()}login/';
   }
 
   static String getRegisterPath() {
-    return '${getUsersPath()}/register/';
+    return '${getUsersPath()}register/';
   }
 
   static String getHousesListPath() {
