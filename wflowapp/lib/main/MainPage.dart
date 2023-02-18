@@ -13,6 +13,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   static const List<Widget> _pages = [
     HomePage(),
+    Text('Statistics'),
     ProfilePage(),
     Text('Settings')
   ];
@@ -33,8 +34,10 @@ class _MainPageState extends State<MainPage> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         iconSize: 28.0,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: ''),
         ],

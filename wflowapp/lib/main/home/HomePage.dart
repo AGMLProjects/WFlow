@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
     String? key = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Read user key from config: ${key!}');
     _futureHousesResponse = housesClient.getHouses(key);
-    _futureExpensesResponse = expensesClient.getExpenses(key);
+    //_futureExpensesResponse = expensesClient.getExpenses(key);
   }
 
   @override
@@ -71,19 +71,19 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: const EdgeInsets.all(20.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  buildHousesCarousel(),
-                  const SizedBox(height: 32.0),
-                  buildWaterPieChart(),
-                  const SizedBox(height: 32.0),
-                  buildExpensesLineChart(),
-                  const SizedBox(height: 32.0),
-                ],
-              ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                buildHousesCarousel(),
+                //const SizedBox(height: 32.0),
+                //buildWaterPieChart(),
+                //const SizedBox(height: 32.0),
+                //buildExpensesLineChart(),
+                //const SizedBox(height: 32.0),
+              ],
             ),
           ),
         ],
@@ -149,12 +149,10 @@ class _HomePageState extends State<HomePage> {
           _houseWidgets.add(HouseWidget(house: House(id: '', name: '')));
           return Column(
             children: [
-              drawHousesTitle(),
-              const SizedBox(height: 16.0),
               CarouselSlider(
                   items: _houseWidgets,
                   options: CarouselOptions(
-                      height: 170.0,
+                      height: 480.0,
                       enableInfiniteScroll: false,
                       autoPlay: false,
                       enlargeCenterPage: true)),

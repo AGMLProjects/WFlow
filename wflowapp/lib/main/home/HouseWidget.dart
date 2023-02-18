@@ -25,6 +25,7 @@ class HouseWidget extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(context, '/addHouse');
         },
+        // https://api.flutter.dev/flutter/material/Card-class.html
         child: Container(
           width: 500.0,
           decoration: BoxDecoration(
@@ -41,24 +42,137 @@ class HouseWidget extends StatelessWidget {
         ),
       );
     }
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, '/house',
-            arguments: {'id': house.id, 'name': house.name});
-      },
-      child: Container(
-        width: 500.0,
-        decoration: BoxDecoration(
-            color: house.color, borderRadius: BorderRadius.circular(12.0)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      elevation: 10.0,
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, '/house',
+              arguments: {'id': house.id, 'name': house.name});
+        },
+        child: Container(
+          width: 500.0,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                house.name,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 18.0),
+              Container(
+                alignment: Alignment.centerLeft,
+                width: double.infinity,
+                height: 70,
+                decoration: BoxDecoration(color: house.color),
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          house.name,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                alignment: Alignment.centerLeft,
+                height: 40,
+                padding: const EdgeInsets.only(left: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_city, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Modena',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                height: 40,
+                padding: const EdgeInsets.only(left: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_on, color: Colors.grey[600]),
+                    const SizedBox(width: 8),
+                    Text(
+                      house.address,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 18),
+              Container(
+                alignment: Alignment.centerLeft,
+                height: 40,
+                padding: const EdgeInsets.only(left: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.water_drop, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Water consumes: ',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '10 L',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                height: 40,
+                padding: const EdgeInsets.only(left: 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.local_fire_department,
+                        color: Color.fromARGB(255, 255, 94, 0)),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Gas consumes: ',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '12 m3',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
