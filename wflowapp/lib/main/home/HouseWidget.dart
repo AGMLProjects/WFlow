@@ -25,7 +25,6 @@ class HouseWidget extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(context, '/addHouse');
         },
-        // https://api.flutter.dev/flutter/material/Card-class.html
         child: Container(
           width: 500.0,
           decoration: BoxDecoration(
@@ -60,7 +59,12 @@ class HouseWidget extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 width: double.infinity,
                 height: 70,
-                decoration: BoxDecoration(color: house.color),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [house.color!, Colors.white],
+                )),
                 padding: const EdgeInsets.all(18),
                 child: Row(
                   children: [
