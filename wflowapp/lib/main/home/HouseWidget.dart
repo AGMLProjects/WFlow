@@ -60,11 +60,14 @@ class HouseWidget extends StatelessWidget {
                 width: double.infinity,
                 height: 70,
                 decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(15),
+                        topLeft: Radius.circular(15)),
                     gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [house.color!, Colors.white],
-                )),
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [house.color!, Colors.white],
+                    )),
                 padding: const EdgeInsets.all(18),
                 child: Row(
                   children: [

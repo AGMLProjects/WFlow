@@ -152,7 +152,8 @@ class _HomePageState extends State<HomePage> {
               CarouselSlider(
                   items: _houseWidgets,
                   options: CarouselOptions(
-                      height: 480.0,
+                      height: 500.0,
+                      clipBehavior: Clip.none,
                       enableInfiniteScroll: false,
                       autoPlay: false,
                       enlargeCenterPage: true)),
