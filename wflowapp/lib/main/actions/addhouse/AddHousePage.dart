@@ -21,11 +21,13 @@ class _AddHousePageState extends State<AddHousePage> {
   Color houseColor = AppConfig.getDefaultColor();
   String? _currentAddress;
   Position? _currentPosition;
+  String? houseType;
   final nameController = TextEditingController();
-  final locationController = TextEditingController();
+  final cityController = TextEditingController();
+  final addressController = TextEditingController();
 
-  final AddHouseClient addHousesClient =
-      AddHouseClient(url: AppConfig.getBaseUrl(), path: '/houses/add');
+  final AddHouseClient addHousesClient = AddHouseClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getAddHousePath());
 
   Future<AddHouseResponse>? _futureAddHouseResponse;
 
@@ -34,12 +36,14 @@ class _AddHousePageState extends State<AddHousePage> {
     super.initState();
     token = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Token: ${token!}');
+    houseType = 'Flat';
   }
 
   @override
   void dispose() {
     nameController.dispose();
-    locationController.dispose();
+    cityController.dispose();
+    addressController.dispose();
     super.dispose();
   }
 
@@ -75,11 +79,11 @@ class _AddHousePageState extends State<AddHousePage> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: locationController,
+                    controller: cityController,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Location',
-                        hintText: 'Location'),
+                        labelText: 'City',
+                        hintText: 'City'),
                   ),
                 ),
                 const SizedBox(width: 10.0),
@@ -98,11 +102,44 @@ class _AddHousePageState extends State<AddHousePage> {
               ],
             ),
             const SizedBox(height: 20.0),
+            TextField(
+              controller: addressController,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Address',
+                  hintText: 'Address'),
+            ),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text(
-                  'House color: ',
+                  'House type: ',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+                SizedBox(width: 10.0),
+                DropdownButton(
+                  items: const [
+                    DropdownMenuItem(child: Text('Flat'), value: 'Flat'),
+                    DropdownMenuItem(
+                        child: Text('Detached House'), value: 'Detached House'),
+                    DropdownMenuItem(
+                        child: Text('Seaside House'), value: 'Seaside House'),
+                    DropdownMenuItem(
+                        child: Text('Mountain House'), value: 'Mountain House')
+                  ],
+                  value: houseType,
+                  onChanged: dropDownCallback,
+                  style: TextStyle(fontSize: 18),
+                )
+              ],
+            ),
+            const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Color: ',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 ElevatedButton(
@@ -142,13 +179,23 @@ class _AddHousePageState extends State<AddHousePage> {
     );
   }
 
+  void dropDownCallback(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        houseType = selectedValue;
+      });
+    }
+  }
+
   void performRequest() {
     setState(() {
       //validate
       String name = nameController.text;
-      String location = locationController.text;
+      String city = cityController.text;
+      String address = addressController.text;
+      String type = houseType!;
       _futureAddHouseResponse =
-          addHousesClient.addHouse(token!, name, location);
+          addHousesClient.addHouse(token!, name, city, address, type);
     });
   }
 

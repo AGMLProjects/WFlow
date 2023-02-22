@@ -21,6 +21,9 @@ class LoginResponse {
     if (code == 400) {
       message = 'Invalid credentials';
     }
+    if (code == 502) {
+      message = 'Service unavailable';
+    }
     return LoginResponse(
       code: response.statusCode,
       key: key,

@@ -10,14 +10,20 @@ class AddHouseClient {
   const AddHouseClient({required this.url, required this.path});
 
   Future<AddHouseResponse> addHouse(
-      String token, String name, String location) async {
-    String body = jsonEncode(
-        <String, String>{'key': token, 'name': name, 'location': location});
-    log(name: 'HTTP', 'Calling $path with body: $body');
+      String key, String name, String city, String address, String type) async {
+    String body = jsonEncode(<String, String>{
+      'name': name,
+      'city': city,
+      'address': address,
+      'type': type
+    });
+    log(name: 'HTTP', 'Calling $path');
+    log(name: 'HTTP', 'Body: $body');
     final response = await http.post(
       Uri.parse(url + path),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Token $key'
       },
       body: body,
     );

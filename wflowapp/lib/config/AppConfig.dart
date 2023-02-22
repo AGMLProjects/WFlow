@@ -28,6 +28,10 @@ class AppConfig {
     return '/API/houses/list';
   }
 
+  static String getAddHousePath() {
+    return '/API/houses/add';
+  }
+
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }

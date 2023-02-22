@@ -6,18 +6,6 @@ class HouseWidget extends StatelessWidget {
 
   final House house;
 
-  static Set<Color> colors = {
-    Colors.amber[200]!,
-    const Color(0xFF90CAF9),
-    Colors.green[200]!,
-    Colors.purple[200]!,
-    Colors.orangeAccent[200]!,
-    Colors.pink[200]!,
-    Colors.lime[200]!,
-    Colors.teal[200]!,
-    Colors.cyan[200]!
-  };
-
   @override
   Widget build(BuildContext context) {
     if (house.name.isEmpty) {
@@ -45,7 +33,7 @@ class HouseWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
-      elevation: 10.0,
+      elevation: 20.0,
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(context, '/house',

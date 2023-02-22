@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     // TODO: remove this setState method
     setState(() {
-      emailController.text = 'leela.turanga@iot.com';
+      emailController.text = 'enzo.ferrari@unimore.it';
       passwordController.text = 'Password01\$';
       confirmPasswordController.text = 'Password01\$';
     });
