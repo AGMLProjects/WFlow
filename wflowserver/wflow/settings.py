@@ -46,12 +46,15 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.openid',
     'dj_rest_auth',
     'dj_rest_auth.registration',
 
     # OUR APPs
     'wflow',        # MAIN APP
     'users',        # USERS MANAGEMENT
+    'devices',
 ]
 
 MIDDLEWARE = [
@@ -148,20 +151,17 @@ REST_FRAMEWORK = {
     ],
 }
 
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
-}
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'users.serializers.CustomRegisterSerializer'
+# }
 
 REST_AUTH_SERIALIZERS = {
+    # 'LOGIN_SERIALIZER': 'users.serializers.CustomLoginSerializer',
     'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserSerializer',
     # 'TOKEN_SERIALIZER': 'users.serializers.CustomTokenSerializer',
 }
 
 SITE_ID = 1
-
-# REST_USE_JWT = True
-
-# JWT_AUTH_COOKIE = 'my-app-auth'
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -170,6 +170,8 @@ AUTHENTICATION_BACKENDS = [
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 # ACCOUNT_CONFIRM_EMAIL_ON_GET = True

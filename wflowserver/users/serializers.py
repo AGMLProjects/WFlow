@@ -10,9 +10,17 @@ from .models import CustomUser
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('email', 'username', 'first_name', 'last_name',
-                  'age', 'occupation', 'date_of_birth', 'city',)
+        fields = ('email', 'first_name', 'last_name',
+                  'age', 'occupation', 'date_of_birth', 'city',
+                  'status', 'family_members')
         read_only_fields = ('email',)
+
+
+class CustomLoginSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'password')
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -30,6 +38,7 @@ class CustomRegisterSerializer(RegisterSerializer):
                   'age', 'occupation', 'date_of_birth', 'city',)
 
     # override get_cleaned_data of RegisterSerializer
+
     def get_cleaned_data(self):
         return {
             'username': self.validated_data.get('username', ''),

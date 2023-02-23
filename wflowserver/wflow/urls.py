@@ -32,6 +32,9 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
+    # AUTH endpoints for devices
+    path('devices/', include('devices.urls')),
+
     # API endpoints
     # path('API/houses/', APIviews.ListCreateHousesAPIView.as_view()),
     path('API/houses/list', APIviews.ListHousesAPIView.as_view()),
