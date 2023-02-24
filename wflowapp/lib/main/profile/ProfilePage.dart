@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/profile/client/ProfileClient.dart';
 import 'package:wflowapp/main/profile/client/ProfileResponse.dart';
@@ -18,6 +19,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final lastNameController = TextEditingController();
   final dateOfBirthController = TextEditingController();
   final cityController = TextEditingController();
+  String? occupation;
+  String? status;
+  int? family_members;
 
   final ProfileClient profileClient = ProfileClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getUsersPath());
@@ -30,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     String? key = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Read user key from config: ${key!}');
+    family_members = -1;
     _futureProfileResponse = profileClient.getUserInfo(key);
   }
 
@@ -71,6 +76,32 @@ class _ProfilePageState extends State<ProfilePage> {
           lastNameController.text = snapshot.data!.last_name;
           dateOfBirthController.text = snapshot.data!.date_of_birth;
           cityController.text = snapshot.data!.city;
+
+          if (snapshot.data!.occupation.isEmpty) {
+            occupation ??= 'NON';
+          } else {
+            occupation ??= snapshot.data!.occupation;
+          }
+
+          if (snapshot.data!.status.isEmpty) {
+            status ??= 'NON';
+          } else {
+            status ??= snapshot.data!.status;
+          }
+
+          if (family_members == -1) {
+            family_members = snapshot.data!.family_members;
+          }
+
+          List<DropdownMenuItem<String>> familyMembersItems = [];
+          for (int i = 1; i <= 10; i++) {
+            DropdownMenuItem<String> item = DropdownMenuItem(
+              value: i.toString(),
+              child: Text(i.toString()),
+            );
+            familyMembersItems.add(item);
+          }
+
           double spaceBetween = 24.0;
           return Column(
             children: [
@@ -119,6 +150,107 @@ class _ProfilePageState extends State<ProfilePage> {
                   labelText: "City",
                 ),
               ),
+              SizedBox(height: spaceBetween),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Occupation: ',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  const SizedBox(width: 10.0),
+                  DropdownButton(
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'NON',
+                        child: Text('None'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'EMP',
+                        child: Text('Employee'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'UNE',
+                        child: Text('Unemployed'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'STU',
+                        child: Text('Student'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'RET',
+                        child: Text('Retired'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'ENT',
+                        child: Text('Entepreneur'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'FRE',
+                        child: Text('Freelancer'),
+                      ),
+                    ],
+                    value: occupation,
+                    onChanged: dropDownCallbackOccupation,
+                    style: const TextStyle(fontSize: 18),
+                  )
+                ],
+              ),
+              SizedBox(height: spaceBetween),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Status: ',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  const SizedBox(width: 10.0),
+                  DropdownButton(
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'NON',
+                        child: Text('None'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'SIN',
+                        child: Text('Single'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'REL',
+                        child: Text('In a relationship'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'ENG',
+                        child: Text('Engaged'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'MAR',
+                        child: Text('Married'),
+                      ),
+                    ],
+                    value: status,
+                    onChanged: dropDownCallbackStatus,
+                    style: const TextStyle(fontSize: 18),
+                  )
+                ],
+              ),
+              SizedBox(height: spaceBetween),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Family members: ',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  const SizedBox(width: 10.0),
+                  DropdownButton(
+                    items: familyMembersItems,
+                    value: family_members.toString(),
+                    onChanged: dropDownCallbackFamilyMembers,
+                    style: const TextStyle(fontSize: 18),
+                  )
+                ],
+              ),
               SizedBox(height: spaceBetween * 2),
               buildSaveButton()
             ],
@@ -129,6 +261,30 @@ class _ProfilePageState extends State<ProfilePage> {
         return const Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  void dropDownCallbackOccupation(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        occupation = selectedValue;
+      });
+    }
+  }
+
+  void dropDownCallbackStatus(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        status = selectedValue;
+      });
+    }
+  }
+
+  void dropDownCallbackFamilyMembers(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        family_members = int.parse(selectedValue);
+      });
+    }
   }
 
   Widget buildSaveButton() {
@@ -151,8 +307,16 @@ class _ProfilePageState extends State<ProfilePage> {
             String city = cityController.text;
             String? key = AppConfig.getUserToken();
             log(name: 'CONFIG', 'Read user key from config: ${key!}');
-            _futureProfileResponsePut = profileClient.setUserInfo(key, email,
-                first_name, last_name, date_of_birth, city, 'EMP', 'ENG', 1);
+            _futureProfileResponsePut = profileClient.setUserInfo(
+                key,
+                email,
+                first_name,
+                last_name,
+                date_of_birth,
+                city,
+                occupation!,
+                status!,
+                family_members!);
             emailController.text = email;
             firstNameController.text = first_name;
             lastNameController.text = last_name;

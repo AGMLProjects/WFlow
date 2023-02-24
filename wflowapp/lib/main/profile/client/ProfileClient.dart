@@ -33,15 +33,30 @@ class ProfileClient {
       String occupation,
       String status,
       int family_members) async {
-    String body = jsonEncode(<String, dynamic>{
+    Map<String, dynamic> map = {
       'email': email,
       'first_name': first_name,
       'last_name': last_name,
       'city': city,
-      'occupation': occupation,
-      'status': status,
       'family_members': family_members
-    });
+    };
+    if (date_of_birth.isNotEmpty) {
+      map['date_of_birth'] = date_of_birth;
+    } else {
+      map['date_of_birth'] = null;
+    }
+    if (occupation != 'NON') {
+      map['occupation'] = occupation;
+    } else {
+      map['occupation'] = null;
+    }
+    if (status != 'NON') {
+      map['status'] = status;
+    } else {
+      map['status'] = null;
+    }
+
+    String body = jsonEncode(map);
     Uri uri = Uri.https(url, path);
     log(name: 'HTTP', 'Calling $uri');
     log(name: 'HTTP', 'Body: $body');

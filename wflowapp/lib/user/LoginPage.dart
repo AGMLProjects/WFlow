@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     setState(() {
       emailController.text = 'enzo.ferrari@unimore.it';
-      passwordController.text = 'Password01$';
+      passwordController.text = 'Password01\$';
     });
     return Scaffold(
       resizeToAvoidBottomInset: false,
