@@ -151,8 +151,8 @@ class _ProfilePageState extends State<ProfilePage> {
             String city = cityController.text;
             String? key = AppConfig.getUserToken();
             log(name: 'CONFIG', 'Read user key from config: ${key!}');
-            _futureProfileResponsePut = profileClient.setUserInfo(
-                key, first_name, last_name, date_of_birth, city);
+            _futureProfileResponsePut = profileClient.setUserInfo(key, email,
+                first_name, last_name, date_of_birth, city, 'EMP', 'ENG', 1);
             emailController.text = email;
             firstNameController.text = first_name;
             lastNameController.text = last_name;

@@ -10,18 +10,20 @@ class HousesResponse {
   const HousesResponse({required this.code, required this.houses});
 
   factory HousesResponse.fromResponse(Response response) {
-    dynamic json = jsonDecode(response.body);
-    List<dynamic> _dhouses = json;
+    List<dynamic> dhouses = jsonDecode(response.body);
     List<House> houses = [];
-    int FAKE_ID = 0;
-    for (var _dhouse in _dhouses) {
-      FAKE_ID++;
+    for (var dhouse in dhouses) {
       House house = House(
-          id: FAKE_ID.toString(),
-          name: _dhouse['name'],
-          total_expenses: _dhouse['total_expenses'],
-          address: _dhouse['address'],
-          city: _dhouse['city']);
+          house_id: dhouse['house_id'],
+          user_id: dhouse['user_id'],
+          total_liters: dhouse['total_liters'],
+          total_gas: dhouse['total_gas'],
+          future_total_liters: dhouse['future_total_liters'],
+          future_total_gas: dhouse['future_total_gas'],
+          name: dhouse['name'],
+          address: dhouse['address'],
+          city: dhouse['city'],
+          house_type: dhouse['house_type']);
       houses.add(house);
     }
     return HousesResponse(

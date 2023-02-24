@@ -15,7 +15,7 @@ class RegisterResponse {
     int code = response.statusCode;
     String key = '';
     String message = '';
-    if (code == 200) {
+    if (code == 201) {
       key = json['key'];
     }
     if (code == 400) {

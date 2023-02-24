@@ -23,14 +23,24 @@ class ProfileClient {
     return ProfileResponse.fromResponse(response);
   }
 
-  Future<ProfileResponse> setUserInfo(String key, String first_name,
-      String last_name, String date_of_birth, String city) async {
-    String body = jsonEncode(<String, String>{
-      'username': 'prova1', // TODO: change
+  Future<ProfileResponse> setUserInfo(
+      String key,
+      String email,
+      String first_name,
+      String last_name,
+      String date_of_birth,
+      String city,
+      String occupation,
+      String status,
+      int family_members) async {
+    String body = jsonEncode(<String, dynamic>{
+      'email': email,
       'first_name': first_name,
       'last_name': last_name,
-      'date_of_birth': date_of_birth,
-      'city': city
+      'city': city,
+      'occupation': occupation,
+      'status': status,
+      'family_members': family_members
     });
     Uri uri = Uri.https(url, path);
     log(name: 'HTTP', 'Calling $uri');

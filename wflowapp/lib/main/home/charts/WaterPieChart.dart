@@ -14,18 +14,18 @@ class WaterPieChart extends StatelessWidget {
     List<Widget> indicators = [];
 
     for (HouseWidget houseWidget in houseWidgets) {
-      if (houseWidget.house.id.isNotEmpty) {
+      if (houseWidget.house.house_id != 0) {
         PieChartSectionData sectionData = PieChartSectionData(
             color: houseWidget.house.color,
-            value: houseWidget.house.total_expenses,
+            value: houseWidget.house.total_liters,
             showTitle: true,
-            title: houseWidget.house.total_expenses.toString());
+            title: houseWidget.house.total_liters.toString());
         sections.add(sectionData);
       }
     }
 
     for (HouseWidget houseWidget in houseWidgets) {
-      if (houseWidget.house.id.isNotEmpty) {
+      if (houseWidget.house.house_id != 0) {
         Indicator indicator = Indicator(
           color: houseWidget.house.color!,
           text: houseWidget.house.name,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/user/client/RegisterClient.dart';
@@ -165,7 +167,7 @@ class _RegisterPageState extends State<RegisterPage> {
               if (!validateInputs(email, password, confirmPassword)) {
                 return;
               }
-              _futureRegister = client.register(email, password);
+              _futureRegister = client.register(email, email, password);
             });
           },
           child: const Text('REGISTER')),
@@ -230,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
       future: _futureRegister,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data!.code != 200) {
+          if (snapshot.data!.code != 201) {
             return Text(snapshot.data!.message,
                 style: const TextStyle(
                   color: Colors.redAccent,
@@ -238,6 +240,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   fontSize: 18.0,
                 ));
           }
+          String key = snapshot.data!.key;
+          AppConfig.setUserKey(key);
+          log(name: 'CONFIG', 'Saved key: $key');
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, '/main');
           });

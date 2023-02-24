@@ -11,16 +11,21 @@ class AddHouseClient {
 
   Future<AddHouseResponse> addHouse(
       String key, String name, String city, String address, String type) async {
-    String body = jsonEncode(<String, String>{
+    Uri uri = Uri.https(url, path);
+    String body = jsonEncode(<String, dynamic>{
       'name': name,
       'city': city,
       'address': address,
-      'type': type
+      'house_type': type,
+      'total_liters': 0.0,
+      'total_gas': 0.0,
+      'future_total_liters': 0.0,
+      'future_total_gas': 0.0
     });
     log(name: 'HTTP', 'Calling $path');
     log(name: 'HTTP', 'Body: $body');
     final response = await http.post(
-      Uri.parse(url + path),
+      uri,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Token $key'

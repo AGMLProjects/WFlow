@@ -34,7 +34,7 @@ class _HousePageState extends State<HousePage> {
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
       log(name: 'CONFIG', 'House ID: $id');
-      color = AppConfig.getHouseColor(id);
+      color = AppConfig.getHouseColor(int.parse(id));
       setState(() {
         _futureHouseResponse = houseClient.getHouse(token!, id);
       });

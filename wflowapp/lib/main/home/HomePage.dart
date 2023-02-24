@@ -139,14 +139,14 @@ class _HomePageState extends State<HomePage> {
             return const SizedBox.shrink();
           }
           for (House house in snapshot.data!.houses) {
-            log(name: 'DEBUG', 'Found "${house.name}" (ID: ${house.id})');
-            Color? color = AppConfig.getHouseColor(house.id);
+            log(name: 'DEBUG', 'Found "${house.name}" (ID: ${house.house_id})');
+            Color? color = AppConfig.getHouseColor(house.house_id);
             color ??= AppConfig.getDefaultColor();
-            AppConfig.setHouseColor(house.id, color);
+            AppConfig.setHouseColor(house.house_id, color);
             house.color = color;
             _houseWidgets.add(HouseWidget(house: house));
           }
-          _houseWidgets.add(HouseWidget(house: House(id: '', name: '')));
+          _houseWidgets.add(HouseWidget(house: House(house_id: 0, name: '')));
           return Column(
             children: [
               CarouselSlider(
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
           }
           double totalConsumes = 0;
           for (HouseWidget houseWidget in _houseWidgets) {
-            totalConsumes += houseWidget.house.total_expenses;
+            totalConsumes += houseWidget.house.total_liters;
           }
           return Column(
             children: [

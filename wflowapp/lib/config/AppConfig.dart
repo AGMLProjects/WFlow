@@ -44,11 +44,11 @@ class AppConfig {
     return _preferences.getString('key');
   }
 
-  static Future setHouseColor(String id, Color color) async {
+  static Future setHouseColor(int id, Color color) async {
     return await _preferences.setInt('${id}.color', color.value);
   }
 
-  static Color? getHouseColor(String id) {
+  static Color? getHouseColor(int id) {
     if (_preferences.getInt('${id}.color') == null) {
       return AppConfig.getDefaultColor();
     }

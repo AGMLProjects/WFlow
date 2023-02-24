@@ -36,7 +36,7 @@ class _AddHousePageState extends State<AddHousePage> {
     super.initState();
     token = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Token: ${token!}');
-    houseType = 'Flat';
+    houseType = 'APA';
   }
 
   @override
@@ -117,16 +117,41 @@ class _AddHousePageState extends State<AddHousePage> {
                   'House type: ',
                   style: TextStyle(fontSize: 18.0),
                 ),
-                SizedBox(width: 10.0),
+                const SizedBox(width: 10.0),
                 DropdownButton(
                   items: const [
-                    DropdownMenuItem(child: Text('Flat'), value: 'Flat'),
                     DropdownMenuItem(
-                        child: Text('Detached House'), value: 'Detached House'),
+                      value: 'APA',
+                      child: Text('Apartment'),
+                    ),
                     DropdownMenuItem(
-                        child: Text('Seaside House'), value: 'Seaside House'),
+                      value: 'SFH',
+                      child: Text('Single-Family House'),
+                    ),
                     DropdownMenuItem(
-                        child: Text('Mountain House'), value: 'Mountain House')
+                      value: 'SDH',
+                      child: Text('Semi-Detached House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'MFH',
+                      child: Text('Multifamily House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'CON',
+                      child: Text('Condominium'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'COP',
+                      child: Text('Co-Op'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'TIN',
+                      child: Text('Tiny House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'MAN',
+                      child: Text('Manufactured Home'),
+                    ),
                   ],
                   value: houseType,
                   onChanged: dropDownCallback,
@@ -204,16 +229,16 @@ class _AddHousePageState extends State<AddHousePage> {
       future: _futureAddHouseResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data!.code != 200) {
-            return Text(snapshot.data!.message,
-                style: const TextStyle(
+          if (snapshot.data!.code != 201) {
+            return const Text('Error',
+                style: TextStyle(
                   color: Colors.redAccent,
                   fontWeight: FontWeight.bold,
                   fontSize: 18.0,
                 ));
           }
-          log(name: 'DEBUG', 'New house ID: ${snapshot.data!.house}');
-          AppConfig.setHouseColor(snapshot.data!.house, houseColor);
+          log(name: 'DEBUG', 'New house ID: ${snapshot.data!.house.house_id}');
+          AppConfig.setHouseColor(snapshot.data!.house.house_id, houseColor);
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, '/main');
           });
@@ -236,7 +261,7 @@ class _AddHousePageState extends State<AddHousePage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Pick a color!'),
+              title: const Text('Pick a color!'),
               content: SingleChildScrollView(
                 child: MaterialPicker(
                   pickerColor: houseColor,

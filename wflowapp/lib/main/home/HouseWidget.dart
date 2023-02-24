@@ -37,7 +37,7 @@ class HouseWidget extends StatelessWidget {
       child: InkWell(
         onTap: () {
           Navigator.pushNamed(context, '/house',
-              arguments: {'id': house.id, 'name': house.name});
+              arguments: {'id': house.house_id, 'name': house.name});
         },
         child: Container(
           width: 500.0,
@@ -90,9 +90,9 @@ class HouseWidget extends StatelessWidget {
                     Icon(Icons.location_city, color: Colors.grey[600]),
                     const SizedBox(width: 8),
                     Text(
-                      'Modena',
+                      house.city,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 14, fontWeight: FontWeight.normal),
                     ),
                   ],
@@ -117,7 +117,7 @@ class HouseWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 18),
+              const SizedBox(height: 18),
               Container(
                 alignment: Alignment.centerLeft,
                 height: 40,
@@ -128,14 +128,14 @@ class HouseWidget extends StatelessWidget {
                   children: [
                     const Icon(Icons.water_drop, color: Colors.blue),
                     const SizedBox(width: 8),
-                    Text(
+                    const Text(
                       'Water consumes: ',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '10 L',
+                      '${house.total_liters} L',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.normal),
@@ -154,14 +154,14 @@ class HouseWidget extends StatelessWidget {
                     const Icon(Icons.local_fire_department,
                         color: Color.fromARGB(255, 255, 94, 0)),
                     const SizedBox(width: 8),
-                    Text(
+                    const Text(
                       'Gas consumes: ',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '12 m3',
+                      '${house.total_gas} m3',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.normal),

@@ -10,11 +10,16 @@ class RegisterClient {
 
   const RegisterClient({required this.url, required this.path});
 
-  Future<RegisterResponse> register(String email, String password) async {
-    String bodyForDebug =
-        jsonEncode(<String, String>{'email': email, 'password': '***'});
-    String body =
-        jsonEncode(<String, String>{'email': email, 'password': password});
+  Future<RegisterResponse> register(
+      String username, String email, String password) async {
+    String bodyForDebug = jsonEncode(
+        <String, String>{'username': email, 'email': email, 'password': '***'});
+    String body = jsonEncode(<String, String>{
+      'username': email,
+      'email': email,
+      'password1': password,
+      'password2': password
+    });
     Uri uri = Uri.https(url, path);
     log(name: 'HTTP', 'Calling $uri');
     log(name: 'HTTP', 'Body: $bodyForDebug');

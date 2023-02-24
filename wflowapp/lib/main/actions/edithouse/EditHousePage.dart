@@ -42,7 +42,7 @@ class _EditHousePageState extends State<EditHousePage> {
       log(name: 'CONFIG', 'House ID: $id');
       log(name: 'CONFIG', 'Current house name: $name');
       log(name: 'CONFIG', 'Current house location: $location');
-      houseColor = AppConfig.getHouseColor(id);
+      houseColor = AppConfig.getHouseColor(int.parse(id));
       nameController.text = name;
       locationController.text = location;
     });
@@ -61,7 +61,7 @@ class _EditHousePageState extends State<EditHousePage> {
     id = arg['id'];
     name = arg['name'];
     location = arg['location'];
-    houseColor ??= AppConfig.getHouseColor(id);
+    houseColor ??= AppConfig.getHouseColor(int.parse(id));
 
     return Scaffold(
       appBar: drawAppBar(),
@@ -184,7 +184,7 @@ class _EditHousePageState extends State<EditHousePage> {
                   fontSize: 18.0,
                 ));
           }
-          AppConfig.setHouseColor(snapshot.data!.house, houseColor!);
+          AppConfig.setHouseColor(int.parse(snapshot.data!.house), houseColor!);
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, '/main');
           });
