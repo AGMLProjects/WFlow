@@ -10,8 +10,8 @@ class HouseClient {
 
   const HouseClient({required this.url, required this.path});
 
-  Future<HouseResponse> getHouse(String token, String id) async {
-    String body = jsonEncode(<String, String>{'key': token, 'id': id});
+  Future<HouseResponse> getHouse(String token, int id) async {
+    String body = jsonEncode(<String, dynamic>{'key': token, 'id': id});
     log(name: 'HTTP', 'Calling $path with body: $body');
     final response = await http.post(
       Uri.parse(url + path),

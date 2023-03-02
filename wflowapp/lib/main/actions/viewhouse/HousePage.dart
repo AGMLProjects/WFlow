@@ -17,9 +17,11 @@ class HousePage extends StatefulWidget {
 class _HousePageState extends State<HousePage> {
   String? token;
   Color? color;
-  String id = '';
+  int id = -1;
   String name = '';
-  String location = '';
+  String city = '';
+  String address = '';
+  String type = '';
 
   final HouseClient houseClient =
       HouseClient(url: AppConfig.getBaseUrl(), path: '/house');
@@ -34,7 +36,7 @@ class _HousePageState extends State<HousePage> {
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
       log(name: 'CONFIG', 'House ID: $id');
-      color = AppConfig.getHouseColor(int.parse(id));
+      color = AppConfig.getHouseColor(id);
       setState(() {
         _futureHouseResponse = houseClient.getHouse(token!, id);
       });
@@ -46,6 +48,9 @@ class _HousePageState extends State<HousePage> {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     id = arg['id'];
     name = arg['name'];
+    city = arg['city'];
+    address = arg['address'];
+    type = arg['type'];
 
     return Scaffold(
       appBar: drawAppBar(),
@@ -64,8 +69,13 @@ class _HousePageState extends State<HousePage> {
             size: 20.0,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, '/editHouse',
-                arguments: {'id': id, 'name': name, 'location': location});
+            Navigator.pushNamed(context, '/editHouse', arguments: {
+              'id': id,
+              'name': name,
+              'city': city,
+              'address': address,
+              'type': type
+            });
           },
         ),
       )
@@ -86,7 +96,6 @@ class _HousePageState extends State<HousePage> {
             return const SizedBox.shrink();
           }
           String houseName = snapshot.data!.house.name;
-          location = snapshot.data!.house.location;
           return Container(
             child: Text('$houseName'),
           );

@@ -36,8 +36,13 @@ class HouseWidget extends StatelessWidget {
       elevation: 20.0,
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/house',
-              arguments: {'id': house.house_id, 'name': house.name});
+          Navigator.pushNamed(context, '/house', arguments: {
+            'id': house.house_id,
+            'name': house.name,
+            'city': house.city,
+            'address': house.address,
+            'type': house.house_type
+          });
         },
         child: Container(
           width: 500.0,

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/profile/client/ProfileClient.dart';
 import 'package:wflowapp/main/profile/client/ProfileResponse.dart';
@@ -94,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           List<DropdownMenuItem<String>> familyMembersItems = [];
-          for (int i = 1; i <= 10; i++) {
+          for (int i = 1; i <= 15; i++) {
             DropdownMenuItem<String> item = DropdownMenuItem(
               value: i.toString(),
               child: Text(i.toString()),

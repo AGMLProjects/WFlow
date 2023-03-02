@@ -73,7 +73,7 @@ class _AddHousePageState extends State<AddHousePage> {
                   labelText: 'Name',
                   hintText: 'Name'),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -155,7 +155,7 @@ class _AddHousePageState extends State<AddHousePage> {
                   ],
                   value: houseType,
                   onChanged: dropDownCallback,
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 )
               ],
             ),

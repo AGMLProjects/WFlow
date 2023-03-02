@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/actions/edithouse/client/EditHouseClient.dart';
 import 'package:wflowapp/main/actions/edithouse/client/EditHouseResponse.dart';
-
-import '../../../config/AppConfig.dart';
 
 class EditHousePage extends StatefulWidget {
   const EditHousePage({super.key});
@@ -18,18 +17,21 @@ class EditHousePage extends StatefulWidget {
 
 class _EditHousePageState extends State<EditHousePage> {
   String? token;
-  String id = '';
+  int id = -1;
   String name = '';
-  String location = '';
-  Color? houseColor;
+  String city = '';
+  String address = '';
+  String houseType = '';
 
+  Color houseColor = AppConfig.getDefaultColor();
   String? _currentAddress;
   Position? _currentPosition;
   final nameController = TextEditingController();
-  final locationController = TextEditingController();
+  final cityController = TextEditingController();
+  final addressController = TextEditingController();
 
-  final EditHouseClient editHousesClient =
-      EditHouseClient(url: AppConfig.getBaseUrl(), path: '/house/edit');
+  final EditHouseClient editHousesClient = EditHouseClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getEditHousePath());
 
   Future<EditHouseResponse>? _futureEditHouseResponse;
 
@@ -40,18 +42,20 @@ class _EditHousePageState extends State<EditHousePage> {
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
       log(name: 'CONFIG', 'House ID: $id');
-      log(name: 'CONFIG', 'Current house name: $name');
-      log(name: 'CONFIG', 'Current house location: $location');
-      houseColor = AppConfig.getHouseColor(int.parse(id));
+      log(name: 'CONFIG', 'House name: $name');
+      log(name: 'CONFIG', 'House type: $houseType');
+      houseColor = AppConfig.getHouseColor(id)!;
       nameController.text = name;
-      locationController.text = location;
+      cityController.text = city;
+      addressController.text = address;
     });
   }
 
   @override
   void dispose() {
     nameController.dispose();
-    locationController.dispose();
+    cityController.dispose();
+    addressController.dispose();
     super.dispose();
   }
 
@@ -60,8 +64,11 @@ class _EditHousePageState extends State<EditHousePage> {
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     id = arg['id'];
     name = arg['name'];
-    location = arg['location'];
-    houseColor ??= AppConfig.getHouseColor(int.parse(id));
+    city = arg['city'];
+    address = arg['address'];
+    if (houseType.isEmpty) {
+      houseType = arg['type'];
+    }
 
     return Scaffold(
       appBar: drawAppBar(),
@@ -93,11 +100,11 @@ class _EditHousePageState extends State<EditHousePage> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: locationController,
+                    controller: cityController,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Location',
-                        hintText: 'Location'),
+                        labelText: 'City',
+                        hintText: 'City'),
                   ),
                 ),
                 const SizedBox(width: 10.0),
@@ -116,19 +123,76 @@ class _EditHousePageState extends State<EditHousePage> {
               ],
             ),
             const SizedBox(height: 20.0),
+            TextField(
+              controller: addressController,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Address',
+                  hintText: 'Address'),
+            ),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text(
-                  'House color: ',
+                  'House type: ',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+                const SizedBox(width: 10.0),
+                DropdownButton(
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'APA',
+                      child: Text('Apartment'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'SFH',
+                      child: Text('Single-Family House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'SDH',
+                      child: Text('Semi-Detached House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'MFH',
+                      child: Text('Multifamily House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'CON',
+                      child: Text('Condominium'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'COP',
+                      child: Text('Co-Op'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'TIN',
+                      child: Text('Tiny House'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'MAN',
+                      child: Text('Manufactured Home'),
+                    ),
+                  ],
+                  value: houseType,
+                  onChanged: dropDownCallback,
+                  style: const TextStyle(fontSize: 18),
+                )
+              ],
+            ),
+            const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Color: ',
                   style: TextStyle(fontSize: 18.0),
                 ),
                 ElevatedButton(
                   onPressed: () => showColorPickerDialog(),
                   style: ButtonStyle(
-                    shape: MaterialStateProperty.all(const CircleBorder()),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(16.0)),
+                    shape: MaterialStateProperty.all(CircleBorder()),
+                    padding: MaterialStateProperty.all(EdgeInsets.all(16.0)),
                     backgroundColor: MaterialStateProperty.all(houseColor),
                   ),
                   child: const Padding(
@@ -143,7 +207,7 @@ class _EditHousePageState extends State<EditHousePage> {
               children: [
                 ElevatedButton(
                   onPressed: () => performRequest(),
-                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
                   child: const Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(
@@ -161,13 +225,26 @@ class _EditHousePageState extends State<EditHousePage> {
     );
   }
 
+  void dropDownCallback(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        houseType = selectedValue;
+      });
+    }
+  }
+
   void performRequest() {
     setState(() {
       //validate
       String name = nameController.text;
-      String location = locationController.text;
+      String city = cityController.text;
+      String address = addressController.text;
+      String type = houseType;
+      //AppConfig.setHouseColor(id, houseColor);
+      editHousesClient.path =
+          editHousesClient.path.replaceAll('{id}', id.toString());
       _futureEditHouseResponse =
-          editHousesClient.editHouse(token!, id, name, location);
+          editHousesClient.editHouse(token!, id, name, city, address, type);
     });
   }
 
@@ -177,14 +254,14 @@ class _EditHousePageState extends State<EditHousePage> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
-            return Text(snapshot.data!.message,
-                style: const TextStyle(
+            return const Text('Error',
+                style: TextStyle(
                   color: Colors.redAccent,
                   fontWeight: FontWeight.bold,
                   fontSize: 18.0,
                 ));
           }
-          AppConfig.setHouseColor(int.parse(snapshot.data!.house), houseColor!);
+          AppConfig.setHouseColor(id, houseColor);
           Future.delayed(Duration.zero, () {
             Navigator.pushReplacementNamed(context, '/main');
           });
@@ -210,7 +287,7 @@ class _EditHousePageState extends State<EditHousePage> {
               title: const Text('Pick a color!'),
               content: SingleChildScrollView(
                 child: MaterialPicker(
-                  pickerColor: houseColor!,
+                  pickerColor: houseColor,
                   onColorChanged: (Color picked) {
                     setState(() {
                       houseColor = picked;

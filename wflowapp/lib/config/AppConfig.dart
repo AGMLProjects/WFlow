@@ -32,6 +32,10 @@ class AppConfig {
     return '/API/houses/add';
   }
 
+  static String getEditHousePath() {
+    return '/API/houses/{id}';
+  }
+
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }
