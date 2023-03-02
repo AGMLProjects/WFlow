@@ -218,6 +218,17 @@ class _EditHousePageState extends State<EditHousePage> {
               ],
             ),
             const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text('Delete this house',
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.bold))
+              ],
+            ),
+            const SizedBox(height: 20.0),
             if (_futureEditHouseResponse != null) drawAddHouseResponse(),
           ],
         ),

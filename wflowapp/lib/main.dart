@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/actions/adddevice/AddDevicePage.dart';
+import 'package:wflowapp/main/actions/adddevice/FinishAddDevicePage.dart';
 import 'package:wflowapp/main/actions/adddevice/ScannerPage.dart';
 import 'package:wflowapp/main/actions/addhouse/AddHousePage.dart';
 import 'package:wflowapp/main/actions/edithouse/EditHousePage.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/addHouse': (context) => const AddHousePage(),
         '/addDevice': (context) => const AddDevicePage(),
         '/scan': (context) => const ScannerPage(),
+        '/finishAddDevice': (context) => const FinishAddDevicePage(),
         '/house': (context) => const HousePage(),
         '/editHouse': (context) => const EditHousePage()
       },

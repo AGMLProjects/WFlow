@@ -12,6 +12,8 @@ class ScannerPage extends StatefulWidget {
 }
 
 class _ScannerPageState extends State<ScannerPage> {
+  int? id;
+
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
@@ -28,19 +30,19 @@ class _ScannerPageState extends State<ScannerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final arg = ModalRoute.of(context)!.settings.arguments as Map;
+    id = arg['id'];
     return Scaffold(
       appBar: AppBar(title: const Text('')),
-      body: Container(
-        child: QRView(
-          key: qrKey,
-          onQRViewCreated: _onQRViewCreated,
-          overlay: QrScannerOverlayShape(
-              borderWidth: 10,
-              borderLength: 60,
-              borderColor: Theme.of(context).colorScheme.secondary,
-              borderRadius: 10,
-              cutOutSize: MediaQuery.of(context).size.width * 0.7),
-        ),
+      body: QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+        overlay: QrScannerOverlayShape(
+            borderWidth: 10,
+            borderLength: 60,
+            borderColor: Theme.of(context).colorScheme.secondary,
+            borderRadius: 10,
+            cutOutSize: MediaQuery.of(context).size.width * 0.7),
       ),
     );
   }
@@ -50,9 +52,9 @@ class _ScannerPageState extends State<ScannerPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        log('Scanned data: ${result!.code}');
-        Navigator.pushReplacementNamed(context, '/editHouse',
-            arguments: {'deviceID': result!.code});
+        log(name: 'DEBUG', 'Scanned data: ${result!.code}');
+        Navigator.pushReplacementNamed(context, '/finishAddDevice',
+            arguments: {'id': id, 'devId': result!.code});
       });
     });
   }

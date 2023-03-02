@@ -36,6 +36,10 @@ class AppConfig {
     return '/API/houses/{id}';
   }
 
+  static String getAddDevicePath() {
+    return '/devices/register/';
+  }
+
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }
