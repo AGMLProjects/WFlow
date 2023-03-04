@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/main/home/HomePage.dart';
 import 'package:wflowapp/main/profile/ProfilePage.dart';
+import 'package:wflowapp/main/settings/SettingsPage.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,7 +16,7 @@ class _MainPageState extends State<MainPage> {
     HomePage(),
     Text('Statistics'),
     ProfilePage(),
-    Text('Settings')
+    SettingsPage()
   ];
 
   void _onItemTapped(int index) {

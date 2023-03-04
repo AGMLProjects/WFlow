@@ -62,4 +62,12 @@ class AppConfig {
     }
     return Color(_preferences.getInt('${id}.color')!);
   }
+
+  static Future setSendPersonalData(bool active) async {
+    return await _preferences.setBool('sendPersonalData', active);
+  }
+
+  static bool? getSendPersonalData() {
+    return _preferences.getBool('sendPersonalData');
+  }
 }

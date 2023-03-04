@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart';
-
-import 'House.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
 
 class HouseResponse {
   final int code;
@@ -15,11 +13,7 @@ class HouseResponse {
   factory HouseResponse.fromResponse(Response response) {
     dynamic json = jsonDecode(response.body);
     dynamic dhouse = json['house'];
-    House house = House(
-        id: dhouse['id'],
-        name: dhouse['name'],
-        totalConsumes: dhouse['totalConsumes'],
-        location: dhouse['location']);
+    House house = House.fromJson(dhouse);
     return HouseResponse(
       code: response.statusCode,
       house: house,

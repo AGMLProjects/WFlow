@@ -13,7 +13,6 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    AppConfig.setUserKey('AAAA'); // TODO: remove this
     String? savedToken = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Read saved token: $savedToken');
     bool validToken = savedToken != null;
