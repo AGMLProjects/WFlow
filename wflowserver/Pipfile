@@ -9,6 +9,7 @@ djangorestframework = "*"
 dj-rest-auth = "*"
 django-allauth = "*"
 djangorestframework-simplejwt = "*"
+autopep8 = "*"
 
 [dev-packages]
 autopep8 = "*"

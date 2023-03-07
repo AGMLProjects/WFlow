@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     # OUR APPs
     'wflow',        # MAIN APP
     'users',        # USERS MANAGEMENT
-    'devices',
+    'devices',      # DEVICE (BRIDGE) MANAGEMENT
+    'sensors',      # SENSORS MANAGEMENT
 ]
 
 MIDDLEWARE = [
