@@ -1,5 +1,5 @@
 import sys
-import data, event, diagnostic
+import data, event, diagnostic, server
 from constants import Resources, MainParameters
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
 
@@ -56,3 +56,5 @@ if __name__ == "__main__":
         ptvsd.wait_for_attach()
 
     eventInterface, dataInterface, logger = init_system_object()
+    serverHandler = server.ServerConnector() #TODO: Definire come prendere questi parametri
+    # TODO: Definire come fare il loop di autenticazione

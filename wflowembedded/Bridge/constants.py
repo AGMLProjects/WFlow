@@ -22,3 +22,16 @@ class MainParameters(_AbstractEnum):
 	SECRET = "secret"
 	TIMEOUT_TIMER_TO_AUTH_ATTEMPT = "timeoutTimerToAuthAttempt"
 	LOG_LEVEL = "logLevel"
+
+class DeviceLoginRequest(_AbstractEnum):
+
+	DEVICE_ID = "device_id"
+	PASSWORD = "password"
+
+class NotifyActiveSensorRequest(_AbstractEnum):
+
+	SENSOR_LIST = "active_sensors"
+
+class SensorParameters(_AbstractEnum):
+	SENSOR_TYPE = "sensor_type"
+	SENSOR_ID = "sensor_id"
