@@ -26,7 +26,7 @@ class Sensor(models.Model):
     device_id = models.ForeignKey(Device, on_delete=models.CASCADE)
     sensor_type = models.ForeignKey(
         SensorTypeDefinition, on_delete=models.CASCADE)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return "Sensor:%s linked to Device:%s" % (self.sensor_id, self.device_id)

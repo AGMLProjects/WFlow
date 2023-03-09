@@ -35,6 +35,9 @@ urlpatterns = [
     # AUTH endpoints for devices
     path('devices/', include('devices.urls')),
 
+    # Sensor management endpoints
+    path('sensors/', include('sensors.urls')),
+
     # API endpoints
     # path('API/houses/', APIviews.ListCreateHousesAPIView.as_view()),
     path('API/houses/list', APIviews.ListHousesAPIView.as_view()),
