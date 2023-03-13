@@ -18,8 +18,6 @@ class Resources(_AbstractEnum):
 	BACKUP_FILE = CUSTOM_DIR + "logger.backup"
 
 class MainParameters(_AbstractEnum):
-	BRIDGE_ID = "bridgeId"
-	SECRET = "secret"
 	TIMEOUT_TIMER_TO_AUTH_ATTEMPT = "timeoutTimerToAuthAttempt"
 	LOG_LEVEL = "logLevel"
 
@@ -35,3 +33,8 @@ class NotifyActiveSensorRequest(_AbstractEnum):
 class SensorParameters(_AbstractEnum):
 	SENSOR_TYPE = "sensor_type"
 	SENSOR_ID = "sensor_id"
+
+class ServerParameters(_AbstractEnum):
+	ADDRESS = "server_address"
+	SECRET = "server_secret"
+	DEVICE_ID = "server_device_id"

@@ -1,19 +1,15 @@
-import sys
+import sys, time
 import data, event, diagnostic, server
 from constants import Resources, MainParameters
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
 
 _MODULE = "MAIN"
 defaultMainParam = {
-	MainParameters.BRIDGE_ID: "",
-	MainParameters.SECRET: "",
 	MainParameters.TIMEOUT_TIMER_TO_AUTH_ATTEMPT: 1 * 60,
     MainParameters.LOG_LEVEL: diagnostic.WARNING,
 }
 
 defaultMainAttr = {
-	MainParameters.BRIDGE_ID: {AttributePrototype.TYPE: AttributeType.TEXT, AttributePrototype.WRITABLE : False, AttributePrototype.NULLABLE : False, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
-	MainParameters.SECRET: {AttributePrototype.TYPE: AttributeType.PASSWORD, AttributePrototype.WRITABLE : False, AttributePrototype.NULLABLE : False, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
 	MainParameters.TIMEOUT_TIMER_TO_AUTH_ATTEMPT: {AttributePrototype.TYPE: AttributeType.NUM, AttributePrototype.WRITABLE : True, AttributePrototype.NULLABLE : False, AttributePrototype.MIN: 1, AttributePrototype.MAX: 604800, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
     MainParameters.LOG_LEVEL: {AttributePrototype.TYPE: AttributeType.NUM, AttributePrototype.WRITABLE : True, AttributePrototype.NULLABLE : False, AttributePrototype.MIN: 1, AttributePrototype.MAX: 100, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
 }
@@ -56,5 +52,33 @@ if __name__ == "__main__":
         ptvsd.wait_for_attach()
 
     eventInterface, dataInterface, logger = init_system_object()
-    serverHandler = server.ServerConnector() #TODO: Definire come prendere questi parametri
-    # TODO: Definire come fare il loop di autenticazione
+    serverHandler = server.ServerConnector(dataInterface = dataInterface, eventInterface = eventInterface, logger = logger)
+    
+    # Try to authenticate, keep in the loop as long as it's not possible to obtain a valid token
+    try:
+        authenticated = False
+
+        while authenticated is False:
+            authenticated = serverHandler.authenticate()
+
+            if authenticated is False:
+                time.sleep(1 * 60)
+    except Exception as e:
+        logger.record(msg = "Error occurred while trying to authenticate, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+        sys.exit(1)
+
+    # Scann the sensors connected to the system in order to notify the server
+    # TODO: Trovare i sensori connessi
+    sensor_list = list()
+
+    # Notify the sensor list to the server
+    try:
+        if serverHandler.notifySensors(sensors = sensor_list) is False:
+            logger.record(msg = "Server refused our sensor list, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1)
+            sys.exit(1)
+    except Exception as e:
+        logger.record(msg = "Error occurred while trying to notify the sensor list to the server, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+        sys.exit(1)
+
+    # TODO: Far partire il loop che gestisce la raccolta dati dai sensori
+    # TODO: Far partire il loop che riceve i comandi dal server e li inoltra agli attuatori
