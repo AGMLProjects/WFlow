@@ -55,3 +55,29 @@ class RegisterSensorAPIView(CreateAPIView):
     def perform_create(self, serializer):
         # NB: here it is called user by convention, it's actually the device id
         serializer.save(device_id=self.request.user)
+
+
+class UploadSensorDataAPIView(CreateAPIView):
+    """
+    This view is responsible for the upload of new data recorded 
+    from the specified sensor for the currently authenticated device
+    """
+    authentication_classes = (DeviceAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SensorDataSerializer
+
+    # override the create method to perform create for active sensors
+    def create(self, request, *args, **kwargs):
+        # get and validate the serializer on a single object
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+
+        # generate response with success headers
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(data={'message': 'data uploaded successfully'}, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
