@@ -1,23 +1,23 @@
 from rest_framework import authentication, exceptions
+from django.utils.translation import gettext_lazy as _
+
 
 from .models import Device, Token
 
+import logging
+
 
 class DeviceAuthentication(authentication.TokenAuthentication):
-    def authenticate(self, request):
-        secret_token = request.META.get('Authorization')
+    model = Token
 
-        if not secret_token:
-            return None
-
+    def authenticate_credentials(self, key):
+        model = self.get_model()
         try:
-            print(secret_token)
-            token_instance = Token.objects.get(key=secret_token)
-            print(token_instance)
-            print(token_instance.device_id)
-            device = Device.objects.get(device_id=token_instance.device_id)
-            print(device)
-        except (Token.DoesNotExist, Device.DoesNotExist):
-            raise exceptions.AuthenticationFailed('Unauthorized')
+            token = model.objects.select_related('device').get(key=key)
+        except model.DoesNotExist:
+            raise exceptions.AuthenticationFailed(_('Invalid token.'))
 
-        return (device, None)
+        # if not token.user.is_active:
+        #     raise exceptions.AuthenticationFailed(_('User inactive or deleted.'))
+
+        return (token.device, token)
