@@ -6,11 +6,11 @@ class SensorAdmin(admin.ModelAdmin):
     list_display = ('device_id', 'active', 'sensor_id', 'sensor_type')
 
 
-class SensorDataAdmin(admin.ModelAdmin):
+class SensorTypeDefinitionAdmin(admin.ModelAdmin):
     list_display = ('sensor_type', 'values')
 
 
-class SensorTypeDefinitionAdmin(admin.ModelAdmin):
+class SensorDataAdmin(admin.ModelAdmin):
     list_display = ('data_id', 'sensor_id', 'start_timestamp',
                     'end_timestamp', 'values')
 
