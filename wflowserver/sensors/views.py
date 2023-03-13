@@ -7,7 +7,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView, CreateAPIView, 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .models import Sensor, SensorTypeDefinition, SensorData
-from .serializers import SensorSerializer, SensorTypeDefinitionSerializer, SensorDataSerialize
+from .serializers import SensorSerializer, SensorTypeDefinitionSerializer, SensorDataSerializer
 
 
 class RegisterSensorAPIView(CreateAPIView):
