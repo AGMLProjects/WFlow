@@ -11,8 +11,12 @@ class DeviceAuthentication(authentication.TokenAuthentication):
             return None
 
         try:
+            print(secret_token)
             token_instance = Token.objects.get(key=secret_token)
+            print(token_instance)
+            print(token_instance.device_id)
             device = Device.objects.get(device_id=token_instance.device_id)
+            print(device)
         except (Token.DoesNotExist, Device.DoesNotExist):
             raise exceptions.AuthenticationFailed('Unauthorized')
 
