@@ -6,6 +6,8 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView, ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from devices.permissions import DeviceAuthentication
+
 from .models import Sensor, SensorTypeDefinition, SensorData
 from .serializers import SensorSerializer, SensorTypeDefinitionSerializer, SensorDataSerializer
 
@@ -15,7 +17,8 @@ class RegisterSensorAPIView(CreateAPIView):
     This view is responsible for the registration of
     a new sensor for the currently authenticated device.
     """
-    permission_classes = (IsAuthenticated,)
+    authentication_classes = (DeviceAuthentication,)
+    permission_classes = (AllowAny,)
     serializer_class = SensorSerializer
 
     # override the create method to perform create for active sensors

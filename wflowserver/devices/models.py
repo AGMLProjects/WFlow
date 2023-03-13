@@ -23,6 +23,14 @@ class Device(models.Model):
 
     name = models.CharField(max_length=200)
 
+    @property
+    def is_authenticated(self):
+        """
+        Always return True. This is a way to tell if the device has been
+        authenticated in templates.
+        """
+        return True
+
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
 
