@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['65.21.49.16', 'wflow', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = ['https://wflow.online']
+
 
 # Application definition
 
