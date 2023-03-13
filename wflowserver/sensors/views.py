@@ -33,7 +33,7 @@ class RegisterSensorAPIView(CreateAPIView):
         # generate response with success headers
         headers = self.get_success_headers(serializer.data)
 
-        return Response(data={'message': 'device created successfully'}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(data={'message': 'sensors updated successfully'}, status=status.HTTP_201_CREATED, headers=headers)
 
     # override the perform_create method to perform the checks on request data for active sensors
     def perform_create(self, serializer):
