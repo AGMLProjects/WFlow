@@ -30,13 +30,13 @@ def generate_data():
 
     if sensor_type == 0:
         payload["temperature"] = float(random.randint(100, 1000)) / 10.0
-        payload["water_volume"] = float(random.randint(100, 1000)) / 10.0
+        payload["water_liters"] = float(random.randint(100, 1000)) / 10.0
         end_timestamp = start_timestamp + (random.randint(1, 9) * 60)
     elif sensor_type == 1:
-        payload["water_volume"] = 10.0
+        payload["water_liters"] = 10.0
         end_timestamp = start_timestamp
     else:
-        payload["water_volume"] = float(random.randint(1000, 100000)) / 10.0
+        payload["water_liters"] = float(random.randint(1000, 100000)) / 10.0
         payload["gas_volume"] = float(random.randint(10, 50)) / 10.0
         end_timestamp = int(time.time())
 
