@@ -1,4 +1,4 @@
-import requests, threading, time, sys, random
+import requests, threading, time, sys, random, datetime
 
 running = True
 valid_types = ["Flow Sensor", "Water Level", "Water Heater"]
@@ -14,7 +14,7 @@ SENSORT_DATA_UPLOAD = "sensors/upload/"
 
 def generate_data():
     
-    # Generate a random amount of time aftwe which send new data
+    # Generate a random amount of time aftwe which send new data (1 min - 10 min)
     new_interval = random.randint(10, 60)
 
     # Reschedule the timer
@@ -44,8 +44,8 @@ def generate_data():
     # Send the request to server
     body = {
         "sensor_id": sensor_id,
-        "start_timestamp": start_timestamp,
-        "end_timestamp": end_timestamp,
+        "start_timestamp": datetime.datetime.fromtimestamp(start_timestamp).strftime("%Y-%m-%d %H:%M:%S"),
+        "end_timestamp": datetime.datetime.fromtimestamp(end_timestamp).strftime("%Y-%m-%d %H:%M:%S"),
         "values": payload
     }
 
@@ -54,17 +54,18 @@ def generate_data():
     }
 
     try:
-        req = requests.post(url = SERVER_URL + SENSORT_DATA_UPLOAD, data = body, headers = header)
+        req = requests.post(url = SERVER_URL + SENSORT_DATA_UPLOAD, json = body, headers = header)
     except Exception as e:
         print("Error: ", e)
         sys.exit(1)
     
-    if req.status_code == 200:
+    if req.status_code == 201:
         print("Data upload successful for sensor " + str(sensor_id))
     else:
         print("Data upload failed with status code " + str(req.status_code))
 
-    timer.start()
+    if running is True:
+        timer.start()
 
 def sensor_register() -> bool:
     body = {
@@ -89,11 +90,11 @@ def sensor_register() -> bool:
     }
 
     try:
-        resp = requests.post(url = SERVER_URL + SENSORT_REGISTER, data = body, headers = header)
+        resp = requests.post(url = SERVER_URL + SENSORT_REGISTER, json = body, headers = header)
     except Exception as e:
         print("Error: ", e)
     
-    if resp.status_code == 200:
+    if resp.status_code == 201:
         print("Sensor registration successful")
         return True
     else:
@@ -140,5 +141,6 @@ if __name__ == "__main__":
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        print("Exiting... Waiting for the last record to be sent, it might take up to one minute")
         running = False
         sys.exit(0)
