@@ -3,9 +3,10 @@ import requests, threading, time, sys, random
 running = True
 valid_types = ["Flow Sensor", "Water Level", "Water Heater"]
 
-API_KEY = "FLzdTj@22EV74gflnyN6^9qKD$37AOL4kQD3&dm^@61Qb1p96z"
+SECRET = "FLzdTj@22EV74gflnyN6^9qKD$37AOL4kQD3&dm^@61Qb1p96z"
+API_KEY = None
 SENSOR_ID_LIST = [111111111, 222222222, 333333333]
-DEVICE_ID = 987654321
+DEVICE_ID = 1
 
 SERVER_URL = "https://wflow.online/"
 SENSORT_REGISTER = "sensors/register/"
@@ -99,8 +100,33 @@ def sensor_register() -> bool:
         print("Sensor registration failed with status code " + str(resp.status_code))
         return False
 
+def device_login():
+    global API_KEY
+    
+    body = {
+        "device_id": DEVICE_ID,
+        "password": SECRET
+    }
+
+    try:
+        resp = requests.post(url = SERVER_URL + "devices/login/", data = body)
+    except Exception as e:
+        print("Error: ", e)
+        return False
+    
+    if resp.status_code == 200:
+        print("Device login successful")
+        API_KEY = resp.json()["key"]
+        return True
+    else:
+        print("Device login failed with status code " + str(resp.status_code))
+        return False
 
 if __name__ == "__main__":
+
+    # Login the device
+    if device_login() == False:
+        sys.exit(1)
 
     # Register the sensors
     if sensor_register() == False:
