@@ -27,8 +27,8 @@ class RegisterSensorAPIView(CreateAPIView):
     def create(self, request, *args, **kwargs):
         # get active sensors
         active_sensors = request.data['active_sensors']
-        active_sensors = [json.loads(idx.replace("'", '"'))
-                          for idx in active_sensors]
+        # active_sensors = [json.loads(idx.replace("'", '"'))
+        #                   for idx in active_sensors]
         active_ids = [element['sensor_id'] for element in active_sensors]
 
         # cycle through objects to elaborate sensor information piecewise
