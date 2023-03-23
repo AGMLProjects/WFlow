@@ -19,11 +19,6 @@ class House(models.Model):
 
     name = models.CharField(max_length=200)
 
-    total_liters = models.FloatField()
-    total_gas = models.FloatField()
-    future_total_liters = models.FloatField()
-    future_total_gas = models.FloatField()
-
     address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     house_type = models.CharField(

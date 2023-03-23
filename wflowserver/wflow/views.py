@@ -1,13 +1,22 @@
+from datetime import date
+from calendar import monthrange
+
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from django.db.models import Sum
+
+from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .models import House
 from .serializers import HouseSerializer
+
+from devices.models import Device
+from sensors.models import Sensor, SensorData
+from sensors.serializers import SensorDataSerializer
 
 
 class CreateHouseAPIView(CreateAPIView):
@@ -60,6 +69,107 @@ class HousesDetailAPIView(RetrieveUpdateDestroyAPIView):
     # access only objects created by the user
     def get_queryset(self):
         return House.objects.filter(user_id=self.request.user)
+
+    # override retrieve to add the sum of consumes
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        response = serializer.data
+
+        # get all the sensor_datas from all the sensor of all the devices of house provided
+        sensor_datas = SensorData.objects.filter(sensor_id__in=Sensor.objects.filter(
+            device_id__in=Device.objects.filter(house_id=instance)))
+        sensor_datas = SensorDataSerializer(sensor_datas, many=True).data
+
+        response['total_liters'] = sum(
+            float(item['values'].get('water_liters', 0)) for item in sensor_datas)
+        response['total_gas'] = sum(
+            float(item['values'].get('gas_volume', 0)) for item in sensor_datas)
+
+        response['future_total_liters'] = -1
+        response['future_total_gas'] = -1
+
+        return Response(response)
+
+
+class HousesSpecificDetailAPIView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HouseSerializer
+
+    # field used to lookup the object
+    lookup_field = "house_id"
+
+    # access only objects created by the user
+    def get_queryset(self):
+        return House.objects.filter(user_id=self.request.user)
+
+    # override retrieve to add the custom data
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        response = serializer.data
+
+        # get all the sensor_datas from all the sensor of all the devices of house provided
+        sensor_datas = SensorData.objects.filter(sensor_id__in=Sensor.objects.filter(
+            device_id__in=Device.objects.filter(house_id=instance)))
+
+        # get current year and month
+        year = date.today().year
+        month = date.today().month
+
+        # filter sensor_datas by the current month
+        sensor_datas = sensor_datas.filter(start_timestamp__year__gte=year,
+                                           start_timestamp__month__gte=month,
+                                           end_timestamp__year__lte=year,
+                                           end_timestamp__month__lte=month)
+
+        # get number of days to create the list of queries
+        number_of_days = monthrange(year, month)[1]
+
+        sensor_datas_per_day = [sensor_datas.filter(start_timestamp__day__gte=(day+1),
+                                                    end_timestamp__day__lte=(day+1)) for day in range(number_of_days)]
+
+        # serialize the data
+        sensor_datas_per_day = [SensorDataSerializer(
+            item, many=True).data for item in sensor_datas_per_day]
+
+        water_liters_per_day = [sum(float(item['values'].get(
+            'water_liters', 0)) for item in day) for day in sensor_datas_per_day]
+        gas_volume_per_day = [sum(float(item['values'].get(
+            'gas_volume', 0)) for item in day) for day in sensor_datas_per_day]
+
+        literConsumes = []
+        for day, value in enumerate(water_liters_per_day, 1):
+            tmpdate = str(day)+'/'+str(month)+'/'+str(year)
+            tmpdict = {'x': tmpdate, 'y': value,
+                       'predicted': False if day <= date.today().day else True}
+            literConsumes.append(tmpdict)
+
+        gasConsumes = []
+        for day, value in enumerate(gas_volume_per_day, 1):
+            tmpdate = str(day)+'/'+str(month)+'/'+str(year)
+            tmpdict = {'x': tmpdate, 'y': value,
+                       'predicted': False if day <= date.today().day else True}
+            gasConsumes.append(tmpdict)
+
+        response['literConsumes'] = literConsumes
+        response['gasConsumes'] = gasConsumes
+
+        # ------------------------------- FIXME: do better
+        # get all the sensor_datas from all the sensor of all the devices of house provided
+        sensor_datas = SensorData.objects.filter(sensor_id__in=Sensor.objects.filter(
+            device_id__in=Device.objects.filter(house_id=instance)))
+        sensor_datas = SensorDataSerializer(sensor_datas, many=True).data
+
+        response['total_liters'] = sum(
+            float(item['values'].get('water_liters', 0)) for item in sensor_datas)
+        response['total_gas'] = sum(
+            float(item['values'].get('gas_volume', 0)) for item in sensor_datas)
+
+        response['future_total_liters'] = -1
+        response['future_total_gas'] = -1
+
+        return Response(response)
 
 
 # @api_view(['GET', 'POST'])

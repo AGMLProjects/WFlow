@@ -43,6 +43,8 @@ urlpatterns = [
     path('API/houses/list', APIviews.ListHousesAPIView.as_view()),
     path('API/houses/add', APIviews.CreateHouseAPIView.as_view()),
     path('API/houses/<int:house_id>', APIviews.HousesDetailAPIView.as_view()),
+    path('API/houses/specific/<int:house_id>',
+         APIviews.HousesSpecificDetailAPIView.as_view()),
 
 ]
 
