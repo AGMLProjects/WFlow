@@ -1,18 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:wflowapp/main/home/client/MonthExpense.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
 
-class CostLineChart extends StatelessWidget {
-  CostLineChart({super.key, required this.months});
+class LitersConsumesChart extends StatelessWidget {
+  const LitersConsumesChart({super.key, required this.consumes});
 
-  final List<MonthExpense> months;
+  final List<LitersConsumed> consumes;
 
   @override
   Widget build(BuildContext context) {
     final List<FlSpot> data = [];
     double i = 0;
-    for (MonthExpense month in months) {
-      data.add(FlSpot(i, month.total));
+    for (LitersConsumed day in consumes) {
+      data.add(FlSpot(i, day.y));
       i++;
     }
 
@@ -95,9 +95,9 @@ class CostLineChart extends StatelessWidget {
       fontSize: 12,
     );
     Widget text;
-    if (value.toInt() < this.months.length) {
-      MonthExpense month = this.months.elementAt(value.toInt());
-      text = Text(month.parseDate(), style: style);
+    if (value.toInt() < this.consumes.length) {
+      LitersConsumed day = this.consumes.elementAt(value.toInt());
+      text = Text(day.x, style: style);
     } else {
       text = const Text('', style: style);
     }

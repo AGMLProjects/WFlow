@@ -40,6 +40,10 @@ class AppConfig {
     return '/devices/register/';
   }
 
+  static String getHouseInfoPath() {
+    return '/API/houses/info/{id}';
+  }
+
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }

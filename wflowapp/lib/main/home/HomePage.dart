@@ -4,8 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/home/HouseWidget.dart';
-import 'package:wflowapp/main/home/charts/CostLineChart.dart';
-import 'package:wflowapp/main/home/charts/WaterPieChart.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/WaterPieChart.dart';
 import 'package:wflowapp/main/home/client/ExpensesClient.dart';
 import 'package:wflowapp/main/home/client/ExpensesResponse.dart';
 import 'package:wflowapp/main/home/client/HousesClient.dart';
@@ -230,9 +229,6 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.black),
               ),
               const SizedBox(height: 24.0),
-              CostLineChart(
-                months: _monthExpenses,
-              ),
             ],
           );
         } else if (snapshot.hasError) {

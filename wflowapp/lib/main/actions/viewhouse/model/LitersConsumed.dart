@@ -1,6 +1,6 @@
 class LitersConsumed {
   final String x;
-  final int y;
+  final double y;
   final bool predicted;
 
   LitersConsumed({required this.x, required this.y, required this.predicted});

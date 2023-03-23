@@ -1,6 +1,6 @@
 class GasConsumed {
   final String x;
-  final int y;
+  final double y;
   final bool predicted;
 
   GasConsumed({required this.x, required this.y, required this.predicted});

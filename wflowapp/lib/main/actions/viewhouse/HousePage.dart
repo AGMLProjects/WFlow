@@ -2,7 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesChart.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
 
 import '../../../config/AppConfig.dart';
 import 'client/HouseResponse.dart';
@@ -23,8 +26,8 @@ class _HousePageState extends State<HousePage> {
   String address = '';
   String type = '';
 
-  final HouseClient houseClient =
-      HouseClient(url: AppConfig.getBaseUrl(), path: '/house');
+  final HouseClient houseClient = HouseClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getHouseInfoPath());
 
   Future<HouseResponse>? _futureHouseResponse;
 
@@ -38,7 +41,8 @@ class _HousePageState extends State<HousePage> {
       log(name: 'CONFIG', 'House ID: $id');
       color = AppConfig.getHouseColor(id);
       setState(() {
-        _futureHouseResponse = houseClient.getHouse(token!, id);
+        houseClient.path = houseClient.path.replaceAll('{id}', id.toString());
+        _futureHouseResponse = houseClient.getHouse(token!);
       });
     });
   }
@@ -95,9 +99,18 @@ class _HousePageState extends State<HousePage> {
           if (snapshot.data!.code != 200) {
             return const SizedBox.shrink();
           }
-          String houseName = snapshot.data!.house.name;
-          return Container(
-            child: Text('$houseName'),
+          House house = snapshot.data!.house;
+          return Column(
+            children: [
+              const Text('Water consumes chart'),
+              LitersConsumesChart(consumes: house.litersConsumes),
+              Text('Total water consumed: ${house.totalLitersConsumed}'),
+              Text('Predicted water consumes: ${house.totalLitersPredicted}'),
+              const Text('Gas consumes chart'),
+              GasConsumedChart(consumes: house.gasConsumed),
+              Text('Total gas consumed: ${house.totalGasConsumed}'),
+              Text('Predicted gas consumes: ${house.totalGasPredicted}'),
+            ],
           );
         } else if (snapshot.hasError) {
           return const SizedBox.shrink();
@@ -114,6 +127,26 @@ class _HousePageState extends State<HousePage> {
       },
       tooltip: 'Add Device',
       child: const Icon(Icons.add),
+    );
+  }
+
+  Widget drawSensor() {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      elevation: 10.0,
+      child: InkWell(
+        onTap: () {
+          // nothing
+        },
+        child: SizedBox(
+          width: 500.0,
+          child: Column(
+            children: [],
+          ),
+        ),
+      ),
     );
   }
 }
