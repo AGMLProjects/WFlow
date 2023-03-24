@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/FakeChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
@@ -88,7 +90,10 @@ class _HousePageState extends State<HousePage> {
 
   Widget drawBody() {
     return Container(
-        padding: const EdgeInsets.all(20.0), child: buildHouseInfo());
+      padding: const EdgeInsets.all(20.0),
+      //child: buildHouseInfo(),
+      child: FakeChart(),
+    );
   }
 
   FutureBuilder<HouseResponse> buildHouseInfo() {
@@ -107,13 +112,30 @@ class _HousePageState extends State<HousePage> {
               Text('Total water consumed: ${house.totalLitersConsumed}'),
               Text('Predicted water consumes: ${house.totalLitersPredicted}'),
               const Text('Gas consumes chart'),
-              GasConsumedChart(consumes: house.gasConsumed),
+              GasConsumedChart(consumes: house.gasConsumes),
               Text('Total gas consumed: ${house.totalGasConsumed}'),
               Text('Predicted gas consumes: ${house.totalGasPredicted}'),
             ],
           );
         } else if (snapshot.hasError) {
-          return const SizedBox.shrink();
+          // TODO: remove this code
+          dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
+          House house = House.fromJson(json);
+          log("unsuccessfull request");
+          return Column(
+            children: [
+              const Text('Water consumes chart'),
+              //LitersConsumesChart(consumes: house.litersConsumes),
+              const FakeChart(),
+              //Text('Total water consumed: ${house.totalLitersConsumed}'),
+              //Text('Predicted water consumes: ${house.totalLitersPredicted}'),
+              const Text('Gas consumes chart'),
+              //GasConsumedChart(consumes: house.gasConsumes),
+              //Text('Total gas consumed: ${house.totalGasConsumed}'),
+              //Text('Predicted gas consumes: ${house.totalGasPredicted}'),
+            ],
+          );
+          //return const SizedBox.shrink();
         }
         return const Center(child: CircularProgressIndicator());
       },

@@ -31,8 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     setState(() {
-      emailController.text = 'enzo.ferrari@unimore.it';
-      passwordController.text = 'Password01\$';
+      emailController.text = 'prova1@prova.it';
+      passwordController.text = 'primoprimo';
     });
     return Scaffold(
       resizeToAvoidBottomInset: false,

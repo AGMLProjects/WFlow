@@ -11,22 +11,28 @@ class LitersConsumesChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<FlSpot> data = [];
     double i = 0;
+    double maxY = 0;
     for (LitersConsumed day in consumes) {
       data.add(FlSpot(i, day.y));
       i++;
+      if (day.y > maxY) {
+        maxY = day.y;
+      }
     }
 
     return Container(
       padding: const EdgeInsets.all(10),
-      width: double.infinity,
+      width: 1000,
       height: 260,
       child: LineChart(
         LineChartData(
             //lineTouchData: lineTouchData(),
             titlesData: titlesData(),
             borderData: FlBorderData(show: false),
+            minY: 0,
+            maxY: maxY + 2,
             minX: 0,
-            maxX: 10,
+            maxX: 32,
             lineBarsData: [
               LineChartBarData(
                   spots: data, isCurved: true, isStepLineChart: false)
@@ -62,7 +68,7 @@ class LitersConsumesChart extends StatelessWidget {
     return SideTitles(
       showTitles: true,
       reservedSize: 40,
-      interval: 10,
+      interval: 5,
       getTitlesWidget: leftTitleWidgets,
     );
   }
@@ -70,12 +76,12 @@ class LitersConsumesChart extends StatelessWidget {
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       color: Colors.grey,
-      fontSize: 12,
+      fontSize: 10,
     );
     Widget text = Text(value.toString(), style: style);
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 15,
+      space: 12,
       child: text,
     );
   }
@@ -84,7 +90,7 @@ class LitersConsumesChart extends StatelessWidget {
     return SideTitles(
       showTitles: true,
       reservedSize: 50,
-      interval: 1,
+      interval: 5,
       getTitlesWidget: bottomTitleWidgets,
     );
   }
@@ -103,7 +109,7 @@ class LitersConsumesChart extends StatelessWidget {
     }
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 15,
+      space: 12,
       child: text,
     );
   }

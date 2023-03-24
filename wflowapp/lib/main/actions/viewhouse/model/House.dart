@@ -3,14 +3,13 @@ import 'package:wflowapp/main/actions/viewhouse/model/GasConsumed.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
 
 class House {
-  final String house_id;
+  final int house_id;
   final String name;
-  final double totalConsumes;
   final String location;
   final List<LitersConsumed> litersConsumes;
   final int totalLitersConsumed;
   final int totalLitersPredicted;
-  final List<GasConsumed> gasConsumed;
+  final List<GasConsumed> gasConsumes;
   final int totalGasConsumed;
   final int totalGasPredicted;
   final List<Device> devices;
@@ -18,12 +17,11 @@ class House {
   House({
     required this.house_id,
     required this.name,
-    required this.totalConsumes,
     required this.location,
     required this.litersConsumes,
     required this.totalLitersConsumed,
     required this.totalLitersPredicted,
-    required this.gasConsumed,
+    required this.gasConsumes,
     required this.totalGasConsumed,
     required this.totalGasPredicted,
     required this.devices,
@@ -35,8 +33,8 @@ class House {
         .map((item) => LitersConsumed.fromJson(item))
         .toList();
 
-    var gasConsumedList = json['gasConsumed'] as List;
-    List<GasConsumed> gasConsumed =
+    var gasConsumedList = json['gasConsumes'] as List;
+    List<GasConsumed> gasConsumes =
         gasConsumedList.map((item) => GasConsumed.fromJson(item)).toList();
 
     var devicesList = json['devices'] as List;
@@ -46,14 +44,13 @@ class House {
     return House(
       house_id: json['house_id'],
       name: json['name'],
-      totalConsumes: json['totalConsumes'],
-      location: json['location'],
+      location: json['address'],
       litersConsumes: litersConsumes,
-      totalLitersConsumed: json['totalLitersConsumed'],
-      totalLitersPredicted: json['totalLitersPredicted'],
-      gasConsumed: gasConsumed,
-      totalGasConsumed: json['totalGasConsumed'],
-      totalGasPredicted: json['totalGasPredicted'],
+      totalLitersConsumed: json['total_liters'],
+      totalLitersPredicted: json['future_total_liters'],
+      gasConsumes: gasConsumes,
+      totalGasConsumed: json['total_gas'],
+      totalGasPredicted: json['future_total_gas'],
       devices: devices,
     );
   }

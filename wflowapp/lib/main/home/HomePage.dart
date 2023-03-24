@@ -159,6 +159,8 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         } else if (snapshot.hasError) {
+          log(name: 'ERROR', 'Request has errors');
+          log(name: 'ERROR', '${snapshot.error.toString()}');
           return const SizedBox.shrink();
         }
         return const Center(child: CircularProgressIndicator());
