@@ -15,6 +15,7 @@ from .models import House
 from .serializers import HouseSerializer
 
 from devices.models import Device
+from devices.serializers import DeviceSerializer
 from sensors.models import Sensor, SensorData
 from sensors.serializers import SensorDataSerializer
 
@@ -196,6 +197,10 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
 
         response['future_total_liters'] = -1
         response['future_total_gas'] = -1
+
+        # ------------------------------------- device list
+        devices = Device.objects.filter(house_id=instance)
+        response['devices'] = DeviceSerializer(devices, many=True).data
 
         return Response(response)
 
