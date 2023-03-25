@@ -42,6 +42,34 @@ class ListHousesAPIView(ListAPIView):
     def get_queryset(self):
         return House.objects.filter(user_id=self.request.user)
 
+    # override list method to add total consumes
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        # cycle through each house
+        for house in serializer.data:
+            # get all the sensor_datas from all the sensor of all the devices of house provided
+            sensor_datas = SensorData.objects.filter(sensor_id__in=Sensor.objects.filter(
+                device_id__in=Device.objects.filter(house_id=house['house_id'])))
+            sensor_datas = SensorDataSerializer(sensor_datas, many=True).data
+
+            house['total_liters'] = sum(float(item['values'].get(
+                'water_liters', 0)) for item in sensor_datas)
+            house['total_gas'] = sum(float(item['values'].get(
+                'gas_volume', 0)) for item in sensor_datas)
+
+            house['future_total_liters'] = -1
+            house['future_total_gas'] = -1
+
+        return Response(serializer.data)
+
 
 class ListCreateHousesAPIView(ListCreateAPIView):
     """
