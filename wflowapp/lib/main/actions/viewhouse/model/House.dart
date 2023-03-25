@@ -7,11 +7,11 @@ class House {
   final String name;
   final String location;
   final List<LitersConsumed> litersConsumes;
-  final int totalLitersConsumed;
-  final int totalLitersPredicted;
+  final double totalLitersConsumed;
+  final double totalLitersPredicted;
   final List<GasConsumed> gasConsumes;
-  final int totalGasConsumed;
-  final int totalGasPredicted;
+  final double totalGasConsumed;
+  final double totalGasPredicted;
   final List<Device> devices;
 
   House({
@@ -28,7 +28,7 @@ class House {
   });
 
   factory House.fromJson(Map<String, dynamic> json) {
-    var litersConsumesList = json['litersConsumes'] as List;
+    var litersConsumesList = json['literConsumes'] as List;
     List<LitersConsumed> litersConsumes = litersConsumesList
         .map((item) => LitersConsumed.fromJson(item))
         .toList();
@@ -37,9 +37,11 @@ class House {
     List<GasConsumed> gasConsumes =
         gasConsumedList.map((item) => GasConsumed.fromJson(item)).toList();
 
-    var devicesList = json['devices'] as List;
-    List<Device> devices =
-        devicesList.map((item) => Device.fromJson(item)).toList();
+    List<Device> devices = List.empty();
+    if (json['devices'] != null) {
+      var devicesList = json['devices'] as List;
+      devices = devicesList.map((item) => Device.fromJson(item)).toList();
+    }
 
     return House(
       house_id: json['house_id'],
