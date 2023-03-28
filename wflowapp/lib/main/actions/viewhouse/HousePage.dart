@@ -3,12 +3,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wflowapp/main/actions/viewhouse/MenuItems.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/Device.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/Sensor.dart';
 
 import '../../../config/AppConfig.dart';
 import 'client/HouseResponse.dart';
@@ -68,23 +71,32 @@ class _HousePageState extends State<HousePage> {
 
   AppBar drawAppBar() {
     return AppBar(title: Text(name), actions: <Widget>[
-      Container(
-        child: IconButton(
-          icon: const Icon(
-            Icons.edit,
-            color: Colors.white,
-            size: 20.0,
-          ),
-          onPressed: () {
-            Navigator.pushNamed(context, '/editHouse', arguments: {
-              'id': id,
-              'name': name,
-              'city': city,
-              'address': address,
-              'type': type
-            });
-          },
+      IconButton(
+        icon: const Icon(
+          Icons.edit,
+          color: Colors.white,
+          size: 20.0,
         ),
+        onPressed: () {
+          Navigator.pushNamed(context, '/editHouse', arguments: {
+            'id': id,
+            'name': name,
+            'city': city,
+            'address': address,
+            'type': type
+          });
+        },
+      ),
+      PopupMenuButton(
+        tooltip: 'Menu',
+        onSelected: (value) {
+          if (value == MenuItems.ACTIONS) {
+            // do something
+          }
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem(value: MenuItems.ACTIONS, child: Text('Actions')),
+        ],
       )
     ]);
   }
@@ -115,41 +127,20 @@ class _HousePageState extends State<HousePage> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               LitersConsumesChart(consumes: house.litersConsumes),
-              const SizedBox(height: 32.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              const SizedBox(height: 10.0),
+              ExpansionTile(
+                title: const Text(
+                  'Statistics',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 children: [
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Total:\n${house.totalLitersConsumed} L',
-                        textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                    ),
+                  ListTile(
+                    title: Text(
+                        'Total liters consumed: ${house.totalLitersConsumed} L'),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Total predicted:\n${house.totalLitersPredicted} L',
-                        textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                    ),
+                  ListTile(
+                    title: Text(
+                        'Total liters predicted: ${house.totalLitersPredicted} L'),
                   )
                 ],
               ),
@@ -164,41 +155,20 @@ class _HousePageState extends State<HousePage> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               GasConsumesChart(consumes: house.gasConsumes),
-              const SizedBox(height: 32.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              const SizedBox(height: 10.0),
+              ExpansionTile(
+                title: const Text(
+                  'Statistics',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 children: [
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Total:\n${house.totalGasConsumed} m3',
-                        textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                    ),
+                  ListTile(
+                    title: Text(
+                        'Total gas consumed: ${house.totalGasConsumed} m3'),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Total predicted:\n${house.totalGasPredicted} m3',
-                        textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.white),
-                      ),
-                    ),
+                  ListTile(
+                    title: Text(
+                        'Total gas predicted: ${house.totalGasPredicted} m3'),
                   )
                 ],
               ),
@@ -208,6 +178,12 @@ class _HousePageState extends State<HousePage> {
                 thickness: 0.4,
               ),
               const SizedBox(height: 20.0),
+              const Text(
+                'Connected devices',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+              for (Device device in house.devices) drawDevice(device),
+              const SizedBox(height: 80.0),
             ],
           );
         } else if (snapshot.hasError) {
@@ -230,22 +206,21 @@ class _HousePageState extends State<HousePage> {
     );
   }
 
-  Widget drawSensor() {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      elevation: 10.0,
-      child: InkWell(
-        onTap: () {
-          // nothing
-        },
-        child: SizedBox(
-          width: 500.0,
-          child: Column(
-            children: [],
-          ),
+  Widget drawDevice(Device device) {
+    // https://www.youtube.com/watch?v=vRWY-IQAin0
+    List<Sensor> sensors = device.sensors;
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      child: ExpansionTile(
+        title: Text(
+          device.name,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        subtitle: Text('${sensors.length} sensors'),
+        children: [
+          for (Sensor sensor in sensors)
+            ListTile(title: Text(sensor.sensorType))
+        ],
       ),
     );
   }
