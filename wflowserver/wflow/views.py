@@ -17,7 +17,7 @@ from .serializers import HouseSerializer
 from devices.models import Device
 from devices.serializers import DeviceSerializer
 from sensors.models import Sensor, SensorData
-from sensors.serializers import SensorDataSerializer
+from sensors.serializers import SensorDataSerializer, SensorSerializer
 
 
 class CreateHouseAPIView(CreateAPIView):
@@ -204,7 +204,8 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
 
         for index, device in enumerate(devices):
             sensors = Sensor.objects.filter(device_id=device)
-            response['devices'][index]['sensors'] = sensors
+            response['devices'][index]['sensors'] = SensorSerializer(
+                sensors, many=True).data
 
         return Response(response)
 
