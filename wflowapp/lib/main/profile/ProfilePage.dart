@@ -162,31 +162,66 @@ class _ProfilePageState extends State<ProfilePage> {
                     items: const [
                       DropdownMenuItem(
                         value: 'NON',
-                        child: Text('None'),
+                        child: Text(
+                          'None',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'EMP',
-                        child: Text('Employee'),
+                        child: Text(
+                          'Employee',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'UNE',
-                        child: Text('Unemployed'),
+                        child: Text(
+                          'Unemployed',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'STU',
-                        child: Text('Student'),
+                        child: Text(
+                          'Student',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'RET',
-                        child: Text('Retired'),
+                        child: Text(
+                          'Retired',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'ENT',
-                        child: Text('Entepreneur'),
+                        child: Text(
+                          'Entepreneur',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'FRE',
-                        child: Text('Freelancer'),
+                        child: Text(
+                          'Freelancer',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ],
                     value: occupation,
@@ -208,23 +243,48 @@ class _ProfilePageState extends State<ProfilePage> {
                     items: const [
                       DropdownMenuItem(
                         value: 'NON',
-                        child: Text('None'),
+                        child: Text(
+                          'None',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'SIN',
-                        child: Text('Single'),
+                        child: Text(
+                          'Single',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'REL',
-                        child: Text('In a relationship'),
+                        child: Text(
+                          'In a relationship',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'ENG',
-                        child: Text('Engaged'),
+                        child: Text(
+                          'Engaged',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       DropdownMenuItem(
                         value: 'MAR',
-                        child: Text('Married'),
+                        child: Text(
+                          'Married',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                     ],
                     value: status,
@@ -246,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     items: familyMembersItems,
                     value: family_members.toString(),
                     onChanged: dropDownCallbackFamilyMembers,
-                    style: const TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18, color: Colors.black),
                   )
                 ],
               ),

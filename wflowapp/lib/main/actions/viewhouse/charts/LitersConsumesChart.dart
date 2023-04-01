@@ -15,10 +15,10 @@ class LitersConsumesChart extends StatelessWidget {
     // TODO: replace this
     final _random = new Random();
     final List<FlSpot> data = [];
-    double maxY = 0;
-    for (double i = 0; i < 30; i++) {
-      double random = _random.nextInt(20) as double;
-      data.add(FlSpot(i, random));
+    dynamic maxY = 0;
+    for (int i = 0; i < 30; i++) {
+      double random = _random.nextDouble() * 20;
+      data.add(FlSpot(i.toDouble(), random));
       if (random > maxY) {
         maxY = random;
       }
@@ -80,7 +80,7 @@ class LitersConsumesChart extends StatelessWidget {
   List<LineTooltipItem> tooltipWidgets(List<LineBarSpot> lineBarsSpot) {
     return lineBarsSpot.map((lineBarSpot) {
       return LineTooltipItem(
-        "${lineBarSpot.y} L\n${consumes.elementAt(lineBarSpot.x as int).x}",
+        "${lineBarSpot.y.toStringAsFixed(2)} L\n${consumes.elementAt(lineBarSpot.x.round()).x}",
         const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -120,7 +120,8 @@ class LitersConsumesChart extends StatelessWidget {
       color: Colors.grey,
       fontSize: 10,
     );
-    Widget text = Text(value.toString(), style: style);
+
+    Widget text = Text(value.round().toString(), style: style);
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: text,
@@ -136,15 +137,15 @@ class LitersConsumesChart extends StatelessWidget {
     );
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget bottomTitleWidgets(dynamic value, TitleMeta meta) {
     const style = TextStyle(
       color: Colors.grey,
       fontSize: 12,
     );
     Widget text;
-    if (value.toInt() < this.consumes.length) {
-      LitersConsumed day = this.consumes.elementAt(value.toInt());
-      String date = day.x.split("/")[0] + "/" + day.x.split("/")[1];
+    if (value.toInt() < consumes.length) {
+      LitersConsumed day = consumes.elementAt(value.toInt());
+      String date = "${day.x.split("/")[0]}/${day.x.split("/")[1]}";
       text = Text(date, style: style);
     } else {
       text = const Text('', style: style);

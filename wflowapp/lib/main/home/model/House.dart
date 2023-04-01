@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class House {
   final int house_id;
   final int user_id;
-  final double total_liters;
-  final double total_gas;
-  final double future_total_liters;
-  final double future_total_gas;
+  final dynamic total_liters;
+  final dynamic total_gas;
+  final dynamic future_total_liters;
+  final dynamic future_total_gas;
   final String name;
   final String address;
   final String city;

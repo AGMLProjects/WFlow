@@ -143,35 +143,75 @@ class _EditHousePageState extends State<EditHousePage> {
                   items: const [
                     DropdownMenuItem(
                       value: 'APA',
-                      child: Text('Apartment'),
+                      child: Text(
+                        'Apartment',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'SFH',
-                      child: Text('Single-Family House'),
+                      child: Text(
+                        'Single-Family House',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'SDH',
-                      child: Text('Semi-Detached House'),
+                      child: Text(
+                        'Semi-Detached House',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'MFH',
-                      child: Text('Multifamily House'),
+                      child: Text(
+                        'Multifamily House',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'CON',
-                      child: Text('Condominium'),
+                      child: Text(
+                        'Condominium',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'COP',
-                      child: Text('Co-Op'),
+                      child: Text(
+                        'Co-Op',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'TIN',
-                      child: Text('Tiny House'),
+                      child: Text(
+                        'Tiny House',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem(
                       value: 'MAN',
-                      child: Text('Manufactured Home'),
+                      child: Text(
+                        'Manufactured Home',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ],
                   value: houseType,

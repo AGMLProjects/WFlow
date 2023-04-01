@@ -75,6 +75,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
           text: const TextSpan(
             style: TextStyle(
               fontSize: 16.0,
+              color: Colors.black,
             ),
             children: <TextSpan>[
               TextSpan(text: '1 • Every house is paired to one or more '),
@@ -90,6 +91,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
           text: const TextSpan(
             style: TextStyle(
               fontSize: 16.0,
+              color: Colors.black,
             ),
             children: <TextSpan>[
               TextSpan(text: '2 • You will find a '),
@@ -109,6 +111,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
           text: const TextSpan(
             style: TextStyle(
               fontSize: 16.0,
+              color: Colors.black,
             ),
             children: <TextSpan>[
               TextSpan(text: '3 • Click on the '),

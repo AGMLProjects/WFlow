@@ -9,11 +9,11 @@ class House {
   final String location;
   final List<LitersConsumed> litersConsumes;
   final List<LitersConsumedWeekly> weeklyLitersConsumes;
-  final double totalLitersConsumed;
-  final double totalLitersPredicted;
+  final dynamic totalLitersConsumed;
+  final dynamic totalLitersPredicted;
   final List<GasConsumed> gasConsumes;
-  final double totalGasConsumed;
-  final double totalGasPredicted;
+  final dynamic totalGasConsumed;
+  final dynamic totalGasPredicted;
   final List<Device> devices;
 
   House({
