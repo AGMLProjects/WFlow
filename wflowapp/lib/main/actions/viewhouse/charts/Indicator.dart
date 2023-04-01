@@ -6,7 +6,7 @@ class Indicator extends StatelessWidget {
     required this.color,
     required this.text,
     required this.isSquare,
-    this.size = 16,
+    this.size = 14,
     this.textColor = const Color(0xff505050),
   });
   final Color color;
@@ -33,8 +33,8 @@ class Indicator extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
             color: textColor,
           ),
         )

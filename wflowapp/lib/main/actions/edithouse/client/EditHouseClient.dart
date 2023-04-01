@@ -17,11 +17,7 @@ class EditHouseClient {
       'name': name,
       'city': city,
       'address': address,
-      'house_type': type,
-      'total_liters': 0.0,
-      'total_gas': 0.0,
-      'future_total_liters': 0.0,
-      'future_total_gas': 0.0
+      'house_type': type
     });
     log(name: 'HTTP', 'Calling $path');
     log(name: 'HTTP', 'Body: $body');

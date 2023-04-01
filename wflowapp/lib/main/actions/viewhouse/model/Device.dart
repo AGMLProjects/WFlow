@@ -14,10 +14,7 @@ class Device {
   });
 
   factory Device.fromJson(Map<String, dynamic> json) {
-    List<Sensor> sensors = [
-      Sensor(sensorId: 1, sensorType: "TYPE1"),
-      Sensor(sensorId: 2, sensorType: "TYPE2")
-    ];
+    List<Sensor> sensors = List.empty();
     if (json['sensors'] != null) {
       var sensorsList = json['sensors'] as List;
       sensors = sensorsList.map((item) => Sensor.fromJson(item)).toList();

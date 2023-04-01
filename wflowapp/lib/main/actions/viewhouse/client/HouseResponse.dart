@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
 
 class HouseResponse {

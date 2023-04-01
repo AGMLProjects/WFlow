@@ -13,10 +13,6 @@ class EditHouseResponse {
     House house = House(
         house_id: dhouse['house_id'],
         user_id: dhouse['user_id'],
-        total_liters: dhouse['total_liters'],
-        total_gas: dhouse['total_gas'],
-        future_total_liters: dhouse['future_total_liters'],
-        future_total_gas: dhouse['future_total_gas'],
         name: dhouse['name'],
         address: dhouse['address'],
         city: dhouse['city'],

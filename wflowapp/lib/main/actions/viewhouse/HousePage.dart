@@ -2,15 +2,14 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wflowapp/main/actions/viewhouse/MenuItems.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/Indicator.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesBarChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesChart.dart';
-import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Device.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Sensor.dart';
 
 import '../../../config/AppConfig.dart';
@@ -55,12 +54,14 @@ class _HousePageState extends State<HousePage> {
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    id = arg['id'];
-    name = arg['name'];
-    city = arg['city'];
-    address = arg['address'];
-    type = arg['type'];
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arg = ModalRoute.of(context)!.settings.arguments as Map;
+      id = arg['id'];
+      name = arg['name'];
+      city = arg['city'];
+      address = arg['address'];
+      type = arg['type'];
+    }
 
     return Scaffold(
       appBar: drawAppBar(),
@@ -71,31 +72,24 @@ class _HousePageState extends State<HousePage> {
 
   AppBar drawAppBar() {
     return AppBar(title: Text(name), actions: <Widget>[
-      IconButton(
-        icon: const Icon(
-          Icons.edit,
-          color: Colors.white,
-          size: 20.0,
-        ),
-        onPressed: () {
-          Navigator.pushNamed(context, '/editHouse', arguments: {
-            'id': id,
-            'name': name,
-            'city': city,
-            'address': address,
-            'type': type
-          });
-        },
-      ),
       PopupMenuButton(
         tooltip: 'Menu',
         onSelected: (value) {
           if (value == MenuItems.ACTIONS) {
             // do something
+          } else if (value == MenuItems.EDIT) {
+            Navigator.pushNamed(context, '/editHouse', arguments: {
+              'id': id,
+              'name': name,
+              'city': city,
+              'address': address,
+              'type': type
+            });
           }
         },
         itemBuilder: (context) => [
           const PopupMenuItem(value: MenuItems.ACTIONS, child: Text('Actions')),
+          const PopupMenuItem(value: MenuItems.EDIT, child: Text('Edit house')),
         ],
       )
     ]);
@@ -120,79 +114,106 @@ class _HousePageState extends State<HousePage> {
             return const SizedBox.shrink();
           }
           House house = snapshot.data!.house;
-          return Column(
-            children: [
-              const Text(
-                'Water consumes',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              LitersConsumesChart(consumes: house.litersConsumes),
-              const SizedBox(height: 10.0),
-              ExpansionTile(
-                title: const Text(
-                  'Statistics',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                children: [
-                  ListTile(
-                    title: Text(
-                        'Total liters consumed: ${house.totalLitersConsumed} L'),
-                  ),
-                  ListTile(
-                    title: Text(
-                        'Total liters predicted: ${house.totalLitersPredicted} L'),
-                  )
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              const Divider(
-                color: Colors.black,
-                thickness: 0.4,
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'Gas consumes',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              GasConsumesChart(consumes: house.gasConsumes),
-              const SizedBox(height: 10.0),
-              ExpansionTile(
-                title: const Text(
-                  'Statistics',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                children: [
-                  ListTile(
-                    title: Text(
-                        'Total gas consumed: ${house.totalGasConsumed} m3'),
-                  ),
-                  ListTile(
-                    title: Text(
-                        'Total gas predicted: ${house.totalGasPredicted} m3'),
-                  )
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              const Divider(
-                color: Colors.black,
-                thickness: 0.4,
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'Connected devices',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-              for (Device device in house.devices) drawDevice(device),
-              const SizedBox(height: 80.0),
-            ],
-          );
+          return buildFromHouse(house);
         } else if (snapshot.hasError) {
-          log(name: 'DEBUG', 'Request in error');
-          log(name: 'DEBUG', snapshot.error.toString());
+          log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
+          //dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
+          //House house = House.fromJson(json);
+          //return buildFromHouse(house);
           return const SizedBox.shrink();
         }
         return const Center(child: CircularProgressIndicator());
       },
+    );
+  }
+
+  Widget buildFromHouse(House house) {
+    String month =
+        toStringMonth(house.litersConsumes.elementAt(0).x.split("/")[1]);
+    return Column(
+      children: [
+        Text(
+          'Water consumes ($month)',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        LitersConsumesChart(consumes: house.litersConsumes),
+        const SizedBox(height: 10.0),
+        ExpansionTile(
+          title: const Text(
+            'Statistics',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          children: [
+            ListTile(
+              title:
+                  Text('Total liters consumed: ${house.totalLitersConsumed} L'),
+            ),
+            ListTile(
+              title: Text(
+                  'Total liters predicted: ${house.totalLitersPredicted} L'),
+            )
+          ],
+        ),
+        const SizedBox(height: 20.0),
+        const Divider(color: Colors.black, thickness: 0.4),
+        const SizedBox(height: 20.0),
+        const Text(
+          'This week water consumes',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        LitersConsumesBarChart(consumes: house.weeklyLitersConsumes),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Column(
+            children: const [
+              Indicator(
+                  color: Colors.orange,
+                  text: 'Average consumes',
+                  isSquare: true),
+              SizedBox(height: 4.0),
+              Indicator(
+                  color: Colors.cyan,
+                  text: 'Actual consumes (this week)',
+                  isSquare: true),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20.0),
+        const Divider(color: Colors.black, thickness: 0.4),
+        const SizedBox(height: 20.0),
+        Text(
+          'Gas consumes ($month)',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        GasConsumesChart(consumes: house.gasConsumes),
+        const SizedBox(height: 10.0),
+        ExpansionTile(
+          title: const Text(
+            'Statistics',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          children: [
+            ListTile(
+              title: Text('Total gas consumed: ${house.totalGasConsumed} m3'),
+            ),
+            ListTile(
+              title: Text('Total gas predicted: ${house.totalGasPredicted} m3'),
+            )
+          ],
+        ),
+        const SizedBox(height: 20.0),
+        const Divider(
+          color: Colors.black,
+          thickness: 0.4,
+        ),
+        const SizedBox(height: 20.0),
+        const Text(
+          'Connected devices',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        for (Device device in house.devices) drawDevice(device),
+        const SizedBox(height: 80.0),
+      ],
     );
   }
 
@@ -219,9 +240,54 @@ class _HousePageState extends State<HousePage> {
         subtitle: Text('${sensors.length} sensors'),
         children: [
           for (Sensor sensor in sensors)
-            ListTile(title: Text(sensor.sensorType))
+            ListTile(title: Text(translateSensor(sensor.sensorType)))
         ],
       ),
     );
+  }
+
+  String translateSensor(String code) {
+    switch (code) {
+      case "FLO":
+        return "Tap sensor";
+      case "HEA":
+        return "Smart heater";
+      case "LEV":
+        return "Flush sensor";
+      default:
+        return "Sensor";
+    }
+  }
+
+  String toStringMonth(String monthStr) {
+    int month = int.parse(monthStr);
+    switch (month) {
+      case 1:
+        return "January";
+      case 2:
+        return "February";
+      case 3:
+        return "March";
+      case 4:
+        return "April";
+      case 5:
+        return "May";
+      case 6:
+        return "June";
+      case 7:
+        return "July";
+      case 8:
+        return "August";
+      case 9:
+        return "September";
+      case 10:
+        return "October";
+      case 11:
+        return "November";
+      case 12:
+        return "December";
+      default:
+        return "";
+    }
   }
 }

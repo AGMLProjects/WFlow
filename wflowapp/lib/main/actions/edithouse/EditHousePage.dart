@@ -191,8 +191,9 @@ class _EditHousePageState extends State<EditHousePage> {
                 ElevatedButton(
                   onPressed: () => showColorPickerDialog(),
                   style: ButtonStyle(
-                    shape: MaterialStateProperty.all(CircleBorder()),
-                    padding: MaterialStateProperty.all(EdgeInsets.all(16.0)),
+                    shape: MaterialStateProperty.all(const CircleBorder()),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(16.0)),
                     backgroundColor: MaterialStateProperty.all(houseColor),
                   ),
                   child: const Padding(
@@ -207,7 +208,7 @@ class _EditHousePageState extends State<EditHousePage> {
               children: [
                 ElevatedButton(
                   onPressed: () => performRequest(),
-                  style: ElevatedButton.styleFrom(shape: StadiumBorder()),
+                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
                   child: const Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Text(

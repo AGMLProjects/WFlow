@@ -59,7 +59,7 @@ class HouseWidget extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [house.color!, Colors.white],
+                      colors: [house.color!, house.color!],
                     )),
                 padding: const EdgeInsets.all(18),
                 child: Row(
