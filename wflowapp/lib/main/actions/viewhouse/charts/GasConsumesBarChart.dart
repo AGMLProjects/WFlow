@@ -2,8 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/WeeklyConsume.dart';
 
-class LitersConsumesBarChart extends StatelessWidget {
-  const LitersConsumesBarChart({super.key, required this.consumes});
+class GasConsumesBarChart extends StatelessWidget {
+  const GasConsumesBarChart({super.key, required this.consumes});
 
   final List<WeeklyConsume> consumes;
 
@@ -86,7 +86,7 @@ class LitersConsumesBarChart extends StatelessWidget {
         tooltipBgColor: Colors.blueGrey,
         getTooltipItem: (group, groupIndex, rod, rodIndex) {
           return BarTooltipItem(
-            '${rod.toY - 1} L',
+            '${rod.toY - 1} m3',
             const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

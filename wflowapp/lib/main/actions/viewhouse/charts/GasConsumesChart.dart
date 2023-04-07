@@ -63,9 +63,9 @@ class GasConsumesChart extends StatelessWidget {
     bool predicted = consumes.elementAt(index).predicted;
     Color color;
     if (predicted == false) {
-      color = AppConfig.getDefaultColor();
+      color = Colors.cyan;
     } else {
-      color = Colors.grey;
+      color = const Color.fromARGB(255, 176, 119, 252);
     }
 
     return FlDotCirclePainter(radius: 4, color: color);

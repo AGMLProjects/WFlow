@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:wflowapp/main/actions/viewhouse/MenuItems.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesBarChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/Indicator.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesBarChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
@@ -137,10 +138,24 @@ class _HousePageState extends State<HousePage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         LitersConsumesChart(consumes: house.litersConsumes),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
+          child: Column(
+            children: const [
+              Indicator(
+                  color: Colors.cyan, text: 'Real consumes', isSquare: true),
+              SizedBox(height: 4.0),
+              Indicator(
+                  color: Color.fromARGB(255, 176, 119, 252),
+                  text: 'Predicted consumes',
+                  isSquare: true),
+            ],
+          ),
+        ),
         const SizedBox(height: 10.0),
         ExpansionTile(
           title: const Text(
-            'Statistics',
+            'Other statistics',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           children: [
@@ -186,10 +201,24 @@ class _HousePageState extends State<HousePage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         GasConsumesChart(consumes: house.gasConsumes),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
+          child: Column(
+            children: const [
+              Indicator(
+                  color: Colors.cyan, text: 'Real consumes', isSquare: true),
+              SizedBox(height: 4.0),
+              Indicator(
+                  color: Color.fromARGB(255, 176, 119, 252),
+                  text: 'Predicted consumes',
+                  isSquare: true),
+            ],
+          ),
+        ),
         const SizedBox(height: 10.0),
         ExpansionTile(
           title: const Text(
-            'Statistics',
+            'Other statistics',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           children: [
@@ -202,10 +231,31 @@ class _HousePageState extends State<HousePage> {
           ],
         ),
         const SizedBox(height: 20.0),
-        const Divider(
-          color: Colors.black,
-          thickness: 0.4,
+        const Divider(color: Colors.black, thickness: 0.4),
+        const SizedBox(height: 20.0),
+        const Text(
+          'This week gas consumes',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+        GasConsumesBarChart(consumes: house.weeklyGasConsumes),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: Column(
+            children: const [
+              Indicator(
+                  color: Colors.orange,
+                  text: 'Average consumes',
+                  isSquare: true),
+              SizedBox(height: 4.0),
+              Indicator(
+                  color: Colors.cyan,
+                  text: 'Actual consumes (this week)',
+                  isSquare: true),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20.0),
+        const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
         const Text(
           'Connected devices',
