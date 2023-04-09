@@ -1,4 +1,5 @@
 import 'package:wflowapp/main/actions/viewhouse/model/Device.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/Event.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/GasConsumed.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/WeeklyConsume.dart';
@@ -15,6 +16,7 @@ class House {
   final List<WeeklyConsume> weeklyGasConsumes;
   final dynamic totalGasConsumed;
   final dynamic totalGasPredicted;
+  final List<Event> recentEvents;
   final List<Device> devices;
 
   House({
@@ -29,6 +31,7 @@ class House {
     required this.weeklyGasConsumes,
     required this.totalGasConsumed,
     required this.totalGasPredicted,
+    required this.recentEvents,
     required this.devices,
   });
 
@@ -74,6 +77,25 @@ class House {
       weeklyGasConsumes.add(WeeklyConsume(avg: 14, current: 11));
     }
 
+    List<Event> recentEvents = [];
+    if (json['recentEvents'] != null) {
+      var recentEventsList = json['recentEvents'] as List;
+      recentEvents =
+          recentEventsList.map((item) => Event.fromJson(item)).toList();
+    } else {
+      recentEvents.add(Event(
+          description: 'description1 of event 1', timestamp: '202304101040'));
+      recentEvents.add(Event(
+          description: 'description2 of event 2', timestamp: '202304101039'));
+      recentEvents.add(Event(
+          description: 'description3 asdfghjklò', timestamp: '202304101038'));
+      recentEvents.add(
+          Event(description: 'description4 aaa', timestamp: '202304101037'));
+      recentEvents.add(Event(
+          description: 'description5 water consuption',
+          timestamp: '202304101036'));
+    }
+
     List<Device> devices = List.empty();
     if (json['devices'] != null) {
       var devicesList = json['devices'] as List;
@@ -92,6 +114,7 @@ class House {
       weeklyGasConsumes: weeklyGasConsumes,
       totalGasConsumed: json['total_gas'],
       totalGasPredicted: json['future_total_gas'],
+      recentEvents: recentEvents,
       devices: devices,
     );
   }

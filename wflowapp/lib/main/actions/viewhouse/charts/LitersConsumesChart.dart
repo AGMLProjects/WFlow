@@ -79,10 +79,16 @@ class LitersConsumesChart extends StatelessWidget {
 
   List<LineTooltipItem> tooltipWidgets(List<LineBarSpot> lineBarsSpot) {
     return lineBarsSpot.map((lineBarSpot) {
+      Color color;
+      if (consumes.elementAt(lineBarSpot.x.round()).predicted) {
+        color = Colors.white;
+      } else {
+        color = Colors.cyan;
+      }
       return LineTooltipItem(
         "${lineBarSpot.y.toStringAsFixed(2)} L\n${consumes.elementAt(lineBarSpot.x.round()).x}",
-        const TextStyle(
-          color: Colors.white,
+        TextStyle(
+          color: color,
           fontWeight: FontWeight.bold,
         ),
       );

@@ -10,6 +10,7 @@ import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart'
 import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Device.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/Event.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Sensor.dart';
 
@@ -138,10 +139,10 @@ class _HousePageState extends State<HousePage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         LitersConsumesChart(consumes: house.litersConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 20),
+        const Padding(
+          padding: EdgeInsets.only(left: 20, top: 20),
           child: Column(
-            children: const [
+            children: [
               Indicator(
                   color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
@@ -177,10 +178,10 @@ class _HousePageState extends State<HousePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         LitersConsumesBarChart(consumes: house.weeklyLitersConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
+        const Padding(
+          padding: EdgeInsets.only(left: 20),
           child: Column(
-            children: const [
+            children: [
               Indicator(
                   color: Colors.orange,
                   text: 'Average consumes',
@@ -201,10 +202,10 @@ class _HousePageState extends State<HousePage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         GasConsumesChart(consumes: house.gasConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 20),
+        const Padding(
+          padding: EdgeInsets.only(left: 20, top: 20),
           child: Column(
-            children: const [
+            children: [
               Indicator(
                   color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
@@ -238,10 +239,10 @@ class _HousePageState extends State<HousePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         GasConsumesBarChart(consumes: house.weeklyGasConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
+        const Padding(
+          padding: EdgeInsets.only(left: 20),
           child: Column(
-            children: const [
+            children: [
               Indicator(
                   color: Colors.orange,
                   text: 'Average consumes',
@@ -262,7 +263,27 @@ class _HousePageState extends State<HousePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         for (Device device in house.devices) drawDevice(device),
-        const SizedBox(height: 80.0),
+        const SizedBox(height: 20.0),
+        const Divider(color: Colors.black, thickness: 0.4),
+        const SizedBox(height: 20.0),
+        const Text(
+          'Recent events',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        SizedBox(height: 20.0),
+        Container(
+          height: 200.0,
+          child: ListView.builder(
+            itemCount: house.recentEvents.length,
+            itemBuilder: (context, index) {
+              final Event event = house.recentEvents[index];
+              return ListTile(
+                title: Text('${event.description}'),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 120.0),
       ],
     );
   }

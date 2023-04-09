@@ -2,10 +2,27 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/WeeklyConsume.dart';
 
-class LitersConsumesBarChart extends StatelessWidget {
+class LitersConsumesBarChart extends StatefulWidget {
   const LitersConsumesBarChart({super.key, required this.consumes});
 
   final List<WeeklyConsume> consumes;
+
+  @override
+  _LitersConsumesBarChartState createState() =>
+      _LitersConsumesBarChartState(consumes: consumes);
+}
+
+class _LitersConsumesBarChartState extends State<LitersConsumesBarChart> {
+  _LitersConsumesBarChartState({required this.consumes});
+
+  final List<WeeklyConsume> consumes;
+  late int showingTooltip;
+
+  @override
+  void initState() {
+    showingTooltip = -1;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +39,7 @@ class LitersConsumesBarChart extends StatelessWidget {
         maxY = current;
       }
     }
+
     return Container(
       width: double.infinity,
       height: 250,
@@ -85,10 +103,16 @@ class LitersConsumesBarChart extends StatelessWidget {
       touchTooltipData: BarTouchTooltipData(
         tooltipBgColor: Colors.blueGrey,
         getTooltipItem: (group, groupIndex, rod, rodIndex) {
+          Color color;
+          if (rodIndex % 2 == 0) {
+            color = Colors.orange;
+          } else {
+            color = Colors.cyan;
+          }
           return BarTooltipItem(
             '${rod.toY - 1} L',
-            const TextStyle(
-              color: Colors.white,
+            TextStyle(
+              color: color,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
