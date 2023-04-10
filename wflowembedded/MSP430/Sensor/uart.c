@@ -2,21 +2,21 @@
 
 #include "uart.h"
 
-const USCI_A_UART_initParam param = {
-     USCI_A_UART_CLOCKSOURCE_SMCLK,
-     UCS_getSMCLK(UCS_BASE),
-     BAUDRATE,
-     USCI_A_UART_NO_PARITY,
-     USCI_A_UART_LSB_FIRST,
-     USCI_A_UART_ONE_STOP_BIT,
-     USCI_A_UART_MODE,
-     USCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION
-};
-
 static UartState state;
+static USCI_A_UART_initParam param = {0};
 
 bool init_uart_interface()
 {
+    param.clockPrescalar = UCS_getSMCLK() / BAUDRATE;
+    param.selectClockSource = USCI_A_UART_CLOCKSOURCE_SMCLK;
+    param.firstModReg = 0;
+    param.secondModReg = 0;
+    param.msborLsbFirst = USCI_A_UART_LSB_FIRST;
+    param.numberofStopBits = USCI_A_UART_ONE_STOP_BIT;
+    param.parity = USCI_A_UART_NO_PARITY;
+    param.uartMode = USCI_A_UART_MODE;
+    param.overSampling = USCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION;
+
     // Initialize the UART module with proper settings
     if (STATUS_FAIL == USCI_A_UART_init(USCI_A0_BASE, &param))
     {
@@ -37,13 +37,15 @@ bool init_uart_interface()
 
 void send_uart_data(uint8_t *message, uint8_t len)
 {
-    for(uint8_t index = 0; index < len; index = index + 1)
+    uint8_t index;
+
+    for(index = 0; index < len; index = index + 1)
     {
         // Wait the TX buffer to be ready
-        while (!USCI_A_UART_interruptStatus(USCI_A0_BASE, UCTXIFG));
+        while (!USCI_A_UART_getInterruptStatus(USCI_A0_BASE, UCTXIFG));
 
         // Send one byte
-        USCI_A_transmitData(USCI_A0_BASE, message[index]);
+        USCI_A_UART_transmitData(USCI_A0_BASE, message[index]);
     }
 
     return;
