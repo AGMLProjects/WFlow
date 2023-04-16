@@ -13,4 +13,12 @@
 #define MIN_WATER_FLUX              1           // Liter/Minute
 #define MAX_WATER_FLUX              30
 
+// Led used to signal errors or other problems
+#define EMERGENCY_LED_PIN           GPIO_PIN0
+#define EMERGENCY_LED_PORT          GPIO_PORT_P1
+
+// Water flow sensor
+#define WFS_INTERRUPT_PIN           GPIO_PIN1
+#define WFS_INTERRUPT_PORT          GPIO_PORT_P2
+
 #endif /* CONSTANTS_H_ */
