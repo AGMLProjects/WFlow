@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/profile/client/ProfileResponse.dart';
 
 class ProfileClient {
@@ -32,13 +33,15 @@ class ProfileClient {
       String city,
       String occupation,
       String status,
-      int family_members) async {
+      int family_members,
+      String invoice_client_code) async {
     Map<String, dynamic> map = {
       'email': email,
       'first_name': first_name,
       'last_name': last_name,
       'city': city,
-      'family_members': family_members
+      'family_members': family_members,
+      //'invoice_client_code': invoice_client_code
     };
     if (date_of_birth.isNotEmpty) {
       map['date_of_birth'] = date_of_birth;
@@ -54,6 +57,11 @@ class ProfileClient {
       map['status'] = status;
     } else {
       map['status'] = null;
+    }
+    if (AppConfig.getSendPersonalData() == true) {
+      map['send_data'] = true;
+    } else {
+      map['send_data'] = false;
     }
 
     String body = jsonEncode(map);

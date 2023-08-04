@@ -49,7 +49,23 @@ class _SettingsPageState extends State<SettingsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('SendData'),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Personal data',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(height: 8),
+                        SizedBox(
+                          width: 350,
+                          child: Text(
+                              'If you allow that, the application will collect some of your personal data. Your personal informations like name, surname and email will remain anonymous. Data on consumptions will be collected.'),
+                        )
+                      ],
+                    ),
                     Switch(
                       value: _sendPersonalData,
                       onChanged: (value) {

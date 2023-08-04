@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -139,10 +138,10 @@ class _HousePageState extends State<HousePage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         LitersConsumesChart(consumes: house.litersConsumes),
-        const Padding(
-          padding: EdgeInsets.only(left: 20, top: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
           child: Column(
-            children: [
+            children: const [
               Indicator(
                   color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
@@ -178,10 +177,10 @@ class _HousePageState extends State<HousePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         LitersConsumesBarChart(consumes: house.weeklyLitersConsumes),
-        const Padding(
-          padding: EdgeInsets.only(left: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
           child: Column(
-            children: [
+            children: const [
               Indicator(
                   color: Colors.orange,
                   text: 'Average consumes',
@@ -202,10 +201,10 @@ class _HousePageState extends State<HousePage> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         GasConsumesChart(consumes: house.gasConsumes),
-        const Padding(
-          padding: EdgeInsets.only(left: 20, top: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
           child: Column(
-            children: [
+            children: const [
               Indicator(
                   color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
@@ -239,10 +238,10 @@ class _HousePageState extends State<HousePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         GasConsumesBarChart(consumes: house.weeklyGasConsumes),
-        const Padding(
-          padding: EdgeInsets.only(left: 20),
+        Padding(
+          padding: const EdgeInsets.only(left: 20),
           child: Column(
-            children: [
+            children: const [
               Indicator(
                   color: Colors.orange,
                   text: 'Average consumes',
@@ -270,7 +269,7 @@ class _HousePageState extends State<HousePage> {
           'Recent events',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Container(
           height: 200.0,
           child: ListView.builder(
