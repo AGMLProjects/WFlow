@@ -46,6 +46,7 @@ dependencies:
   geolocator: ^8.2.0
   geocoding: ^2.0.4
   flutter_colorpicker: ^1.0.3
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:

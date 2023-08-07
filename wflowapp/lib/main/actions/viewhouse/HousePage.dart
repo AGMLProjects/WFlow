@@ -66,7 +66,7 @@ class _HousePageState extends State<HousePage> {
 
     return Scaffold(
       appBar: drawAppBar(),
-      body: drawBody(),
+      body: RefreshIndicator(onRefresh: _pullRefresh, child: drawBody()),
       floatingActionButton: drawFAB(),
     );
   }
@@ -77,7 +77,7 @@ class _HousePageState extends State<HousePage> {
         tooltip: 'Menu',
         onSelected: (value) {
           if (value == MenuItems.ACTIONS) {
-            // do something
+            Navigator.pushNamed(context, '/actions', arguments: {'id': id});
           } else if (value == MenuItems.EDIT) {
             Navigator.pushNamed(context, '/editHouse', arguments: {
               'id': id,
@@ -104,6 +104,20 @@ class _HousePageState extends State<HousePage> {
         child: buildHouseInfo(),
       ),
     );
+  }
+
+  Future<void> _pullRefresh() async {
+    String? token;
+    Future.delayed(Duration.zero, () {
+      token = AppConfig.getUserToken();
+      log(name: 'CONFIG', 'Token: ${token!}');
+      log(name: 'CONFIG', 'House ID: $id');
+      color = AppConfig.getHouseColor(id);
+      setState(() {
+        houseClient.path = houseClient.path.replaceAll('{id}', id.toString());
+        _futureHouseResponse = houseClient.getHouse(token!);
+      });
+    });
   }
 
   FutureBuilder<HouseResponse> buildHouseInfo() {
@@ -146,7 +160,7 @@ class _HousePageState extends State<HousePage> {
                   color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
               Indicator(
-                  color: Color.fromARGB(255, 176, 119, 252),
+                  color: Color.fromARGB(200, 195, 195, 195),
                   text: 'Predicted consumes',
                   isSquare: true),
             ],
@@ -182,7 +196,7 @@ class _HousePageState extends State<HousePage> {
           child: Column(
             children: const [
               Indicator(
-                  color: Colors.orange,
+                  color: Color.fromARGB(200, 195, 195, 195),
                   text: 'Average consumes',
                   isSquare: true),
               SizedBox(height: 4.0),
@@ -209,7 +223,7 @@ class _HousePageState extends State<HousePage> {
                   color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
               Indicator(
-                  color: Color.fromARGB(255, 176, 119, 252),
+                  color: Color.fromARGB(200, 195, 195, 195),
                   text: 'Predicted consumes',
                   isSquare: true),
             ],
@@ -233,7 +247,7 @@ class _HousePageState extends State<HousePage> {
         const SizedBox(height: 20.0),
         const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
-        const Text(
+        Text(
           'This week gas consumes',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
@@ -243,7 +257,7 @@ class _HousePageState extends State<HousePage> {
           child: Column(
             children: const [
               Indicator(
-                  color: Colors.orange,
+                  color: Color.fromARGB(200, 195, 195, 195),
                   text: 'Average consumes',
                   isSquare: true),
               SizedBox(height: 4.0),
@@ -277,7 +291,7 @@ class _HousePageState extends State<HousePage> {
             itemBuilder: (context, index) {
               final Event event = house.recentEvents[index];
               return ListTile(
-                title: Text('${event.description}'),
+                title: Text('• ${event.description}'),
               );
             },
           ),
@@ -304,13 +318,13 @@ class _HousePageState extends State<HousePage> {
       margin: const EdgeInsets.only(top: 20),
       child: ExpansionTile(
         title: Text(
-          device.name,
+          'Connected to "${device.name}"',
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         subtitle: Text('${sensors.length} sensors'),
         children: [
           for (Sensor sensor in sensors)
-            ListTile(title: Text(translateSensor(sensor.sensorType)))
+            ListTile(title: Text(translateSensor(sensor.type)))
         ],
       ),
     );

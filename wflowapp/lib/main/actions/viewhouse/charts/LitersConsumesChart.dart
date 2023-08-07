@@ -64,7 +64,7 @@ class LitersConsumesChart extends StatelessWidget {
     if (predicted == false) {
       color = Colors.cyan;
     } else {
-      color = const Color.fromARGB(255, 176, 119, 252);
+      color = const Color.fromARGB(200, 195, 195, 195);
     }
 
     return FlDotCirclePainter(radius: 4, color: color);

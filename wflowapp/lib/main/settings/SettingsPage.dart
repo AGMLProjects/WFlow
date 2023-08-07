@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 
+import '../profile/client/ProfileClient.dart';
+import '../profile/client/ProfileResponse.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -12,6 +15,9 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _sendPersonalData = false;
+
+  final ProfileClient profileClient = ProfileClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getUsersPath());
 
   @override
   void initState() {
@@ -49,10 +55,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Personal data',
                           style: TextStyle(
@@ -60,7 +66,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         SizedBox(height: 8),
                         SizedBox(
-                          width: 350,
+                          width: 280,
                           child: Text(
                               'If you allow that, the application will collect some of your personal data. Your personal informations like name, surname and email will remain anonymous. Data on consumptions will be collected.'),
                         )
@@ -72,6 +78,22 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() {
                           _sendPersonalData = value;
                           AppConfig.setSendPersonalData(_sendPersonalData);
+                          Future<ProfileResponse>? _futureProfileResponsePut;
+                          Future<ProfileResponse>? profileResponse =
+                              profileClient
+                                  .getUserInfo(AppConfig.getUserToken()!);
+                          profileResponse.then((result) {
+                            profileClient.setUserInfo(
+                                AppConfig.getUserToken()!,
+                                result.email,
+                                result.first_name,
+                                result.last_name,
+                                result.date_of_birth,
+                                result.city,
+                                result.occupation,
+                                result.status,
+                                result.family_members);
+                          });
                         });
                         _toggleSwitch(value);
                       },

@@ -33,15 +33,13 @@ class ProfileClient {
       String city,
       String occupation,
       String status,
-      int family_members,
-      String invoice_client_code) async {
+      int family_members) async {
     Map<String, dynamic> map = {
       'email': email,
       'first_name': first_name,
       'last_name': last_name,
       'city': city,
       'family_members': family_members,
-      //'invoice_client_code': invoice_client_code
     };
     if (date_of_birth.isNotEmpty) {
       map['date_of_birth'] = date_of_birth;
@@ -59,9 +57,9 @@ class ProfileClient {
       map['status'] = null;
     }
     if (AppConfig.getSendPersonalData() == true) {
-      map['send_data'] = true;
+      map['personal_data'] = true;
     } else {
-      map['send_data'] = false;
+      map['personal_data'] = false;
     }
 
     String body = jsonEncode(map);

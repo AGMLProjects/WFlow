@@ -18,7 +18,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final lastNameController = TextEditingController();
   final dateOfBirthController = TextEditingController();
   final cityController = TextEditingController();
-  final invoiceClientCodeController = TextEditingController();
   String? occupation;
   String? status;
   int? family_members;
@@ -76,7 +75,6 @@ class _ProfilePageState extends State<ProfilePage> {
           lastNameController.text = snapshot.data!.last_name;
           dateOfBirthController.text = snapshot.data!.date_of_birth;
           cityController.text = snapshot.data!.city;
-          //invoiceClientCodeController.text = snapshot.data!.invoice_client_code;
 
           if (snapshot.data!.occupation.isEmpty) {
             occupation ??= 'NON';
@@ -312,15 +310,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   )
                 ],
               ),
-              SizedBox(height: spaceBetween),
-              TextField(
-                enabled: true,
-                controller: invoiceClientCodeController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Invoices client code",
-                ),
-              ),
               SizedBox(height: spaceBetween * 2),
               buildSaveButton()
             ],
@@ -374,7 +363,6 @@ class _ProfilePageState extends State<ProfilePage> {
             String first_name = firstNameController.text;
             String last_name = lastNameController.text;
             String date_of_birth = dateOfBirthController.text;
-            String invoiceClientCode = invoiceClientCodeController.text;
             String city = cityController.text;
             String? key = AppConfig.getUserToken();
             log(name: 'CONFIG', 'Read user key from config: ${key!}');
@@ -387,14 +375,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 city,
                 occupation!,
                 status!,
-                family_members!,
-                invoiceClientCode);
+                family_members!);
             emailController.text = email;
             firstNameController.text = first_name;
             lastNameController.text = last_name;
             dateOfBirthController.text = date_of_birth;
             cityController.text = city;
-            invoiceClientCodeController.text = invoiceClientCode;
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
                 "Successfully saved user information",

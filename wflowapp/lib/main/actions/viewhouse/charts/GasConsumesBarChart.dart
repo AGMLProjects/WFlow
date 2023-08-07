@@ -86,7 +86,7 @@ class _GasConsumesBarChartState extends State<GasConsumesBarChart> {
       barRods: [
         BarChartRodData(
           toY: avg,
-          color: Colors.orange,
+          color: Color.fromARGB(200, 195, 195, 195),
           width: 12,
         ),
         BarChartRodData(
@@ -105,7 +105,7 @@ class _GasConsumesBarChartState extends State<GasConsumesBarChart> {
         getTooltipItem: (group, groupIndex, rod, rodIndex) {
           Color color;
           if (rodIndex % 2 == 0) {
-            color = Colors.orange;
+            color = Color.fromARGB(200, 195, 195, 195);
           } else {
             color = Colors.cyan;
           }

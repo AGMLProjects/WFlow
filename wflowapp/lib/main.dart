@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
+import 'package:wflowapp/main/actions/actuator/ActionsPage.dart';
 import 'package:wflowapp/main/actions/adddevice/AddDevicePage.dart';
 import 'package:wflowapp/main/actions/adddevice/FinishAddDevicePage.dart';
 import 'package:wflowapp/main/actions/adddevice/ScannerPage.dart';
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
         '/scan': (context) => const ScannerPage(),
         '/finishAddDevice': (context) => const FinishAddDevicePage(),
         '/house': (context) => const HousePage(),
-        '/editHouse': (context) => const EditHousePage()
+        '/editHouse': (context) => const EditHousePage(),
+        '/actions': (context) => const ActionsPage()
       },
     );
   }
