@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -23,9 +26,11 @@ class _EditHousePageState extends State<EditHousePage> {
   String address = '';
   String houseType = '';
 
+  String _selectedRegion = '';
+  List<String> cities = [];
+  String _selectedCity = '';
+
   Color houseColor = AppConfig.getDefaultColor();
-  String? _currentAddress;
-  Position? _currentPosition;
   final nameController = TextEditingController();
   final cityController = TextEditingController();
   final addressController = TextEditingController();
@@ -81,197 +86,262 @@ class _EditHousePageState extends State<EditHousePage> {
   }
 
   Widget drawBody() {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Name',
-                  hintText: 'Name'),
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SingleChildScrollView(
+      child: Expanded(
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: cityController,
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'City',
-                        hintText: 'City'),
+                const SizedBox(height: 40),
+                TextField(
+                  enabled: true,
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "House name",
                   ),
                 ),
-                const SizedBox(width: 10.0),
-                ElevatedButton(
-                  onPressed: getCurrentPosition,
-                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                      size: 20.0,
+                const SizedBox(height: 40),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 4, bottom: 4),
+                      child: Text('Country'),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            TextField(
-              controller: addressController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Address',
-                  hintText: 'Address'),
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'House type: ',
-                  style: TextStyle(fontSize: 18.0),
+                DropdownSearch<String>(
+                  mode: Mode.BOTTOM_SHEET,
+                  showSelectedItems: true,
+                  items: const ["Italy"],
+                  showSearchBox: true,
+                  selectedItem: "Italy",
                 ),
-                const SizedBox(width: 10.0),
-                DropdownButton(
+                const SizedBox(height: 20),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 4, bottom: 4),
+                      child: Text('Region'),
+                    ),
+                  ],
+                ),
+                DropdownSearch<String>(
+                  mode: Mode.BOTTOM_SHEET,
+                  showSelectedItems: true,
                   items: const [
-                    DropdownMenuItem(
-                      value: 'APA',
-                      child: Text(
-                        'Apartment',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
+                    "Lombardia",
+                    "Lazio",
+                    "Campania",
+                    "Veneto",
+                    "Sicilia",
+                    "Emilia-Romagna",
+                    "Piemonte",
+                    "Puglia",
+                    "Toscana",
+                    "Calabria",
+                    "Sardegna",
+                    "Liguria",
+                    "Marche",
+                    "Abruzzo",
+                    "Friuli-Venezia Giulia",
+                    "Trentino-Alto Adige",
+                    "Umbria",
+                    "Basilicata",
+                    "Molise",
+                    "Valle d'Aosta"
+                  ],
+                  showSearchBox: true,
+                  showClearButton: true,
+                  onChanged: (value) async {
+                    if (_selectedRegion.toUpperCase() != value!.toUpperCase()) {
+                      setState(() {
+                        _selectedCity = '';
+                      });
+                    }
+                    _selectedRegion = value.toUpperCase();
+                    var data =
+                        await rootBundle.loadString('assets/locations.json');
+                    final citiesInJson = json.decode(data);
+                    log('Selected region: $_selectedRegion');
+                    setState(() {
+                      cities = List<String>.from(
+                          citiesInJson[_selectedRegion] as List);
+                    });
+                    log('Selected city: $_selectedCity');
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 4, bottom: 4),
+                      child: Text('City (comune)'),
                     ),
-                    DropdownMenuItem(
-                      value: 'SFH',
-                      child: Text(
-                        'Single-Family House',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
+                  ],
+                ),
+                DropdownSearch<String>(
+                  selectedItem: _selectedCity,
+                  mode: Mode.BOTTOM_SHEET,
+                  items: cities,
+                  showSearchBox: true,
+                  showClearButton: true,
+                  filterFn: (item, filter) {
+                    return item!
+                        .toUpperCase()
+                        .startsWith(filter!.toUpperCase());
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'House type: ',
+                      style: TextStyle(fontSize: 18.0),
                     ),
-                    DropdownMenuItem(
-                      value: 'SDH',
-                      child: Text(
-                        'Semi-Detached House',
-                        style: TextStyle(
-                          color: Colors.black,
+                    const SizedBox(width: 10.0),
+                    DropdownButton(
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'APA',
+                          child: Text(
+                            'Apartment',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                      ),
+                        DropdownMenuItem(
+                          value: 'SFH',
+                          child: Text(
+                            'Single-Family House',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'SDH',
+                          child: Text(
+                            'Semi-Detached House',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'MFH',
+                          child: Text(
+                            'Multifamily House',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'CON',
+                          child: Text(
+                            'Condominium',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'COP',
+                          child: Text(
+                            'Co-Op',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'TIN',
+                          child: Text(
+                            'Tiny House',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: 'MAN',
+                          child: Text(
+                            'Manufactured Home',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                      value: houseType,
+                      onChanged: dropDownCallback,
+                      style: const TextStyle(fontSize: 18),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Color: ',
+                      style: TextStyle(fontSize: 18.0),
                     ),
-                    DropdownMenuItem(
-                      value: 'MFH',
-                      child: Text(
-                        'Multifamily House',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
+                    ElevatedButton(
+                      onPressed: () => showColorPickerDialog(),
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(const CircleBorder()),
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.all(16.0)),
+                        backgroundColor: MaterialStateProperty.all(houseColor),
                       ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'CON',
-                      child: Text(
-                        'Condominium',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'COP',
-                      child: Text(
-                        'Co-Op',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'TIN',
-                      child: Text(
-                        'Tiny House',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 'MAN',
-                      child: Text(
-                        'Manufactured Home',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
                       ),
                     ),
                   ],
-                  value: houseType,
-                  onChanged: dropDownCallback,
-                  style: const TextStyle(fontSize: 18),
-                )
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Text(
-                  'Color: ',
-                  style: TextStyle(fontSize: 18.0),
                 ),
-                ElevatedButton(
-                  onPressed: () => showColorPickerDialog(),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all(const CircleBorder()),
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(16.0)),
-                    backgroundColor: MaterialStateProperty.all(houseColor),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                  ),
+                const SizedBox(height: 70.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => performRequest(),
+                      style: ElevatedButton.styleFrom(
+                          shape: const StadiumBorder()),
+                      child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            'Done',
+                            style: TextStyle(fontSize: 20.0),
+                          )),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 70.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => performRequest(),
-                  style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
-                  child: const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        'Done',
-                        style: TextStyle(fontSize: 20.0),
-                      )),
+                const SizedBox(height: 20.0),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Delete this house',
+                        style: TextStyle(
+                            fontSize: 14.0,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold))
+                  ],
                 ),
+                const SizedBox(height: 20.0),
+                if (_futureEditHouseResponse != null) drawAddHouseResponse(),
               ],
             ),
-            const SizedBox(height: 20.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text('Delete this house',
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold))
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            if (_futureEditHouseResponse != null) drawAddHouseResponse(),
-          ],
+          ),
         ),
       ),
     );
@@ -357,61 +427,6 @@ class _EditHousePageState extends State<EditHousePage> {
               ],
             );
           });
-    });
-  }
-
-  Future<bool> handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
-      return false;
-    }
-    return true;
-  }
-
-  Future<void> getCurrentPosition() async {
-    final hasPermission = await handleLocationPermission();
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
-      setState(() => _currentPosition = position);
-      getAddressFromLatLng(_currentPosition!);
-    }).catchError((e) {
-      debugPrint(e);
-    });
-  }
-
-  Future<void> getAddressFromLatLng(Position position) async {
-    await placemarkFromCoordinates(
-            _currentPosition!.latitude, _currentPosition!.longitude)
-        .then((List<Placemark> placemarks) {
-      Placemark place = placemarks[0];
-      setState(() {
-        _currentAddress =
-            '${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}, ${place.postalCode}';
-      });
-    }).catchError((e) {
-      debugPrint(e);
     });
   }
 }

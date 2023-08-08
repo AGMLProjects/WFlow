@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/profile/client/ProfileClient.dart';
 import 'package:wflowapp/main/profile/client/ProfileResponse.dart';
@@ -21,6 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String? occupation;
   String? status;
   int? family_members;
+  String _selectedRegion = '';
+  List<String> cities = [];
+  String _selectedCity = '';
 
   final ProfileClient profileClient = ProfileClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getUsersPath());
@@ -93,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           List<DropdownMenuItem<String>> familyMembersItems = [];
-          for (int i = 1; i <= 15; i++) {
+          for (int i = 1; i <= 10; i++) {
             DropdownMenuItem<String> item = DropdownMenuItem(
               value: i.toString(),
               child: Text(i.toString()),
@@ -146,8 +152,100 @@ class _ProfilePageState extends State<ProfilePage> {
                 controller: cityController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: "City",
+                  labelText: "City (TODO: remove)",
                 ),
+              ),
+              SizedBox(height: spaceBetween),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 4),
+                    child: Text('Country'),
+                  ),
+                ],
+              ),
+              DropdownSearch<String>(
+                mode: Mode.BOTTOM_SHEET,
+                showSelectedItems: true,
+                items: const ["Italy"],
+                showSearchBox: true,
+                selectedItem: "Italy",
+              ),
+              SizedBox(height: spaceBetween),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 4),
+                    child: Text('Region'),
+                  ),
+                ],
+              ),
+              DropdownSearch<String>(
+                mode: Mode.BOTTOM_SHEET,
+                showSelectedItems: true,
+                items: const [
+                  "Lombardia",
+                  "Lazio",
+                  "Campania",
+                  "Veneto",
+                  "Sicilia",
+                  "Emilia-Romagna",
+                  "Piemonte",
+                  "Puglia",
+                  "Toscana",
+                  "Calabria",
+                  "Sardegna",
+                  "Liguria",
+                  "Marche",
+                  "Abruzzo",
+                  "Friuli-Venezia Giulia",
+                  "Trentino-Alto Adige",
+                  "Umbria",
+                  "Basilicata",
+                  "Molise",
+                  "Valle d'Aosta"
+                ],
+                showSearchBox: true,
+                showClearButton: true,
+                onChanged: (value) async {
+                  if (_selectedRegion.toUpperCase() != value!.toUpperCase()) {
+                    setState(() {
+                      _selectedCity = '';
+                    });
+                  }
+                  _selectedRegion = value.toUpperCase();
+                  var data =
+                      await rootBundle.loadString('assets/locations.json');
+                  final citiesInJson = json.decode(data);
+                  log('Selected region: $_selectedRegion');
+                  setState(() {
+                    cities = List<String>.from(
+                        citiesInJson[_selectedRegion] as List);
+                  });
+                  log('Selected city: $_selectedCity');
+                },
+              ),
+              SizedBox(height: spaceBetween),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 4, bottom: 4),
+                    child: Text('City (comune)'),
+                  ),
+                ],
+              ),
+              DropdownSearch<String>(
+                selectedItem: _selectedCity,
+                mode: Mode.BOTTOM_SHEET,
+                items: cities,
+                showSearchBox: true,
+                showClearButton: true,
+                filterFn: (item, filter) {
+                  return item!.toUpperCase().startsWith(filter!.toUpperCase());
+                },
               ),
               SizedBox(height: spaceBetween),
               Row(

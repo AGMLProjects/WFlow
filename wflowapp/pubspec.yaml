@@ -47,6 +47,7 @@ dependencies:
   geocoding: ^2.0.4
   flutter_colorpicker: ^1.0.3
   numberpicker: ^2.1.2
+  dropdown_search: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  assets:
+  - assets/locations.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
