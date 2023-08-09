@@ -1,6 +1,6 @@
-import sys, time
-import data, event, diagnostic, server
-from constants import Resources, MainParameters
+import sys, time, json
+import data, event, diagnostic, server, deviceManager
+from constants import Resources, MainParameters, SensorEvents, NotifyActiveSensorRequest
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
 
 _MODULE = "MAIN"
@@ -42,17 +42,13 @@ def init_system_object() -> tuple:
     return eventHandler, dataHandler, logger
 
 if __name__ == "__main__":
-    arguments = len(sys.argv) - 1
-    
-    if arguments > 0:
-        import ptvsd
-        # Allow other computers to attach to ptvsd at this IP address and port.
-        ptvsd.enable_attach(address = ("127.0.0.1", 3001))
-        # Pause the program until a remote debugger is attached
-        ptvsd.wait_for_attach()
 
     eventInterface, dataInterface, logger = init_system_object()
     serverHandler = server.ServerConnector(dataInterface = dataInterface, eventInterface = eventInterface, logger = logger)
+    controlSignals = deviceManager.ControlSignals(dataInterface = dataInterface, eventInterface = eventInterface, logger = logger)
+    serialInterface = deviceManager.SerialInterface(dataInterface = dataInterface, eventInterface = eventInterface, logger = logger)
+
+    sensor_list, actuator_list = dict(), dict()
     
     # Try to authenticate, keep in the loop as long as it's not possible to obtain a valid token
     try:
@@ -67,18 +63,50 @@ if __name__ == "__main__":
         logger.record(msg = "Error occurred while trying to authenticate, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
         sys.exit(1)
 
-    # Scann the sensors connected to the system in order to notify the server
-    # TODO: Trovare i sensori connessi
-    sensor_list = list()
+    # Load the devices' configuration from file
+    try:
+        with open(Resources.DEVICE_FILE, "r") as f:
+            devices_list = json.load(f)
+    except Exception as e:
+        logger.record(msg = "Error occurred while trying to load devices' configuration, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+        sys.exit(1)
+
+    # Register the sensors to the ControlSingals handler
+    for sensor in devices_list["sensors"]:
+        controlSignals.registerSensor(sensor = int(sensor["GPIO"]))
+        
+        if serialInterface.addDevice(id = int(sensor["id"]), port = sensor["port"]) == True:
+           #TODO: Prima di questo bisogna inviare l'ID a questo dispositivo e vedere se risponde OK 
+           sensor_list[sensor["id"]] = sensor["type"]
+
+    #TODO: Fare la stessa cosa con gli attuatori ma solo per la UART visto che non hanno GPIO
 
     # Notify the sensor list to the server
     try:
-        if serverHandler.notifySensors(sensors = sensor_list) is False:
+
+        # Prepare the list as the server want it to be
+        formatted_list = []
+        for sensor in sensor_list:
+            formatted_list.append({NotifyActiveSensorRequest.SENSOR_ID: sensor, NotifyActiveSensorRequest.SENSOR_TYPE: sensor_list[sensor]})
+
+        if serverHandler.notifySensors(sensors = formatted_list) is False:
             logger.record(msg = "Server refused our sensor list, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1)
             sys.exit(1)
     except Exception as e:
         logger.record(msg = "Error occurred while trying to notify the sensor list to the server, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
         sys.exit(1)
 
-    # TODO: Far partire il loop che gestisce la raccolta dati dai sensori
     # TODO: Far partire il loop che riceve i comandi dal server e li inoltra agli attuatori
+
+    # Main messaging loop
+    while True:
+
+        # Wait untill a sensor needs to talk with us
+        try:
+            eventInterface.pend(name = SensorEvents.SENSOR_REQUEST_TO_TALK, timeout = None)
+            eventInterface.clear
+        except Exception as e:
+            logger.record(msg = "The SENSOR_REQUEST_TO_TALK does not exists", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+            sys.exit(1)
+
+        

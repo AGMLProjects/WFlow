@@ -1,7 +1,7 @@
 import requests, json, datetime
 import data, event, diagnostic
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
-from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParameters, ServerParameters
+from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParameters, ServerParameters, SendSensorDataRequest, ServerAPI
 
 SERVER_DEFAULT_PARAM = {
     	ServerParameters.ADDRESS: "https://wflow.online",
@@ -46,7 +46,7 @@ class ServerConnector():
                 DeviceLoginRequest.PASSWORD: self._secret
             }
 
-            result = requests.post(self._address + "/devices/login", json = body)
+            result = requests.post(self._address + ServerAPI.DEVICE_AUTH, json = body)
 
             if result.status_code != 200:
                 self._token = None
@@ -75,7 +75,7 @@ class ServerConnector():
                 NotifyActiveSensorRequest.SENSOR_LIST: sensors
             }
 
-            result = requests.post(self._address + "/devices/sensors/register", json = body, headers = {"Authorization": "Token " + self._token})
+            result = requests.post(self._address + ServerAPI.SENSOR_REGISTER, json = body, headers = {"Authorization": "Token " + self._token})
 
             if result.status_code == 200:
                 return True
@@ -85,3 +85,30 @@ class ServerConnector():
             self._logger.record(msg = "Error while notifying sensors", logLevel = diagnostic.ERROR, module = self._MODULE, code = 2, exc = e)
 
         return False
+
+    def sendSensorData(self, sensor_id: int, start_timestamp: int, end_timestamp: int, payload: dict) -> bool:
+        if type(sensor_id) != int or type(start_timestamp) != int or type(end_timestamp) != int or type(payload) != dict:
+            raise TypeError("Error: Invalid type of arguments")
+        
+        # Prepare the payload
+        body = {
+            SendSensorDataRequest.SENSOR_ID: sensor_id,
+            SendSensorDataRequest.START_TIMESTAMP: start_timestamp,
+            SendSensorDataRequest.END_TIMESTAMP: end_timestamp,
+            SendSensorDataRequest.PAYLOAD: payload
+        }
+        
+        header = {"Authorization": "Token " + self._token}
+
+        # Send the request
+        try:
+            resp = requests.post(self._address + ServerAPI.SEND_SENSOR_DATA, json = body, headers = header)
+        except Exception as e:
+            self._logger.record(msg = "Error while sending sensor data", logLevel = diagnostic.ERROR, module = self._MODULE, code = 4, exc = e)
+            return False
+        
+        if resp.status_code != 200:
+            self._logger.record(msg = f"Server replied with {resp.status_code} to our SEND_SENSOR_DATA call", logLevel = diagnostic.WARNING, module = self._MODULE, code = 5)
+            return False
+    
+        return True

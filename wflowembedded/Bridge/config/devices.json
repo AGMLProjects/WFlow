@@ -1,0 +1,17 @@
+{
+    "sensors": [
+        {
+            "device_id": 1111,
+            "type": "FLO",
+            "UART": "/dev/ttyUSB0",
+            "GPIO": 23
+        }
+    ],
+    "actuators": [
+        {
+            "device_id": 1111,
+            "type": "",
+            "UART": "/dev/ttyUSB0"
+        }
+    ]
+}
