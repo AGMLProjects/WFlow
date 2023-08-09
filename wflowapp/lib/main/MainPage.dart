@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wflowapp/main/discover/DiscoverPage.dart';
 import 'package:wflowapp/main/home/HomePage.dart';
 import 'package:wflowapp/main/profile/ProfilePage.dart';
 import 'package:wflowapp/main/settings/SettingsPage.dart';
@@ -14,7 +15,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   static const List<Widget> _pages = [
     HomePage(),
-    Text('Statistics'),
+    DiscoverPage(),
     ProfilePage(),
     SettingsPage()
   ];

@@ -1,5 +1,5 @@
 {
-    "LOMBARDIA": [
+    "Lombardia": [
         "Abbadia Cerreto",
         "Abbadia Lariana",
         "Abbiategrasso",
@@ -1505,7 +1505,7 @@
         "Zogno",
         "Zone"
     ],
-    "LAZIO": [
+    "Lazio": [
         "Accumoli",
         "Acquafondata",
         "Acquapendente",
@@ -1885,7 +1885,7 @@
         "Vivaro Romano",
         "Zagarolo"
     ],
-    "CAMPANIA": [
+    "Campania": [
         "Acerno",
         "Acerra",
         "Afragola",
@@ -2437,7 +2437,7 @@
         "Volturara Irpina",
         "Zungoli"
     ],
-    "VENETO": [
+    "Veneto": [
         "Abano Terme",
         "Adria",
         "Affi",
@@ -3002,7 +3002,7 @@
         "Zovencedo",
         "Zugliano"
     ],
-    "SICILIA": [
+    "Sicilia": [
         "Acate",
         "Aci Bonaccorsi",
         "Aci Castello",
@@ -3395,7 +3395,7 @@
         "Vizzini",
         "Zafferana Etnea"
     ],
-    "EMILIA-ROMAGNA": [
+    "Emilia-Romagna": [
         "Agazzano",
         "Albareto",
         "Albinea",
@@ -3727,7 +3727,7 @@
         "Zocca",
         "Zola Predosa"
     ],
-    "PIEMONTE": [
+    "Piemonte": [
         "Acceglio",
         "Acqui Terme",
         "Agliano Terme",
@@ -4909,7 +4909,7 @@
         "Zubiena",
         "Zumaglia"
     ],
-    "PUGLIA": [
+    "Puglia": [
         "Accadia",
         "Acquaviva delle Fonti",
         "Adelfia",
@@ -5168,7 +5168,8 @@
         "Zapponeta",
         "Zollino"
     ],
-    "TOSCANA:Abbadia San Salvatore": [
+    "Toscana": [
+        "Abbadia San Salvatore",
         "Abetone Cutigliano",
         "Agliana",
         "Altopascio",
@@ -5442,7 +5443,7 @@
         "Volterra",
         "Zeri"
     ],
-    "CALABRIA": [
+    "Calabria": [
         "Acquaformosa",
         "Acquappesa",
         "Acquaro",
@@ -5848,7 +5849,7 @@
         "Zumpano",
         "Zungri"
     ],
-    "SARDEGNA": [
+    "Sardegna": [
         "Abbasanta",
         "Aggius",
         "Aglientu",
@@ -6227,7 +6228,7 @@
         "Zeddiani",
         "Zerfaliu"
     ],
-    "LIGURIA": [
+    "Liguria": [
         "Airole",
         "Alassio",
         "Albenga",
@@ -6463,7 +6464,7 @@
         "Zoagli",
         "Zuccarello"
     ],
-    "MARCHE": [
+    "Marche": [
         "Acqualagna",
         "Acquasanta Terme",
         "Acquaviva Picena",
@@ -6690,7 +6691,7 @@
         "Venarotta",
         "Visso"
     ],
-    "ABRUZZO": [
+    "Abruzzo": [
         "Abbateggio",
         "Acciano",
         "Aielli",
@@ -6997,7 +6998,7 @@
         "Villetta Barrea",
         "Vittorito"
     ],
-    "FRIULI-VENEZIA GIULIA": [
+    "Friuli-Venezia Giulia": [
         "Aiello del Friuli",
         "Amaro",
         "Ampezzo",
@@ -7214,7 +7215,7 @@
         "Zoppola",
         "Zuglio"
     ],
-    "TRENTINO-ALTO ADIGE": [
+    "Trentino-Alto Adige": [
         "Ala",
         "Albiano",
         "Aldeno",
@@ -7498,7 +7499,7 @@
         "Volano",
         "Ziano di Fiemme"
     ],
-    "UMBRIA": [
+    "Umbria": [
         "Acquasparta",
         "Allerona",
         "Alviano",
@@ -7592,7 +7593,7 @@
         "Vallo di Nera",
         "Valtopina"
     ],
-    "BASILICATA": [
+    "Basilicata": [
         "Abriola",
         "Accettura",
         "Acerenza",
@@ -7725,7 +7726,7 @@
         "Viggianello",
         "Viggiano"
     ],
-    "MOLISE": [
+    "Molise": [
         "Campobasso",
         "Termoli",
         "Isernia",
@@ -7863,7 +7864,7 @@
         "Provvidenti",
         "Castelverrino"
     ],
-    "VALLE D'AOSTA": [
+    "Valle d'Aosta": [
         "Allein",
         "Antey-Saint-Andra",
         "Aosta",

@@ -8,6 +8,7 @@ import 'package:wflowapp/main/actions/addhouse/AddHousePage.dart';
 import 'package:wflowapp/main/actions/edithouse/EditHousePage.dart';
 import 'package:wflowapp/main/MainPage.dart';
 import 'package:wflowapp/main/actions/viewhouse/HousePage.dart';
+import 'package:wflowapp/main/discover/DiscoverPage.dart';
 import 'package:wflowapp/splash/SplashPage.dart';
 import 'package:wflowapp/user/LoginPage.dart';
 import 'package:wflowapp/user/RegisterPage.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
         '/finishAddDevice': (context) => const FinishAddDevicePage(),
         '/house': (context) => const HousePage(),
         '/editHouse': (context) => const EditHousePage(),
-        '/actions': (context) => const ActionsPage()
+        '/actions': (context) => const ActionsPage(),
+        '/discover': (context) => const DiscoverPage()
       },
     );
   }

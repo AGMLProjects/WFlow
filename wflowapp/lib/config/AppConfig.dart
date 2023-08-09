@@ -44,6 +44,10 @@ class AppConfig {
     return '/API/houses/specific/{id}';
   }
 
+  static String getDiscoverPath() {
+    return '/API/discover';
+  }
+
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }
