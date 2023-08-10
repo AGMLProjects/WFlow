@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:wflowapp/config/AppConfig.dart';
 
-import 'DiscoverResponse.dart';
+import '../model/DiscoverResponse.dart';
 
 class DiscoverClient {
   final String url;

@@ -5,8 +5,12 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wflowapp/config/AppConfig.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/Indicator.dart';
+import 'package:wflowapp/main/discover/charts/ConsumesLineChart.dart';
+import 'package:wflowapp/main/discover/charts/ConsumesPieChart.dart';
 import 'package:wflowapp/main/discover/client/DiscoverClient.dart';
-import 'package:wflowapp/main/discover/client/DiscoverResponse.dart';
+import 'package:wflowapp/main/discover/model/Consume.dart';
+import 'package:wflowapp/main/discover/model/DiscoverResponse.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -121,8 +125,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   });
                 }
                 if (checksOnValues()) {
-                  _futureResponse = discoverClient.getStatistics(token,
-                      _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                  setState(() {
+                    _futureResponse = discoverClient.getStatistics(token,
+                        _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                  });
                 }
               }
             },
@@ -151,8 +157,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
               }
               log('Selected city: $value');
               if (checksOnValues()) {
-                _futureResponse = discoverClient.getStatistics(token,
-                    _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                setState(() {
+                  _futureResponse = discoverClient.getStatistics(token,
+                      _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                });
               }
             },
           ),
@@ -176,8 +184,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
               }
               log('Selected statistics: $value');
               if (checksOnValues()) {
-                _futureResponse = discoverClient.getStatistics(token,
-                    _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                setState(() {
+                  _futureResponse = discoverClient.getStatistics(token,
+                      _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                });
               }
             },
           ),
@@ -208,13 +218,123 @@ class _DiscoverPageState extends State<DiscoverPage> {
           if (snapshot.data!.code != 200) {
             return const SizedBox.shrink();
           }
-          String email = snapshot.data!.email;
-          return Text('Stats');
+          return _buildCharts(snapshot);
         } else if (snapshot.hasError) {
           return const SizedBox.shrink();
         }
         return const Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  Widget _buildCharts(var snapshot) {
+    List<Consume> cityConsume = snapshot.data!.cityConsume;
+    List<Consume> averageRegionConsume = snapshot.data!.averageRegionConsume;
+    List<Consume> regionConsume = snapshot.data!.regionConsume;
+    List<Consume> averageCountryConsume = snapshot.data!.averageCountryConsume;
+    List<Consume> monthRegionConsume = snapshot.data!.monthRegionConsume;
+    List<Consume> regionsToConsider =
+        filterRegions(_selectedRegion, monthRegionConsume);
+    String zone = getRegionZone(_selectedRegion);
+    String measurement = _selectedStatistic == 'Water' ? 'L' : 'm3';
+    return Column(
+      children: [
+        Text(
+          '$_selectedStatistic consumes by city ($measurement)',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ConsumesLineChart(
+            consumes1: cityConsume, consumes2: averageRegionConsume),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
+          child: Column(
+            children: [
+              Indicator(
+                  color: Colors.cyan,
+                  text: 'Consumes in $_selectedCity',
+                  isSquare: true),
+              const SizedBox(height: 4.0),
+              Indicator(
+                  color: Colors.grey,
+                  text: 'Average consumes in $_selectedRegion',
+                  isSquare: true),
+            ],
+          ),
+        ),
+        const SizedBox(height: 40),
+        Text(
+          '$_selectedStatistic consumes by region ($measurement)',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ConsumesLineChart(
+            consumes1: regionConsume, consumes2: averageCountryConsume),
+        Padding(
+          padding: const EdgeInsets.only(left: 20, top: 20),
+          child: Column(
+            children: [
+              Indicator(
+                  color: Colors.cyan,
+                  text: 'Consumes in $_selectedRegion',
+                  isSquare: true),
+              const SizedBox(height: 4.0),
+              const Indicator(
+                  color: Colors.grey,
+                  text: 'Average consumes in Italy',
+                  isSquare: true),
+            ],
+          ),
+        ),
+        const SizedBox(height: 40),
+        Text(
+          '$_selectedStatistic consumes in $zone Italy',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ConsumesPieChart(consumes: regionsToConsider)
+      ],
+    );
+  }
+
+  List<Consume> filterRegions(String selectedRegion, List<Consume> regions) {
+    List<Consume> subList = [];
+    String zone = getRegionZone(selectedRegion);
+    for (Consume consume in regions) {
+      if (getRegionZone(consume.region) == zone) {
+        subList.add(consume);
+      }
+    }
+    return subList;
+  }
+
+  String getRegionZone(String region) {
+    switch (region) {
+      case "Valle d'Aosta":
+      case "Liguria":
+      case "Lombardia":
+      case "Piemonte":
+        return "Nord-ovest";
+      case "Trentino-Alto Adige":
+      case "Veneto":
+      case "Friuli-Venezia Giulia":
+      case "Emilia-Romagna":
+        return "Nord-est";
+      case "Toscana":
+      case "Umbria":
+      case "Marche":
+      case "Lazio":
+      case "Abruzzo":
+        return "Centro";
+      case "Molise":
+      case "Campania":
+      case "Puglia":
+      case "Basilicata":
+      case "Calabria":
+      case "Sicilia":
+        return "Sud";
+      default:
+        return "";
+    }
   }
 }
