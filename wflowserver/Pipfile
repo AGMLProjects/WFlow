@@ -10,6 +10,8 @@ dj-rest-auth = "*"
 django-allauth = "*"
 djangorestframework-simplejwt = "*"
 autopep8 = "*"
+channels = "*"
+daphne = "*"
 
 [dev-packages]
 autopep8 = "*"

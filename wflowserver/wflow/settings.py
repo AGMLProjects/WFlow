@@ -33,6 +33,7 @@ CSRF_TRUSTED_ORIGINS = ['https://wflow.online']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     # BASIC
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.openid',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+
 
     # OUR APPs
     'wflow',        # MAIN APP
@@ -90,6 +92,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wflow.wsgi.application'
 
+# django channels
+
+ASGI_APPLICATION = "wflow.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        # You can also use other channel backends like Redis
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

@@ -6,6 +6,8 @@ SENSOR_TYPE_CHOICES = [
     ('FLO', 'Flow Sensor'),
     ('LEV', 'Water Level'),
     ('HEA', 'Water Heater'),
+    ('SAC', 'Shower Actuator'),
+    ('HAC', 'Heater Actuator'),
 ]
 
 

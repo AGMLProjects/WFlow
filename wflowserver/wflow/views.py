@@ -8,8 +8,12 @@ from rest_framework import status
 
 from django.db.models import Sum
 
-from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import mixins
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from .models import House
 from .serializers import HouseSerializer
@@ -18,6 +22,42 @@ from devices.models import Device
 from devices.serializers import DeviceSerializer
 from sensors.models import Sensor, SensorData
 from sensors.serializers import SensorDataSerializer
+
+ACTIVE_ACTUATORS = {}
+
+class SendMessageToActuatorAPIView(mixins.CreateModelMixin, GenericAPIView):
+    """
+    This view is responsible for the forwarding of messages from the app
+    to the actuators by using django channels
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+
+        # qui devo assicurarmi che l'utente sia autenticato
+        # poi devo prendere dalla request l'id del sensore (attuatore) e vedere se é suo
+        # poi se é suo vedo se esiste un channel con quel nome (sensor_id) e se si mando la roba
+
+        actuator_id = kwargs['actuator_id']
+
+        if actuator_id not in ACTIVE_ACTUATORS:
+            return Response("Actuator not found.")
+
+        channel_layer = get_channel_layer()
+        channel_name =  f"actuator_{actuator_id}"
+
+        # Channel exists, send the message
+        async_to_sync(channel_layer.group_send)(
+            channel_name,
+            {
+                "type": "send.message",
+                "message": "Hello, Raspberry Pi!",
+            },
+        )
+        
+        return Response("Message sent to Raspberry Pi.")
+
+
 
 
 class CreateHouseAPIView(CreateAPIView):

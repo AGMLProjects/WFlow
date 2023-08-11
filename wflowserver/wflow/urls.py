@@ -45,6 +45,8 @@ urlpatterns = [
     path('API/houses/<int:house_id>', APIviews.HousesDetailAPIView.as_view()),
     path('API/houses/specific/<int:house_id>',
          APIviews.HousesSpecificDetailAPIView.as_view()),
+    path('API/control_actuators/<int:actuator_id>',
+         APIviews.SendMessageToActuatorAPIView.as_view())
 
 ]
 
