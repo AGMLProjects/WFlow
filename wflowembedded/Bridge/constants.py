@@ -50,6 +50,7 @@ class ServerParameters(_AbstractEnum):
 	ADDRESS = "server_address"
 	SECRET = "server_secret"
 	DEVICE_ID = "server_device_id"
+	WEBSOCKET_ADDRESS = "websocket_address"
 
 class SensorEvents(_AbstractEnum):
 	SENSOR_REQUEST_TO_TALK = "sensor_request_to_talk"

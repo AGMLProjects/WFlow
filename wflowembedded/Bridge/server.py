@@ -1,4 +1,4 @@
-import requests, json, datetime
+import requests, websockets, asyncio
 import data, event, diagnostic
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
 from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParameters, ServerParameters, SendSensorDataRequest, ServerAPI
@@ -6,13 +6,15 @@ from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParam
 SERVER_DEFAULT_PARAM = {
     	ServerParameters.ADDRESS: "https://wflow.online",
         ServerParameters.DEVICE_ID: 123456789,
-        ServerParameters.SECRET: "5C3D6637D62DA6B9183487CE123DC6A622570ACFF9A07EE909525C3FC104F139"
+        ServerParameters.SECRET: "5C3D6637D62DA6B9183487CE123DC6A622570ACFF9A07EE909525C3FC104F139",
+        ServerParameters.WEBSOCKET_ADDRESS: "wss://wflow.online"
 }
 
 SERVER_DEFAULT_ATTR = {
     ServerParameters.ADDRESS: {AttributePrototype.TYPE: AttributeType.TEXT, AttributePrototype.WRITABLE : False, AttributePrototype.NULLABLE : False, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
 	ServerParameters.SECRET: {AttributePrototype.TYPE: AttributeType.PASSWORD, AttributePrototype.WRITABLE : False, AttributePrototype.NULLABLE : False, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
 	ServerParameters.DEVICE_ID: {AttributePrototype.TYPE: AttributeType.NUM, AttributePrototype.WRITABLE : True, AttributePrototype.NULLABLE : False, AttributePrototype.MIN: 1, AttributePrototype.MAX: 999999999, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN},
+    ServerParameters.WEBSOCKET_ADDRESS: {AttributePrototype.TYPE: AttributeType.TEXT, AttributePrototype.WRITABLE : False, AttributePrototype.NULLABLE : False, AttributePrototype.DOC : "", AttributePrototype.AUTH_LEVEL : AuthLevel.ADMIN}
 }
 
 class ServerConnector():
@@ -32,12 +34,19 @@ class ServerConnector():
         self._secret = Parameters.getParam(key = ServerParameters.SECRET)
         self._token = None
 
+        self._status = True
+
         self._logger = logger
         self._data = dataInterface
         self._event = eventInterface
 
+        self._actuators_socket = Parameters.getParam(key = ServerParameters.WEBSOCKET_ADDRESS)
+
         self._logger.record(msg = "Server module initialized", logLevel = diagnostic.INFO, module = self._MODULE, code = 0)
     
+    def closeWebsocket(self) -> None:
+        self._status = False
+
     def authenticate(self) -> bool:
 
         try:
@@ -112,3 +121,23 @@ class ServerConnector():
             return False
     
         return True
+
+    async def _websocketHandler(self) -> None:
+        #TODO: Aggiungere il token nell'header della connessione 'Authorization': 'Token ' + token
+        async with websockets.connect(self._actuators_socket, extra_headers = [("Authorization", "Token " + self._token)]) as websocket:
+            self._logger.record(msg = "Connected to websocket", logLevel = diagnostic.INFO, module = self._MODULE, code = 6)
+
+            while self._status == True:
+                try:
+                    message = await asyncio.wait_for(websocket.recv(), timeout = 1)
+                except asyncio.TimeoutError:
+                    message = None
+                except Exception as e:
+                    self._logger.record(msg = "Error while receiving websocket message", logLevel = diagnostic.ERROR, module = self._MODULE, code = 7, exc = e)
+                    continue
+
+                #TODO: Se il messaggio contiene qualcosa vuol dire che il server ha mandato una richiesta, quindi bisogna parsare
+                # il messaggio e scatenare degli eventi
+
+                #TODO: Se il messaggio è vuoto, vuol dire che dobbiamo controllare se ci sono messaggi che dobbiamo mandare al server (evento + data interface)
+                # Se ci sono dei messaggi, si prendono uno per volta e si mandano, aspettando la risposta di OK

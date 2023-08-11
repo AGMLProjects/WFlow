@@ -148,4 +148,8 @@ if __name__ == "__main__":
 			#TODO: Parse the response
 			#TODO: Send to the server the packet
 
+			# The message is a Data Packet, with the recorded values and the shape: DP<id><start_time><end_time><values>
+			if "DP" in resp:
+				pass
+
 		
