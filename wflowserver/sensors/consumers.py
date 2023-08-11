@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 
-from ..wflow.views import ACTIVE_ACTUATORS
+# from ..wflow.views import ACTIVE_ACTUATORS
 
 
 class ActuatorConsumer(AsyncWebsocketConsumer):
@@ -17,7 +17,7 @@ class ActuatorConsumer(AsyncWebsocketConsumer):
         )
 
         # Add the Raspberry Pi channel to the dictionary
-        ACTIVE_ACTUATORS[device_id] = True
+        # ACTIVE_ACTUATORS[device_id] = True
 
         await self.accept()
 

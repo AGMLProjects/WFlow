@@ -1,9 +1,9 @@
 from channels.routing import ProtocolTypeRouter, URLRouter
-from django.urls import path, re_path
+from django.urls import path
 from sensors.consumers import ActuatorConsumer
 
 websocket_urlpatterns = [
-    re_path(r'/actuator/(?P<device_id>\w+)/$', ActuatorConsumer.as_asgi()),
+    path('actuator/<int:device_id>', ActuatorConsumer.as_asgi()),
 ]
 
 
