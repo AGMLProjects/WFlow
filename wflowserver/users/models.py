@@ -21,6 +21,8 @@ STATUS_CHOICES = [
     ('MAR', 'Married'),
 ]
 
+# TODO: add personal_data flag to users
+
 
 class CustomUser(AbstractUser):
     # basic fields are already included: username, password, first_name, last_name, email

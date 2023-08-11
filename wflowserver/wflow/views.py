@@ -25,6 +25,7 @@ from sensors.serializers import SensorDataSerializer, SensorSerializer
 
 ACTIVE_ACTUATORS = {}
 
+# TODO: integrare nel send sensor data 
 class SendMessageToActuatorAPIView(mixins.CreateModelMixin, GenericAPIView):
     """
     This view is responsible for the forwarding of messages from the app
