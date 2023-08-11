@@ -1,7 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 
-from .views import ACTIVE_ACTUATORS
+from ..wflow.views import ACTIVE_ACTUATORS
 
 
 class ActuatorConsumer(AsyncWebsocketConsumer):
