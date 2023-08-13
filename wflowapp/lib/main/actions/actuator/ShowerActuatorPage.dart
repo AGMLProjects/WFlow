@@ -1,0 +1,208 @@
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
+import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
+
+import '../../../config/AppConfig.dart';
+import '../viewhouse/client/HouseResponse.dart';
+
+class ShowerActuatorPage extends StatefulWidget {
+  const ShowerActuatorPage({super.key});
+
+  @override
+  State<ShowerActuatorPage> createState() => _ShowerActuatorPageState();
+}
+
+class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
+  String? token;
+  int id = -1;
+  int sensorId = -1;
+  int deviceId = -1;
+  String deviceName = '';
+  int temperature = 24;
+
+  final HouseClient houseClient = HouseClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getHouseInfoPath());
+
+  Future<HouseResponse>? _futureHouseResponse;
+
+  @override
+  void initState() {
+    super.initState();
+    String? token;
+    Future.delayed(Duration.zero, () {
+      token = AppConfig.getUserToken();
+      log(name: 'CONFIG', 'Token: ${token!}');
+      log(name: 'CONFIG', 'House ID: $id');
+      log(name: 'CONFIG', 'Device ID: $deviceId');
+      log(name: 'CONFIG', 'Sensor ID: $sensorId');
+      setState(() {
+        houseClient.path = houseClient.path.replaceAll('{id}', id.toString());
+        _futureHouseResponse = houseClient.getHouse(token!);
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arg = ModalRoute.of(context)!.settings.arguments as Map;
+      id = arg['id'];
+      sensorId = arg['sensorId'];
+      deviceId = arg['deviceId'];
+      deviceName = arg['deviceName'];
+    }
+
+    return Scaffold(appBar: drawAppBar(), body: drawBody());
+  }
+
+  AppBar drawAppBar() {
+    return AppBar(title: Text('$deviceName - Shower'));
+  }
+
+  Widget drawBody() {
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.only(
+            top: 32.0, left: 4.0, right: 4.0, bottom: 32.0),
+        child: buildActions(),
+      ),
+    );
+  }
+
+  FutureBuilder<HouseResponse> buildActions() {
+    return FutureBuilder<HouseResponse>(
+      future: _futureHouseResponse,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.code != 200) {
+            return const SizedBox.shrink();
+          }
+          //House house = snapshot.data!.house;
+          return buildShowerAction();
+        } else if (snapshot.hasError) {
+          log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
+          //dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
+          //House house = House.fromJson(json);
+          //return buildFromHouse(house);
+          return const SizedBox.shrink();
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget buildShowerAction() {
+    return Center(
+      child: Column(
+        children: [
+          const SizedBox(height: 18),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Choose the shower temperature',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
+              ),
+            ],
+          ),
+          const SizedBox(height: 60),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              NumberPicker(
+                value: temperature,
+                minValue: 10,
+                maxValue: 30,
+                step: 1,
+                itemHeight: 60,
+                axis: Axis.horizontal,
+                haptics: true,
+                textStyle: const TextStyle(fontSize: 18),
+                selectedTextStyle:
+                    const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                onChanged: (value) => setState(() {
+                  temperature = value;
+                }),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border:
+                      Border.all(color: getColorFromTemperature(temperature)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 60),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Confirmation'),
+                        content: const Text(
+                            'This shower will be turned on if not active, do you want to proceed?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('No'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Yes'),
+                            onPressed: () {
+                              setState(() {
+                                // TODO: turn on call
+                                // TODO: request
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                    "Successfully sent information",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ));
+                              });
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Text(
+                    'Toggle',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Color getColorFromTemperature(int temp) {
+    if (temp < 14) {
+      return const Color.fromARGB(255, 0, 217, 255);
+    } else if (temp >= 14 && temp < 18) {
+      return const Color.fromARGB(255, 0, 136, 255);
+    } else if (temp >= 18 && temp < 22) {
+      return const Color.fromARGB(255, 255, 157, 0);
+    } else if (temp >= 22 && temp < 26) {
+      return const Color.fromARGB(255, 255, 102, 0);
+    } else {
+      return const Color.fromARGB(255, 255, 47, 0);
+    }
+  }
+}
