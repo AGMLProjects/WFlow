@@ -6,6 +6,9 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView, ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 from devices.permissions import DeviceAuthentication
 
 from .models import Sensor, SensorTypeDefinition, SensorData
@@ -100,6 +103,26 @@ class UploadActuatorDataAPIView(CreateAPIView):
         # get and validate the serializer on a single object
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        actuator_id = request['sensor_id']
+        message = request['values']
+
+        # if actuator_id not in ACTIVE_ACTUATORS:
+        #     return Response("Actuator not found.")
+
+        channel_layer = get_channel_layer()
+        channel_name =  f"actuator_{actuator_id}"
+
+        # Channel exists, send the message
+        async_to_sync(channel_layer.group_send)(
+            channel_name,
+            {
+                "type": "send.message",
+                "message": message,
+            },
+        )
+        
+        return Response("Message sent to Raspberry Pi.")
 
         self.perform_create(serializer)
 
