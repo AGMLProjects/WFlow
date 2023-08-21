@@ -1,7 +1,8 @@
-import requests, websockets, asyncio
+import requests, websockets, asyncio, json
 import data, event, diagnostic
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
-from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParameters, ServerParameters, SendSensorDataRequest, ServerAPI
+from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParameters, ServerParameters, SendSensorDataRequest, ServerAPI, ActuatorType, ShowerActuatorParameters
+from constants import HeaterActuatorParameters, ActuatorEvents
 
 SERVER_DEFAULT_PARAM = {
     	ServerParameters.ADDRESS: "https://wflow.online",
@@ -122,8 +123,7 @@ class ServerConnector():
     
         return True
 
-    async def _websocketHandler(self) -> None:
-        #TODO: Aggiungere il token nell'header della connessione 'Authorization': 'Token ' + token
+    async def getActuatorsCommands(self) -> None:
         async with websockets.connect(self._actuators_socket, extra_headers = [("Authorization", "Token " + self._token)]) as websocket:
             self._logger.record(msg = "Connected to websocket", logLevel = diagnostic.INFO, module = self._MODULE, code = 6)
 
@@ -136,8 +136,52 @@ class ServerConnector():
                     self._logger.record(msg = "Error while receiving websocket message", logLevel = diagnostic.ERROR, module = self._MODULE, code = 7, exc = e)
                     continue
 
-                #TODO: Se il messaggio contiene qualcosa vuol dire che il server ha mandato una richiesta, quindi bisogna parsare
-                # il messaggio e scatenare degli eventi
+                if message is not None:
+                    message = json.loads(message)
+
+                    if "type" not in message:
+                        self._logger.record(msg = "Invalid message format", logLevel = diagnostic.WARNING, module = self._MODULE, code = 8)
+                        continue
+
+                    if message["type"] == ActuatorType.SHOWER_ACTUATOR:
+                        id = int(message[ShowerActuatorParameters.ID])
+                        temperature = float(message[ShowerActuatorParameters.TEMPERATURE])
+
+                        self._data.pushQueue(
+                            name = ActuatorEvents.COMMAND_FOR_ACTUATOR, 
+                            newItem = {
+                                ShowerActuatorParameters.ID: id, 
+                                ShowerActuatorParameters.TEMPERATURE: temperature,
+                                "type": ActuatorType.SHOWER_ACTUATOR
+                            }
+                        )
+                    elif message["type"] == ActuatorType.HEATER_ACTUATOR:
+                        id = int(message[HeaterActuatorParameters.ID])
+                        status = bool(message[HeaterActuatorParameters.STATUS])
+                        temperature_list = message[HeaterActuatorParameters.TEMPERATURE]
+                        start_time_list = message[HeaterActuatorParameters.TIME_START]
+                        end_time_list = message[HeaterActuatorParameters.TIME_END]
+
+                        if len(temperature_list) != len(start_time_list) or len(temperature_list) != len(end_time_list):
+                            self._logger.record(msg = "Invalid message format", logLevel = diagnostic.WARNING, module = self._MODULE, code = 8)
+                            continue
+
+                        self._data.pushQueue(
+                            name = ActuatorEvents.COMMAND_FOR_ACTUATOR,
+                            newItem = {
+                                HeaterActuatorParameters.ID: id, 
+                                HeaterActuatorParameters.STATUS: status, 
+                                HeaterActuatorParameters.TEMPERATURE: temperature_list, 
+                                HeaterActuatorParameters.TIME_START: start_time_list, 
+                                HeaterActuatorParameters.TIME_END: end_time_list,
+                                "type": ActuatorType.HEATER_ACTUATOR
+                            }
+                        )
+                    else:
+                        self._logger.record(msg = "Invalid actuator type in message from Server", logLevel = diagnostic.WARNING, module = self._MODULE, code = 8)
+                        continue
+
+                    self._event.set(ActuatorEvents.COMMAND_FOR_ACTUATOR)
 
                 #TODO: Se il messaggio è vuoto, vuol dire che dobbiamo controllare se ci sono messaggi che dobbiamo mandare al server (evento + data interface)
                 # Se ci sono dei messaggi, si prendono uno per volta e si mandano, aspettando la risposta di OK

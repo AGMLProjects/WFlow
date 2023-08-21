@@ -1,6 +1,6 @@
-import sys, time, json
+import sys, time, json, asyncio
 import data, event, diagnostic, server, deviceManager
-from constants import Resources, MainParameters, SensorEvents, NotifyActiveSensorRequest
+from constants import Resources, MainParameters, SensorEvents, NotifyActiveSensorRequest, ActuatorEvents, ActuatorType
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
 
 _MODULE = "MAIN"
@@ -122,34 +122,64 @@ if __name__ == "__main__":
 		logger.record(msg = "Error occurred while trying to notify the sensor list to the server, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
 		sys.exit(1)
 
-	# TODO: Far partire il loop che riceve i comandi dal server e li inoltra agli attuatori
+	# Open the WebSocket connection to server in order to get the actuators commands
+	asyncio.create_task(serverHandler.getActuatorsCommands())
 
 	# Main messaging loop
 	while True:
 
-		# Wait untill a sensor needs to talk with us
+		# Wait until there is an event to process
 		try:
-			eventInterface.clear(name = SensorEvents.SENSOR_REQUEST_TO_TALK)
-			eventInterface.pend(name = SensorEvents.SENSOR_REQUEST_TO_TALK, timeout = None)
+			sensor_res = eventInterface.pend(name = SensorEvents.SENSOR_REQUEST_TO_TALK, timeout = 1)
+			actuator_res = eventInterface.pend(name = ActuatorEvents.COMMAND_FOR_ACTUATOR, timeout = 1)
 		except Exception as e:
 			logger.record(msg = "The SENSOR_REQUEST_TO_TALK does not exists", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
 			sys.exit(1)
 
-		# Process the request queue, one by one
-		while dataInterface.isQueueEmpty(name = SensorEvents.SENSOR_REQUEST_TO_TALK) == False:
+		# Process the sensor request queue, one by one
+		if sensor_res is True:
+			eventInterface.clear(name = SensorEvents.SENSOR_REQUEST_TO_TALK)
+			while dataInterface.isQueueEmpty(name = SensorEvents.SENSOR_REQUEST_TO_TALK) == False:
 
-			# Get the sensor ID that requested to talk
-			sensor_id = dataInterface.popQueue(name = SensorEvents.SENSOR_REQUEST_TO_TALK)
+				# Get the sensor ID that requested to talk
+				sensor_id = dataInterface.popQueue(name = SensorEvents.SENSOR_REQUEST_TO_TALK)
 
-			# Request to the sensor to provide the data
-			serialInterface.send(id = sensor_id, msg = "SD")
-			resp = serialInterface.receive(id = sensor_id, timeout = 5)
+				# Request to the sensor to provide the data
+				serialInterface.send(id = sensor_id, msg = "SD")
+				resp = serialInterface.receive(id = sensor_id, timeout = 5)
 
-			#TODO: Parse the response
-			#TODO: Send to the server the packet
+				#TODO: Parse the response
+				#TODO: Send to the server the packet
 
-			# The message is a Data Packet, with the recorded values and the shape: DP<id><start_time><end_time><values>
-			if "DP" in resp:
-				pass
+				# The message is a Data Packet, with the recorded values and the shape: DP<id><start_time><end_time><values>
+				if "DP" in resp:
+					pass
+
+		if actuator_res is True:
+			eventInterface.clear(name = ActuatorEvents.COMMAND_FOR_ACTUATOR)
+			while dataInterface.isQueueEmpty(name = ActuatorEvents.COMMAND_FOR_ACTUATOR) == False:
+
+				# Get the command
+				command = dataInterface.popQueue(name = ActuatorEvents.COMMAND_FOR_ACTUATOR)
+				type = command["type"]
+
+				if type == ActuatorType.SHOWER_ACTUATOR:
+					id = command["id"]
+					temperature = command["temperature"]
+
+					# Send to the actuator this command with the format: EX<temperature>
+					serialInterface.send(id = id, msg = f"EX{temperature}")
+					resp = serialInterface.receive(id = id, timeout = 5)
+
+					#TODO: Verificare la risposta
+				elif type == ActuatorType.HEATER_ACTUATOR:
+					id = command["id"]
+					status = command["status"]
+					temperature = command["temperature"]
+					time_start = command["time_start"]
+					time_end = command["time_end"]
+					automatic = command["automatic"]
+
+					#TODO: Creare dei timer per gestire l'accensione e lo spegnimento del riscaldamento in base ai timestamps specificati
 
 		

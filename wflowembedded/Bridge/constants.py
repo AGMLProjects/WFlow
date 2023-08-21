@@ -54,3 +54,23 @@ class ServerParameters(_AbstractEnum):
 
 class SensorEvents(_AbstractEnum):
 	SENSOR_REQUEST_TO_TALK = "sensor_request_to_talk"
+
+class ActuatorType(_AbstractEnum):
+	SHOWER_ACTUATOR = "shower_actuator"
+	HEATER_ACTUATOR = "heater_actuator"
+
+class ShowerActuatorParameters(_AbstractEnum):
+	ID = "id"
+	TEMPERATURE = "temperature"
+
+class HeaterActuatorParameters(_AbstractEnum):
+	ID = "id"
+	STATUS = "status"
+	TEMPERATURE = "temperature"
+	TIME_START = "time_start"
+	TIME_END = "time_end"
+	AUTOMATIC = "automatic"
+
+class ActuatorEvents(_AbstractEnum):
+	COMMAND_FOR_ACTUATOR = "command_for_actuator"
+	

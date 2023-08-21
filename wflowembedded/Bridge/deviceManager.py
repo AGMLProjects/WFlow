@@ -1,6 +1,6 @@
 import serial
 import data, event, diagnostic
-from constants import SensorEvents
+from constants import SensorEvents, ActuatorEvents
 
 import RPi.GPIO as GPIO
 
@@ -21,6 +21,9 @@ class ControlSignals():
 
         self._event.create(name = SensorEvents.SENSOR_REQUEST_TO_TALK)
         self._data.store(name = SensorEvents.SENSOR_REQUEST_TO_TALK, dataType = data.FIFO, value = [])
+
+        self._event.create(name = ActuatorEvents.COMMAND_FOR_ACTUATOR)
+        self._data.store(name = ActuatorEvents.COMMAND_FOR_ACTUATOR, dataType = data.FIFO, value = [])
 
         GPIO.setmode(GPIO.BCM)
 
