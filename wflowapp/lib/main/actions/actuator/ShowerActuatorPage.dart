@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
+import 'package:wflowapp/main/actions/actuator/client/ShowerActuatorClient.dart';
+import 'package:wflowapp/main/actions/actuator/client/ShowerActuatorResponse.dart';
 
 import '../../../config/AppConfig.dart';
-import '../viewhouse/client/HouseResponse.dart';
 
 class ShowerActuatorPage extends StatefulWidget {
   const ShowerActuatorPage({super.key});
@@ -20,27 +20,22 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
   int sensorId = -1;
   int deviceId = -1;
   String deviceName = '';
-  int temperature = 24;
+  double temperature = 24.0;
 
-  final HouseClient houseClient = HouseClient(
-      url: AppConfig.getBaseUrl(), path: AppConfig.getHouseInfoPath());
+  final ShowerActuatorClient client = ShowerActuatorClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getPostActuatorPath());
 
-  Future<HouseResponse>? _futureHouseResponse;
+  Future<ShowerActuatorResponse>? _futureResponse;
 
   @override
   void initState() {
     super.initState();
-    String? token;
     Future.delayed(Duration.zero, () {
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
       log(name: 'CONFIG', 'House ID: $id');
       log(name: 'CONFIG', 'Device ID: $deviceId');
       log(name: 'CONFIG', 'Sensor ID: $sensorId');
-      setState(() {
-        houseClient.path = houseClient.path.replaceAll('{id}', id.toString());
-        _futureHouseResponse = houseClient.getHouse(token!);
-      });
     });
   }
 
@@ -71,26 +66,8 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
     );
   }
 
-  FutureBuilder<HouseResponse> buildActions() {
-    return FutureBuilder<HouseResponse>(
-      future: _futureHouseResponse,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.code != 200) {
-            return const SizedBox.shrink();
-          }
-          //House house = snapshot.data!.house;
-          return buildShowerAction();
-        } else if (snapshot.hasError) {
-          log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
-          //dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
-          //House house = House.fromJson(json);
-          //return buildFromHouse(house);
-          return const SizedBox.shrink();
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+  Widget buildActions() {
+    return buildShowerAction();
   }
 
   Widget buildShowerAction() {
@@ -112,7 +89,7 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               NumberPicker(
-                value: temperature,
+                value: temperature.toInt(),
                 minValue: 10,
                 maxValue: 30,
                 step: 1,
@@ -123,7 +100,7 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
                 selectedTextStyle:
                     const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 onChanged: (value) => setState(() {
-                  temperature = value;
+                  temperature = value.toDouble();
                 }),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -157,8 +134,8 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
                             child: const Text('Yes'),
                             onPressed: () {
                               setState(() {
-                                // TODO: turn on call
-                                // TODO: request
+                                _futureResponse = client.activateShower(
+                                    token!, sensorId, deviceId, temperature);
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(const SnackBar(
                                   content: Text(
@@ -192,7 +169,7 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
     );
   }
 
-  Color getColorFromTemperature(int temp) {
+  Color getColorFromTemperature(double temp) {
     if (temp < 14) {
       return const Color.fromARGB(255, 0, 217, 255);
     } else if (temp >= 14 && temp < 18) {

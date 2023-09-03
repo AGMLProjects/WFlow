@@ -335,9 +335,13 @@ class _HousePageState extends State<HousePage> {
       case "FLO":
         return "Tap sensor";
       case "HEA":
-        return "Smart heater";
+        return "Smart heater sensor";
       case "LEV":
         return "Flush sensor";
+      case "SAC":
+        return "Shower";
+      case "HAC":
+        return "Smart heater actuator";
       default:
         return "Sensor";
     }

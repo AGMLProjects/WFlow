@@ -48,6 +48,10 @@ class AppConfig {
     return '/API/discover';
   }
 
+  static String getPostActuatorPath() {
+    return '/sensors/set/{id}';
+  }
+
   static Color getDefaultColor() {
     return Colors.lightBlue;
   }

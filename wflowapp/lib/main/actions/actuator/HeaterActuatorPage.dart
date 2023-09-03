@@ -2,6 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:wflowapp/main/actions/actuator/client/HeaterActuatorClient.dart';
+import 'package:wflowapp/main/actions/actuator/client/HeaterActuatorResponse.dart';
+import 'package:wflowapp/main/actions/actuator/client/ShowerActuatorResponse.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
 
 import '../../../config/AppConfig.dart';
@@ -24,15 +27,19 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
   bool manuallySet = false;
   bool active = false;
 
-  final HouseClient houseClient = HouseClient(
-      url: AppConfig.getBaseUrl(), path: AppConfig.getHouseInfoPath());
+  List<int> temperatures = [];
+  List<DateTime> starts = [];
+  List<DateTime> ends = [];
 
-  Future<HouseResponse>? _futureHouseResponse;
+  final HeaterActuatorClient client = HeaterActuatorClient(
+      url: AppConfig.getBaseUrl(), path: AppConfig.getPostActuatorPath());
+
+  Future<HeaterActuatorResponse>? _futureGetResponse;
+  Future<HeaterActuatorResponse>? _futurePostResponse;
 
   @override
   void initState() {
     super.initState();
-    String? token;
     Future.delayed(Duration.zero, () {
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
@@ -40,8 +47,7 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
       log(name: 'CONFIG', 'Device ID: $deviceId');
       log(name: 'CONFIG', 'Sensor ID: $sensorId');
       setState(() {
-        houseClient.path = houseClient.path.replaceAll('{id}', id.toString());
-        _futureHouseResponse = houseClient.getHouse(token!);
+        _futureGetResponse = client.getHeater(token!, sensorId, deviceId);
       });
     });
   }
@@ -73,21 +79,23 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
     );
   }
 
-  FutureBuilder<HouseResponse> buildActions() {
-    return FutureBuilder<HouseResponse>(
-      future: _futureHouseResponse,
+  FutureBuilder<HeaterActuatorResponse> buildActions() {
+    return FutureBuilder<HeaterActuatorResponse>(
+      future: _futureGetResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
             return const SizedBox.shrink();
           }
-          //House house = snapshot.data!.house;
+          log('Request ok');
+          active = snapshot.data!.active;
+          automatic = snapshot.data!.automatic;
+          temperatures = snapshot.data!.temperatures;
+          starts = snapshot.data!.starts;
+          ends = snapshot.data!.ends;
           return buildSmartHeaterAction();
         } else if (snapshot.hasError) {
           log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
-          //dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
-          //House house = House.fromJson(json);
-          //return buildFromHouse(house);
           return const SizedBox.shrink();
         }
         return const Center(child: CircularProgressIndicator());
@@ -252,185 +260,199 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
   }
 
   Widget buildActivations() {
+    int n_activations = temperatures.length;
+    List<Widget> activations = [];
+    for (var i = 0; i < n_activations; i++) {
+      activations.add(buildActivation(i));
+    }
     return Container(
         color: !manuallySet
             ? const Color.fromARGB(50, 204, 204, 204)
             : const Color.fromARGB(0, 0, 0, 0),
         padding: const EdgeInsets.only(top: 20, bottom: 20),
         child: Column(
-          children: [buildActivation()],
+          children: activations,
         ));
   }
 
-  Widget buildActivation() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+  Widget buildActivation(int index) {
+    return Column(
       children: [
-        const SizedBox(width: 10),
-        Text(
-          '1',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(width: 20),
-        Column(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Row(
-              children: [
-                Text(
-                  'Temperature',
-                  style: TextStyle(fontSize: 18),
-                )
-              ],
+            const SizedBox(width: 10),
+            Text(
+              (index + 1).toString(),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(width: 20),
             Column(
               children: [
-                Row(
+                const Row(
                   children: [
-                    NumberPicker(
-                        value: 24,
-                        minValue: 10,
-                        maxValue: 30,
-                        step: 1,
-                        itemHeight: 25,
-                        itemWidth: 30,
-                        itemCount: 3,
-                        axis: Axis.vertical,
-                        haptics: true,
-                        textStyle: const TextStyle(fontSize: 14),
-                        selectedTextStyle: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        onChanged: (value) => setState(() {
-                              int foo = value;
-                            })),
+                    Text(
+                      'Temperature',
+                      style: TextStyle(fontSize: 18),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        NumberPicker(
+                            value: temperatures[index],
+                            minValue: 10,
+                            maxValue: 30,
+                            step: 1,
+                            itemHeight: 25,
+                            itemWidth: 30,
+                            itemCount: 3,
+                            axis: Axis.vertical,
+                            haptics: true,
+                            textStyle: const TextStyle(fontSize: 14),
+                            selectedTextStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            onChanged: (value) => setState(() {
+                                  temperatures[index] = value;
+                                })),
+                      ],
+                    )
                   ],
                 )
               ],
-            )
-          ],
-        ),
-        const SizedBox(width: 20),
-        Column(
-          children: [
-            const Row(
-              children: [
-                Text(
-                  'Start',
-                  style: TextStyle(fontSize: 18),
-                )
-              ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(width: 20),
             Column(
               children: [
-                Row(
+                const Row(
                   children: [
-                    NumberPicker(
-                        value: 10,
-                        minValue: 0,
-                        maxValue: 23,
-                        step: 1,
-                        itemHeight: 25,
-                        itemWidth: 30,
-                        itemCount: 3,
-                        zeroPad: true,
-                        axis: Axis.vertical,
-                        haptics: true,
-                        textStyle: const TextStyle(fontSize: 14),
-                        selectedTextStyle: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        onChanged: (value) => setState(() {
-                              int foo = value;
-                            })),
-                    const Text(
-                      ':',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    NumberPicker(
-                        value: 10,
-                        minValue: 0,
-                        maxValue: 59,
-                        step: 1,
-                        itemHeight: 25,
-                        itemWidth: 30,
-                        itemCount: 3,
-                        zeroPad: true,
-                        axis: Axis.vertical,
-                        haptics: true,
-                        textStyle: const TextStyle(fontSize: 14),
-                        selectedTextStyle: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        onChanged: (value) => setState(() {
-                              int foo = value;
-                            })),
+                    Text(
+                      'Start',
+                      style: TextStyle(fontSize: 18),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        NumberPicker(
+                            value: starts[index].hour,
+                            minValue: 0,
+                            maxValue: 23,
+                            step: 1,
+                            itemHeight: 25,
+                            itemWidth: 30,
+                            itemCount: 3,
+                            zeroPad: true,
+                            axis: Axis.vertical,
+                            haptics: true,
+                            textStyle: const TextStyle(fontSize: 14),
+                            selectedTextStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            onChanged: (value) => setState(() {
+                                  starts[index] = DateTime(
+                                      2023, 1, 1, value, starts[index].minute);
+                                })),
+                        const Text(
+                          ':',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        NumberPicker(
+                            value: starts[index].minute,
+                            minValue: 0,
+                            maxValue: 59,
+                            step: 1,
+                            itemHeight: 25,
+                            itemWidth: 30,
+                            itemCount: 3,
+                            zeroPad: true,
+                            axis: Axis.vertical,
+                            haptics: true,
+                            textStyle: const TextStyle(fontSize: 14),
+                            selectedTextStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            onChanged: (value) => setState(() {
+                                  starts[index] = DateTime(
+                                      2023, 1, 1, starts[index].hour, value);
+                                })),
+                      ],
+                    )
                   ],
                 )
               ],
-            )
-          ],
-        ),
-        const SizedBox(width: 20),
-        Column(
-          children: [
-            const Row(
-              children: [
-                Text(
-                  'End',
-                  style: TextStyle(fontSize: 18),
-                )
-              ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(width: 20),
             Column(
               children: [
-                Row(
+                const Row(
                   children: [
-                    NumberPicker(
-                        value: 10,
-                        minValue: 0,
-                        maxValue: 23,
-                        step: 1,
-                        itemHeight: 25,
-                        itemWidth: 30,
-                        itemCount: 3,
-                        zeroPad: true,
-                        axis: Axis.vertical,
-                        haptics: true,
-                        textStyle: const TextStyle(fontSize: 14),
-                        selectedTextStyle: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        onChanged: (value) => setState(() {
-                              int foo = value;
-                            })),
-                    const Text(
-                      ':',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    NumberPicker(
-                        value: 10,
-                        minValue: 0,
-                        maxValue: 59,
-                        step: 1,
-                        itemHeight: 25,
-                        itemWidth: 30,
-                        itemCount: 3,
-                        zeroPad: true,
-                        axis: Axis.vertical,
-                        haptics: true,
-                        textStyle: const TextStyle(fontSize: 14),
-                        selectedTextStyle: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        onChanged: (value) => setState(() {
-                              int foo = value;
-                            })),
+                    Text(
+                      'End',
+                      style: TextStyle(fontSize: 18),
+                    )
                   ],
-                )
+                ),
+                const SizedBox(height: 8),
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        NumberPicker(
+                            value: ends[index].hour,
+                            minValue: 0,
+                            maxValue: 23,
+                            step: 1,
+                            itemHeight: 25,
+                            itemWidth: 30,
+                            itemCount: 3,
+                            zeroPad: true,
+                            axis: Axis.vertical,
+                            haptics: true,
+                            textStyle: const TextStyle(fontSize: 14),
+                            selectedTextStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            onChanged: (value) => setState(() {
+                                  ends[index] = DateTime(
+                                      2023, 1, 1, value, ends[index].minute);
+                                })),
+                        const Text(
+                          ':',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        NumberPicker(
+                            value: ends[index].minute,
+                            minValue: 0,
+                            maxValue: 59,
+                            step: 1,
+                            itemHeight: 25,
+                            itemWidth: 30,
+                            itemCount: 3,
+                            zeroPad: true,
+                            axis: Axis.vertical,
+                            haptics: true,
+                            textStyle: const TextStyle(fontSize: 14),
+                            selectedTextStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            onChanged: (value) => setState(() {
+                                  ends[index] = DateTime(
+                                      2023, 1, 1, ends[index].hour, value);
+                                })),
+                      ],
+                    )
+                  ],
+                ),
               ],
-            )
+            ),
           ],
         ),
+        const SizedBox(height: 38)
       ],
     );
   }
