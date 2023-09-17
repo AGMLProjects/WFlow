@@ -123,6 +123,7 @@ class UploadActuatorDataAPIView(CreateAPIView):
                 channel_name,
                 {
                     "type": "send.message",
+                    "actuator_id": actuator_id,
                     "message": message,
                 },
             )
@@ -142,5 +143,22 @@ class UploadActuatorDataAPIView(CreateAPIView):
         serializer.save()
 
 
-# # TODO: endpoint to get the last sensordata based on id
-# class GetLastActuatorData(ListAPIView):
+# TODO: endpoint to get the last sensordata based on id
+class GetLastActuatorData(ListAPIView):
+    """
+    This view should return a list of all the actuators
+    last data for the given actuator id.
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SensorDataSerializer
+
+    def get_queryset(self):
+        # Use query parameter to get sensor_id
+        sensor_id = self.request.data.get('sensor_id')
+        print(f"sensor_id: {sensor_id}")  # Debugging line
+        if sensor_id:
+            # Filter and order the queryset by timestamp in descending order and limit it to 1 item
+            return SensorData.objects.filter(sensor_id=sensor_id).order_by('-end_timestamp')[:1]
+        else:
+            # Handle the case where 'sensor_id' query parameter is not provided
+            return SensorData.objects.none()
