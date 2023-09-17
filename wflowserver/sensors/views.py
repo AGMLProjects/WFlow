@@ -104,25 +104,32 @@ class UploadActuatorDataAPIView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        actuator_id = request['sensor_id']
-        message = request['values']
+        actuator_id = request.data['sensor_id']
+        message = request.data['values']
+
+        # TODO: get device_id from actuator_id
+
+        device_id = 1
 
         # if actuator_id not in ACTIVE_ACTUATORS:
         #     return Response("Actuator not found.")
 
-        channel_layer = get_channel_layer()
-        channel_name =  f"actuator_{actuator_id}"
+        try:
+            channel_layer = get_channel_layer()
+            channel_name = f"device_{device_id}"
 
-        # Channel exists, send the message
-        async_to_sync(channel_layer.group_send)(
-            channel_name,
-            {
-                "type": "send.message",
-                "message": message,
-            },
-        )
-        
-        return Response("Message sent to Raspberry Pi.")
+            # Channel exists, send the message
+            async_to_sync(channel_layer.group_send)(
+                channel_name,
+                {
+                    "type": "send.message",
+                    "message": message,
+                },
+            )
+        except Exception as e:
+            return Response("ERROR")
+
+        # return Response("Message sent to Raspberry Pi.")
 
         self.perform_create(serializer)
 
@@ -135,4 +142,5 @@ class UploadActuatorDataAPIView(CreateAPIView):
         serializer.save()
 
 
-# TODO: endpoint to get the last sensordata based on id
+# # TODO: endpoint to get the last sensordata based on id
+# class GetLastActuatorData(ListAPIView):

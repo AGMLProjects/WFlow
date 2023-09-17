@@ -42,5 +42,7 @@ class CustomUser(AbstractUser):
         choices=STATUS_CHOICES, max_length=3, default=None, blank=True, null=True)
     family_members = models.IntegerField(default=None, blank=True, null=True)
 
+    personal_data = models.BooleanField(default=False)
+
     def __str__(self):
         return "%d" % (self.id)

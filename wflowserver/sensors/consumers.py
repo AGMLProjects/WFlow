@@ -33,3 +33,12 @@ class ActuatorConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': 'Message sent to Raspberry Pi successfully.',
         }))
+
+    async def send_message(self, event):
+        # This method will handle messages with type "send.message"
+        message = event['message']
+
+        # Send the message to the WebSocket connection
+        await self.send(text_data=json.dumps({
+            'message': message,
+        }))
