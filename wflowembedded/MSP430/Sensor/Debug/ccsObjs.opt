@@ -1,5 +1,4 @@
 "./main.obj"
-"./uart.obj"
 "./driverlib/MSP430F5xx_6xx/adc10_a.obj"
 "./driverlib/MSP430F5xx_6xx/adc12_a.obj"
 "./driverlib/MSP430F5xx_6xx/aes.obj"

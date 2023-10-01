@@ -1,60 +1,32 @@
-#include "driverlib.h"
+#include <msp430.h>
 
-#include "constants.h"
-#include "uart.h"
-
-int main(void) {
-
-    WDT_A_hold(WDT_A_BASE);
-
-    // Setup the emergency led driver in case it's needed
-    GPIO_setAsOutputPin(EMERGENCY_LED_PORT, EMERGENCY_LED_PIN);
-
-    // Define the UART interface to communicate with bridge
-    if (init_uart_interface() == false)
-    {
-        while(true)
-        {
-            // Toggle LED pin
-            GPIO_toggleOutputOnPin(EMERGENCY_LED_PORT, EMERGENCY_LED_PIN);
-
-            // Wait for 0.5 seconds
-            __delay_cycles(250000);
-
-            // Toggle LED pin again
-            GPIO_toggleOutputOnPin(EMERGENCY_LED_PORT, EMERGENCY_LED_PIN);
-
-            // Wait for another 0.5 seconds
-            __delay_cycles(250000);
-        }
-    }
-
-    // Initialize differtent component depending on the sensor type
-#ifdef WATER_FLOW_SENSOR
-
-    /* Water flow sensor has two sensors, a flow sensor and a temperature sensor */
-    GPIO_setAsInputPin(WFS_INTERRUPT_PORT, WFS_INTERRUPT_PIN);
-    GPIO_interruptEdgeSelect(WFS_INTERRUPT_PORT, WFS_INTERRUPT_PIN, GPIO_LOW_TO_HIGH_TRANSITION);
-    GPIO_enableInterrupt(WFS_INTERRUPT_PORT, WFS_INTERRUPT_PIN);
-    GPIO_clearInterrupt(WFS_INTERRUPT_PORT, WFS_INTERRUPT_PIN);
-
-#endif
-
-    // Enable global interrupts
-    __enable_interrupt();
-
-    return (0);
-}
-
-#pragma vector=PORT2_VECTOR
-__interrupt void Port2_ISR(void)
+void main(void)
 {
-    // Check if interrupt was triggered by the desired pin
-    if (GPIO_getInterruptStatus(WFS_INTERRUPT_PORT, WFS_INTERRUPT_PIN) == GPIO_LOW_TO_HIGH_TRANSITION) {
-        // Call interrupt callback function
+    WDTCTL = WDTPW | WDTHOLD;   // Stop the Watchdog timer
 
+    // Configure UART pins (TXD and RXD) - P3.3 and P3.4
+    P3SEL |= BIT3 | BIT4;
+    UCA0CTL1 |= UCSWRST;        // Put USCI in reset
+    UCA0CTL1 |= UCSSEL_2;        // Clock source: SMCLK
+
+    // Baud rate settings (assuming 16MHz SMCLK)
+    // For 9600 baud rate: UCBRx = 1666, UCBRSx = 6, UCBRFx = 0, UCOS16 = 1
+    UCA0BR0 = 1666;
+    UCA0BR1 = 0;
+    UCA0MCTL |= UCBRS_6 | UCBRF_0 | UCOS16;
+
+    UCA0CTL1 &= ~UCSWRST;       // Release USCI from reset
+
+    // Main loop
+    while(1)
+    {
+        // Transmit data
+        UCA0TXBUF = 'A';
+
+        // Wait until the transmission is complete
+        while(!(UCA0IFG & UCTXIFG));
+
+        // Add a delay between transmissions
+        __delay_cycles(1000000);
     }
-
-    // Clear interrupt flag
-    GPIO_clearInterrupt(WFS_INTERRUPT_PORT, WFS_INTERRUPT_PIN);
 }
