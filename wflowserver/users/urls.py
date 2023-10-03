@@ -1,8 +1,8 @@
 from django.urls import path, re_path
 from dj_rest_auth.registration.views import RegisterView, VerifyEmailView
-from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
+from dj_rest_auth.views import LoginView, LogoutView
 
-from .views import UserDetail
+from .views import UserDetailsView
 
 urlpatterns = [
 

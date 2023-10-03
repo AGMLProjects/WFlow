@@ -245,12 +245,13 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
 
         for index, device in enumerate(devices):
             sensors = Sensor.objects.filter(device_id=device)
+            print(sensors)
             response['devices'][index]['sensors'] = SensorSerializer(
                 sensors, many=True).data
             
         # -------------------------------------- last events
-        devices = Device.objects.filter(house_id=instance)
-        response['devices'] = DeviceSerializer(devices, many=True).data
+        # devices = Device.objects.filter(house_id=instance)
+        # response['devices'] = DeviceSerializer(devices, many=True).data
 
         # for index, device in enumerate(devices):
         #     sensors = Sensor.objects.filter(device_id=device)
