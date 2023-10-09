@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "driverlib.h"
 
 #include "com.h"
@@ -139,6 +140,51 @@ void create_error_message(uint8_t *message, uint32_t device_address, uint16_t *c
     message[12] = '\n';
     *count = 13;
 }
+
+#ifdef FLO
+void create_sd_message(uint8_t *message, float liters, float temperature, uint32_t seconds, uint16_t *count)
+{
+    char str[20];   // TMP string to convert the numbers
+
+    message[0] = 'S';
+    message[1] = 'D';
+
+    // Convert the liters into string
+    sprintf(str, "%.2f", liters);
+
+    message[2] = str[6];
+    message[3] = str[5];
+    message[4] = str[4];
+    message[5] = str[3];
+    message[6] = str[2];
+    message[7] = str[1];
+    message[8] = str[0];
+
+    // Convert the temperature
+    sprintf(str, "%.2f", temperature);
+
+    message[9] = str[5];
+    message[10] = str[4];
+    message[11] = str[3];
+    message[12] = str[2];
+    message[13] = str[1];
+    message[14] = str[0];
+
+    intEncode(seconds, &message[15], 5);
+
+    *count = 21;
+
+}
+#else
+void create_sd_message(uint8_t *message, uint16_t *count)
+{
+    message[0] = 'E';
+    message[1] = 'R';
+    message[2] = 'R';
+
+    *count = 3;
+}
+#endif
 
 float convert_hall_to_liters(uint32_t hall_pulses, uint32_t seconds)
 {

@@ -10,7 +10,7 @@
 #include "com.h"
 #include "hal.h"
 
-#define FLO                                 // This sensor is a FLOW SENSOR (WATER FLOW + TEMPERATURE)
+#include "list.h"
 
 // Global flags set by events
 volatile uint8_t bCDCDataReceived_event = FALSE;   // Flag set by event handler to
@@ -21,19 +21,12 @@ volatile uint8_t bCDCDataReceived_event = FALSE;   // Flag set by event handler 
 uint8_t dataBuffer[BUFFER_SIZE] = "";
 char nl[2] = "\n";
 uint16_t count;                    
+Node *input_list;
 
-// Define the structure used to handle the sensor input and state
-#ifdef FLO
-typedef struct {
-    uint32_t hall_ticks;
-    float temperature;
-    uint32_t hall_ticks_old;
-    uint32_t seconds;
-    bool ready;
-} SensorInput;
-#endif
+bool sleeping = false;                              // Flag to handle the sleeping state. If waiting USB this flag is true, otherwise is false
 
 // Initialize the sensor input object
+#ifdef FLO
 SensorInput sensor_input = {
     .hall_ticks = 0,
     .hall_ticks_old = 0,
@@ -41,9 +34,7 @@ SensorInput sensor_input = {
     .seconds = 0,
     .temperature = 0
 };
-
-// This object is used to avoid race conditions
-SensorInput shadow_sensor_input = {.ready = false};
+#endif
 
 void main (void)
 {
@@ -62,6 +53,10 @@ void main (void)
     P1IES |= BIT3;      // Falling edge trigger
     P1IFG &= ~BIT3;     // Clear the interrupt flag
     P1IE |= BIT3;       // Enable the interrupt
+
+    // Configure P1.5 as output for signaling USB messages
+    P1DIR |= BIT5;
+    P1OUT |= BIT0;
 
     // Set up Timer A to trigger an interrupt every second
     TA0CCTL0 = CCIE;           // Enable Timer A interrupt
@@ -119,6 +114,18 @@ void main (void)
             continue;
         }
 
+        // Check if there are new sensor data
+        if(available_data(input_list) == true)
+        {
+            // There are data so we must raise the alert flag
+            P1OUT &= ~BIT5;
+        }
+        else
+        {
+            // There is no message waiting to be sent, reset the flag
+            P1OUT |= BIT5;
+        }
+
         // Check if there is an USB incoming message
         create_ack_message(dataBuffer, device_address, &count);
         USBCDC_sendDataInBackground((uint8_t*)dataBuffer, count, CDC0_INTFNUM, 1);
@@ -127,9 +134,11 @@ void main (void)
         __disable_interrupt();
         if (!USBCDC_getBytesInUSBBuffer(CDC0_INTFNUM))
         {
-            __bis_SR_register(LPM0_bits + GIE);         //TODO: Sostituire con una misura del tempo max
+            sleeping = true;
+            __bis_SR_register(LPM0_bits + GIE);
         }
         __enable_interrupt();
+        sleeping = false;
 
         // fetch the received data
         if (bCDCDataReceived_event){
@@ -148,7 +157,27 @@ void main (void)
             {
                 device_address = intDecode(&dataBuffer[2], 10);
                 create_ack_message(dataBuffer, device_address, &count);
-            } // TODO: Scrivere gli altri messaggi possibili
+            }
+            else if (message_code == SD)
+            {
+                // Check if there are data to be sent
+                if(available_data(input_list) == true)
+                {
+                    SensorInput data = popNode(input_list);
+
+#ifdef FLO
+                    float liters, temperature;              //TODO: Riempire questi valori
+                    create_sd_message(dataBuffer, liters, temperature, data.seconds, &count);
+#else
+                    create_sd_message(dataBuffer, &count);
+#endif
+                }
+                else
+                {
+                    // There are no data, just send an ACK
+                    create_ack_message(dataBuffer, device_address, &count);
+                }
+            }
             else
             {
                 create_error_message(dataBuffer, device_address, &count);
@@ -240,7 +269,14 @@ __interrupt void Timer_A_ISR(void)
     {
         // In this state the water flow finished and we can close the event
         sensor_input.ready = true;
-        float f = convert_hall_to_liters(sensor_input.hall_ticks, sensor_input.seconds);
-        shadow_sensor_input = sensor_input;
+
+        // Store this item as the input is ready
+        insertNode(input_list, sensor_input);
+    }
+
+    // If the system is sleeping wake it up to check for other events
+    if(sleeping == true)
+    {
+        __bic_SR_register_on_exit(LPM0_bits);
     }
 }
