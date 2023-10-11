@@ -1,0 +1,520 @@
+INFO:2023/10/01 17:42:06, [MRC-0] Starting program
+INFO:2023/10/01 17:42:06, [MRC-0] Starting program
+INFO:2023/10/01 17:42:06, [MRC-0] Starting program
+INFO:2023/10/01 17:42:06, [SRV-0] Server module initialized
+INFO:2023/10/01 17:42:06, [SRV-0] Server module initialized
+INFO:2023/10/01 17:42:06, [SIG-0] ControlSignals module initialized
+INFO:2023/10/01 17:42:06, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/01 17:42:06,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:42:06,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:42:06,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/01 17:42:06,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+ERROR:2023/10/01 17:42:06, [MAIN-1] Error occurred while trying to register sensor 1111 . <class 'TypeError'>:record() got an unexpected keyword argument 'exception'
+ERROR:2023/10/01 17:42:06, [MAIN-1] Error occurred while trying to register sensor 1111 . <class 'TypeError'>:record() got an unexpected keyword argument 'exception'
+DEBUG:2023/10/01 17:42:06,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:42:06,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:42:07,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/01 17:42:07,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+INFO:2023/10/01 17:43:53, [MRC-0] Starting program
+INFO:2023/10/01 17:43:53, [MRC-0] Starting program
+INFO:2023/10/01 17:43:53, [MRC-0] Starting program
+INFO:2023/10/01 17:43:53, [SRV-0] Server module initialized
+INFO:2023/10/01 17:43:53, [SRV-0] Server module initialized
+INFO:2023/10/01 17:43:53, [SIG-0] ControlSignals module initialized
+INFO:2023/10/01 17:43:53, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/01 17:43:53,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:43:53,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:43:53,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/01 17:43:53,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/01 17:44:05,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:44:05,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/01 17:44:05,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/01 17:44:05,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/01 17:44:07,Using selector: EpollSelector
+DEBUG:2023/10/01 17:44:07,Using selector: EpollSelector
+INFO:2023/10/11 19:59:03, [MRC-0] Starting program
+INFO:2023/10/11 19:59:03, [MRC-0] Starting program
+INFO:2023/10/11 19:59:03, [MRC-0] Starting program
+INFO:2023/10/11 19:59:03, [SRV-0] Server module initialized
+INFO:2023/10/11 19:59:03, [SRV-0] Server module initialized
+INFO:2023/10/11 19:59:03, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 19:59:03, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 19:59:04,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 19:59:04,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 19:59:04,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 19:59:04,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 19:59:39,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 19:59:39,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 19:59:39,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 19:59:39,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 19:59:41,Using selector: EpollSelector
+DEBUG:2023/10/11 19:59:41,Using selector: EpollSelector
+INFO:2023/10/11 20:01:19, [MRC-0] Starting program
+INFO:2023/10/11 20:01:19, [MRC-0] Starting program
+INFO:2023/10/11 20:01:19, [MRC-0] Starting program
+INFO:2023/10/11 20:01:19, [SRV-0] Server module initialized
+INFO:2023/10/11 20:01:19, [SRV-0] Server module initialized
+INFO:2023/10/11 20:01:19, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:01:19, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:01:19,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:19,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:19,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:01:19,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:01:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:24,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:01:24,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:01:24,Using selector: EpollSelector
+DEBUG:2023/10/11 20:01:24,Using selector: EpollSelector
+INFO:2023/10/11 20:01:36, [MRC-0] Starting program
+INFO:2023/10/11 20:01:36, [MRC-0] Starting program
+INFO:2023/10/11 20:01:36, [MRC-0] Starting program
+INFO:2023/10/11 20:01:36, [SRV-0] Server module initialized
+INFO:2023/10/11 20:01:36, [SRV-0] Server module initialized
+INFO:2023/10/11 20:01:36, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:01:36, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:01:36,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:36,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:37,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:01:37,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:01:45,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:45,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:01:45,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:01:45,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:01:45,Using selector: EpollSelector
+DEBUG:2023/10/11 20:01:45,Using selector: EpollSelector
+INFO:2023/10/11 20:06:47, [MRC-0] Starting program
+INFO:2023/10/11 20:06:47, [MRC-0] Starting program
+INFO:2023/10/11 20:06:47, [MRC-0] Starting program
+INFO:2023/10/11 20:06:47, [SRV-0] Server module initialized
+INFO:2023/10/11 20:06:47, [SRV-0] Server module initialized
+INFO:2023/10/11 20:06:47, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:06:47, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:06:47,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:06:47,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:06:48,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:06:48,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+ERROR:2023/10/11 20:06:48, [MAIN-1] Error occurred while trying to register sensor 1111 . <class 'TypeError'>:addSensors() missing 1 required positional argument: 'id'
+ERROR:2023/10/11 20:06:48, [MAIN-1] Error occurred while trying to register sensor 1111 . <class 'TypeError'>:addSensors() missing 1 required positional argument: 'id'
+DEBUG:2023/10/11 20:06:48,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:06:48,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:06:48,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:06:48,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:06:48,Using selector: EpollSelector
+DEBUG:2023/10/11 20:06:48,Using selector: EpollSelector
+INFO:2023/10/11 20:09:02, [MRC-0] Starting program
+INFO:2023/10/11 20:09:02, [MRC-0] Starting program
+INFO:2023/10/11 20:09:02, [MRC-0] Starting program
+INFO:2023/10/11 20:09:02, [SRV-0] Server module initialized
+INFO:2023/10/11 20:09:02, [SRV-0] Server module initialized
+INFO:2023/10/11 20:09:02, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:09:02, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:09:02,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:09:02,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:09:02,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:09:02,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:09:02,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:09:02,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:09:02,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:09:02,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:09:02,Using selector: EpollSelector
+DEBUG:2023/10/11 20:09:02,Using selector: EpollSelector
+INFO:2023/10/11 20:12:05, [MRC-0] Starting program
+INFO:2023/10/11 20:12:05, [MRC-0] Starting program
+INFO:2023/10/11 20:12:05, [MRC-0] Starting program
+INFO:2023/10/11 20:12:05, [SRV-0] Server module initialized
+INFO:2023/10/11 20:12:05, [SRV-0] Server module initialized
+INFO:2023/10/11 20:12:05, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:12:05, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:12:05,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:05,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:06,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:12:06,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:12:06,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:06,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:06,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:12:06,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:12:06,Using selector: EpollSelector
+DEBUG:2023/10/11 20:12:06,Using selector: EpollSelector
+INFO:2023/10/11 20:12:40, [MRC-0] Starting program
+INFO:2023/10/11 20:12:40, [MRC-0] Starting program
+INFO:2023/10/11 20:12:40, [MRC-0] Starting program
+INFO:2023/10/11 20:12:40, [SRV-0] Server module initialized
+INFO:2023/10/11 20:12:40, [SRV-0] Server module initialized
+INFO:2023/10/11 20:12:40, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:12:40, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:12:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:40,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:12:40,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:12:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:12:41,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:12:41,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:12:41,Using selector: EpollSelector
+DEBUG:2023/10/11 20:12:41,Using selector: EpollSelector
+INFO:2023/10/11 20:30:41, [MRC-0] Starting program
+INFO:2023/10/11 20:30:41, [MRC-0] Starting program
+INFO:2023/10/11 20:30:41, [MRC-0] Starting program
+INFO:2023/10/11 20:30:41, [SRV-0] Server module initialized
+INFO:2023/10/11 20:30:41, [SRV-0] Server module initialized
+INFO:2023/10/11 20:30:41, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:30:41, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:30:41,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:30:41,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:30:41,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:30:41,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:30:41,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:30:41,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:30:41,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:30:41,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:30:41,Using selector: EpollSelector
+DEBUG:2023/10/11 20:30:41,Using selector: EpollSelector
+INFO:2023/10/11 20:33:36, [MRC-0] Starting program
+INFO:2023/10/11 20:33:36, [MRC-0] Starting program
+INFO:2023/10/11 20:33:36, [MRC-0] Starting program
+INFO:2023/10/11 20:33:36, [SRV-0] Server module initialized
+INFO:2023/10/11 20:33:36, [SRV-0] Server module initialized
+INFO:2023/10/11 20:33:36, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:33:36, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:33:36,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:33:36,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:33:36,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:33:36,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:33:36,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:33:36,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:33:37,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:33:37,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:33:37,Using selector: EpollSelector
+DEBUG:2023/10/11 20:33:37,Using selector: EpollSelector
+INFO:2023/10/11 20:37:10, [MRC-0] Starting program
+INFO:2023/10/11 20:37:10, [MRC-0] Starting program
+INFO:2023/10/11 20:37:10, [MRC-0] Starting program
+INFO:2023/10/11 20:37:10, [SRV-0] Server module initialized
+INFO:2023/10/11 20:37:10, [SRV-0] Server module initialized
+INFO:2023/10/11 20:37:10, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:37:10, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:37:10,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:37:10,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:37:10,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:37:10,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:37:10,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:37:10,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:37:11,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:37:11,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:37:11,Using selector: EpollSelector
+DEBUG:2023/10/11 20:37:11,Using selector: EpollSelector
+INFO:2023/10/11 20:48:16, [MRC-0] Starting program
+INFO:2023/10/11 20:48:16, [MRC-0] Starting program
+INFO:2023/10/11 20:48:16, [MRC-0] Starting program
+INFO:2023/10/11 20:48:16, [SRV-0] Server module initialized
+INFO:2023/10/11 20:48:16, [SRV-0] Server module initialized
+INFO:2023/10/11 20:48:16, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:48:16, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:48:16,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:48:16,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:48:16,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:48:16,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:48:16,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:48:16,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:48:17,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:48:17,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:48:17,Using selector: EpollSelector
+DEBUG:2023/10/11 20:48:17,Using selector: EpollSelector
+INFO:2023/10/11 20:54:22, [MRC-0] Starting program
+INFO:2023/10/11 20:54:22, [MRC-0] Starting program
+INFO:2023/10/11 20:54:22, [MRC-0] Starting program
+INFO:2023/10/11 20:54:22, [SRV-0] Server module initialized
+INFO:2023/10/11 20:54:22, [SRV-0] Server module initialized
+INFO:2023/10/11 20:54:22, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 20:54:22, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 20:54:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:54:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:54:23,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:54:23,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 20:54:23,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:54:23,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 20:54:23,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:54:23,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 20:54:23,Using selector: EpollSelector
+DEBUG:2023/10/11 20:54:23,Using selector: EpollSelector
+INFO:2023/10/11 21:06:51, [MRC-0] Starting program
+INFO:2023/10/11 21:06:51, [MRC-0] Starting program
+INFO:2023/10/11 21:06:51, [MRC-0] Starting program
+INFO:2023/10/11 21:06:51, [SRV-0] Server module initialized
+INFO:2023/10/11 21:06:51, [SRV-0] Server module initialized
+INFO:2023/10/11 21:06:51, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 21:06:51, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 21:06:51,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:06:51,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:06:51,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:06:51,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:06:51,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:06:51,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:06:51,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:06:51,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:06:51,Using selector: EpollSelector
+DEBUG:2023/10/11 21:06:51,Using selector: EpollSelector
+INFO:2023/10/11 21:12:39, [MRC-0] Starting program
+INFO:2023/10/11 21:12:39, [MRC-0] Starting program
+INFO:2023/10/11 21:12:39, [MRC-0] Starting program
+INFO:2023/10/11 21:12:39, [SRV-0] Server module initialized
+INFO:2023/10/11 21:12:39, [SRV-0] Server module initialized
+INFO:2023/10/11 21:12:39, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 21:12:39, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 21:12:39,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:12:39,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:12:40,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:12:40,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:12:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:12:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:12:40,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:12:40,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:12:40,Using selector: EpollSelector
+DEBUG:2023/10/11 21:12:40,Using selector: EpollSelector
+DEBUG:2023/10/11 21:13:15,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:13:15,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:13:15,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 400 263
+DEBUG:2023/10/11 21:13:15,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 400 263
+INFO:2023/10/11 21:15:56, [MRC-0] Starting program
+INFO:2023/10/11 21:15:56, [MRC-0] Starting program
+INFO:2023/10/11 21:15:56, [MRC-0] Starting program
+INFO:2023/10/11 21:15:56, [SRV-0] Server module initialized
+INFO:2023/10/11 21:15:56, [SRV-0] Server module initialized
+INFO:2023/10/11 21:15:56, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 21:15:56, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 21:15:56,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:15:56,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:15:57,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:15:57,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:15:57,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:15:57,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:15:57,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:15:57,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:15:57,Using selector: EpollSelector
+DEBUG:2023/10/11 21:15:57,Using selector: EpollSelector
+INFO:2023/10/11 21:16:22, [MRC-0] Starting program
+INFO:2023/10/11 21:16:22, [MRC-0] Starting program
+INFO:2023/10/11 21:16:22, [MRC-0] Starting program
+INFO:2023/10/11 21:16:22, [SRV-0] Server module initialized
+INFO:2023/10/11 21:16:22, [SRV-0] Server module initialized
+INFO:2023/10/11 21:16:22, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 21:16:22, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 21:16:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:16:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:16:22,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:16:22,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:16:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:16:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:16:23,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:16:23,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:16:23,Using selector: EpollSelector
+DEBUG:2023/10/11 21:16:23,Using selector: EpollSelector
+DEBUG:2023/10/11 21:16:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:16:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:16:40,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 21:16:40,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+INFO:2023/10/11 21:18:23, [MRC-0] Starting program
+INFO:2023/10/11 21:18:23, [MRC-0] Starting program
+INFO:2023/10/11 21:18:23, [MRC-0] Starting program
+INFO:2023/10/11 21:18:23, [SRV-0] Server module initialized
+INFO:2023/10/11 21:18:23, [SRV-0] Server module initialized
+INFO:2023/10/11 21:18:23, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 21:18:23, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 21:18:23,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:18:23,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:18:24,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:18:24,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 21:18:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:18:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:18:24,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:18:24,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 21:18:24,Using selector: EpollSelector
+DEBUG:2023/10/11 21:18:24,Using selector: EpollSelector
+DEBUG:2023/10/11 21:18:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:18:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:18:40,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 21:18:40,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 21:19:45,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:19:45,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 21:19:46,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 21:19:46,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+INFO:2023/10/11 22:06:18, [MRC-0] Starting program
+INFO:2023/10/11 22:06:18, [MRC-0] Starting program
+INFO:2023/10/11 22:06:18, [MRC-0] Starting program
+INFO:2023/10/11 22:06:18, [SRV-0] Server module initialized
+INFO:2023/10/11 22:06:18, [SRV-0] Server module initialized
+INFO:2023/10/11 22:06:18, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:06:18, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:06:18,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:18,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:18,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:06:18,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:06:18,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:18,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:18,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:06:18,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:06:18,Using selector: EpollSelector
+DEBUG:2023/10/11 22:06:18,Using selector: EpollSelector
+INFO:2023/10/11 22:06:57, [MRC-0] Starting program
+INFO:2023/10/11 22:06:57, [MRC-0] Starting program
+INFO:2023/10/11 22:06:57, [MRC-0] Starting program
+INFO:2023/10/11 22:06:57, [SRV-0] Server module initialized
+INFO:2023/10/11 22:06:57, [SRV-0] Server module initialized
+INFO:2023/10/11 22:06:57, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:06:57, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:06:57,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:57,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:57,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:06:57,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:06:57,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:57,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:06:58,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 500 204415
+DEBUG:2023/10/11 22:06:58,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 500 204415
+WARNING:2023/10/11 22:06:58, [SRV-3] Sensor register failed with code 500
+WARNING:2023/10/11 22:06:58, [SRV-3] Sensor register failed with code 500
+CRITICAL:2023/10/11 22:06:58, [MAIN-1] Server refused our sensor list, abort main
+CRITICAL:2023/10/11 22:06:58, [MAIN-1] Server refused our sensor list, abort main
+INFO:2023/10/11 22:07:42, [MRC-0] Starting program
+INFO:2023/10/11 22:07:42, [MRC-0] Starting program
+INFO:2023/10/11 22:07:42, [MRC-0] Starting program
+INFO:2023/10/11 22:07:42, [SRV-0] Server module initialized
+INFO:2023/10/11 22:07:42, [SRV-0] Server module initialized
+INFO:2023/10/11 22:07:42, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:07:42, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:07:42,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:07:42,Starting new HTTPS connection (1): wflow.online:443
+ERROR:2023/10/11 22:07:42, [SRV-1] Error while authenticating
+ERROR:2023/10/11 22:07:42, [SRV-1] Error while authenticating
+DEBUG:2023/10/11 22:08:42,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:08:42,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:08:43,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:08:43,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:08:43,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:08:43,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:08:43,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:08:43,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:08:43,Using selector: EpollSelector
+DEBUG:2023/10/11 22:08:43,Using selector: EpollSelector
+DEBUG:2023/10/11 22:10:49,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:10:49,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:10:49,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 22:10:49,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+INFO:2023/10/11 22:11:21, [MRC-0] Starting program
+INFO:2023/10/11 22:11:21, [MRC-0] Starting program
+INFO:2023/10/11 22:11:21, [MRC-0] Starting program
+INFO:2023/10/11 22:11:21, [SRV-0] Server module initialized
+INFO:2023/10/11 22:11:21, [SRV-0] Server module initialized
+INFO:2023/10/11 22:11:21, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:11:21, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:11:21,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:11:21,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:11:22,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:11:22,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+ERROR:2023/10/11 22:11:22, [MAIN-1] Error occurred while trying to register sensor 2222 . <class 'TypeError'>:record() got an unexpected keyword argument 'exception'
+ERROR:2023/10/11 22:11:22, [MAIN-1] Error occurred while trying to register sensor 2222 . <class 'TypeError'>:record() got an unexpected keyword argument 'exception'
+DEBUG:2023/10/11 22:11:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:11:22,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:11:22,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:11:22,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:11:22,Using selector: EpollSelector
+DEBUG:2023/10/11 22:11:22,Using selector: EpollSelector
+INFO:2023/10/11 22:15:00, [MRC-0] Starting program
+INFO:2023/10/11 22:15:00, [MRC-0] Starting program
+INFO:2023/10/11 22:15:00, [MRC-0] Starting program
+INFO:2023/10/11 22:15:00, [SRV-0] Server module initialized
+INFO:2023/10/11 22:15:00, [SRV-0] Server module initialized
+INFO:2023/10/11 22:15:00, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:15:00, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:15:00,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:00,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:01,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:15:01,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:15:01,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:01,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:01,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:15:01,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:15:01,Using selector: EpollSelector
+DEBUG:2023/10/11 22:15:01,Using selector: EpollSelector
+ERROR:2023/10/11 22:15:34, [SER-1] Error occurred while trying to send message to device. <class 'serial.serialutil.SerialException'>:write failed: [Errno 5] Input/output error
+ERROR:2023/10/11 22:15:34, [SER-1] Error occurred while trying to send message to device. <class 'serial.serialutil.SerialException'>:write failed: [Errno 5] Input/output error
+ERROR:2023/10/11 22:15:34, [SER-1] Error occurred while trying to receive message from device. <class 'serial.serialutil.SerialException'>:Could not configure port: (5, 'Input/output error')
+ERROR:2023/10/11 22:15:34, [SER-1] Error occurred while trying to receive message from device. <class 'serial.serialutil.SerialException'>:Could not configure port: (5, 'Input/output error')
+INFO:2023/10/11 22:15:40, [MRC-0] Starting program
+INFO:2023/10/11 22:15:40, [MRC-0] Starting program
+INFO:2023/10/11 22:15:40, [MRC-0] Starting program
+INFO:2023/10/11 22:15:40, [SRV-0] Server module initialized
+INFO:2023/10/11 22:15:40, [SRV-0] Server module initialized
+INFO:2023/10/11 22:15:40, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:15:40, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:15:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:40,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:41,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:15:41,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+ERROR:2023/10/11 22:15:41, [MAIN-1] Error occurred while trying to register sensor 2222 . <class 'TypeError'>:record() got an unexpected keyword argument 'exception'
+ERROR:2023/10/11 22:15:41, [MAIN-1] Error occurred while trying to register sensor 2222 . <class 'TypeError'>:record() got an unexpected keyword argument 'exception'
+DEBUG:2023/10/11 22:15:41,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:41,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:15:41,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:15:41,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:15:41,Using selector: EpollSelector
+DEBUG:2023/10/11 22:15:41,Using selector: EpollSelector
+INFO:2023/10/11 22:19:00, [MRC-0] Starting program
+INFO:2023/10/11 22:19:00, [MRC-0] Starting program
+INFO:2023/10/11 22:19:00, [MRC-0] Starting program
+INFO:2023/10/11 22:19:00, [SRV-0] Server module initialized
+INFO:2023/10/11 22:19:00, [SRV-0] Server module initialized
+INFO:2023/10/11 22:19:00, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 22:19:00, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 22:19:00,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:19:00,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:19:01,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:19:01,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 22:19:01,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:19:01,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 22:19:01,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:19:01,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 22:19:01,Using selector: EpollSelector
+DEBUG:2023/10/11 22:19:01,Using selector: EpollSelector
+INFO:2023/10/11 23:19:07, [MRC-0] Starting program
+INFO:2023/10/11 23:19:07, [MRC-0] Starting program
+INFO:2023/10/11 23:19:07, [MRC-0] Starting program
+INFO:2023/10/11 23:19:07, [SRV-0] Server module initialized
+INFO:2023/10/11 23:19:07, [SRV-0] Server module initialized
+INFO:2023/10/11 23:19:07, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 23:19:07, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 23:19:07,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:07,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:07,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 23:19:07,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 23:19:07,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:07,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:08,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 23:19:08,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 23:19:08,Using selector: EpollSelector
+DEBUG:2023/10/11 23:19:08,Using selector: EpollSelector
+INFO:2023/10/11 23:19:24, [MRC-0] Starting program
+INFO:2023/10/11 23:19:24, [MRC-0] Starting program
+INFO:2023/10/11 23:19:24, [MRC-0] Starting program
+INFO:2023/10/11 23:19:24, [SRV-0] Server module initialized
+INFO:2023/10/11 23:19:24, [SRV-0] Server module initialized
+INFO:2023/10/11 23:19:24, [SIG-0] ControlSignals module initialized
+INFO:2023/10/11 23:19:24, [SIG-0] ControlSignals module initialized
+DEBUG:2023/10/11 23:19:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:24,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 23:19:24,https://wflow.online:443 "POST /devices/login/ HTTP/1.1" 200 61
+DEBUG:2023/10/11 23:19:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:24,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:19:25,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 23:19:25,https://wflow.online:443 "POST /sensors/register/ HTTP/1.1" 201 42
+DEBUG:2023/10/11 23:19:25,Using selector: EpollSelector
+DEBUG:2023/10/11 23:19:25,Using selector: EpollSelector
+DEBUG:2023/10/11 23:20:16,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:20:16,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:20:16,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 23:20:16,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 23:20:42,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:20:42,Starting new HTTPS connection (1): wflow.online:443
+DEBUG:2023/10/11 23:20:43,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40
+DEBUG:2023/10/11 23:20:43,https://wflow.online:443 "POST /sensors/upload/ HTTP/1.1" 201 40

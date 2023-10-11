@@ -1,4 +1,4 @@
-import sys, time, json, asyncio
+import sys, time, json, asyncio, datetime
 import data, event, diagnostic, server, deviceManager
 from constants import Resources, MainParameters, SensorEvents, NotifyActiveSensorRequest, ActuatorEvents, ActuatorType
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
@@ -32,7 +32,7 @@ def init_system_object() -> tuple:
 			logger = diagnostic.Diagnostic(path = Resources.LOGGER_FILE, logLevel = log_level)
 
 
-		logger = diagnostic.Diagnostic()
+		logger = diagnostic.Diagnostic(path = Resources.LOGGER_FILE, logLevel = diagnostic.DEBUG)
 		eventHandler = event.Event()
 		dataHandler = data.Data()
 	except Exception as e:
@@ -60,7 +60,7 @@ if __name__ == "__main__":
 			if authenticated is False:
 				time.sleep(1 * 60)
 	except Exception as e:
-		logger.record(msg = "Error occurred while trying to authenticate, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+		logger.record(msg = "Error occurred while trying to authenticate, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exc = e)
 		sys.exit(1)
 
 	# Load the devices' configuration from file
@@ -68,17 +68,18 @@ if __name__ == "__main__":
 		with open(Resources.DEVICE_FILE, "r") as f:
 			devices_list = json.load(f)
 	except Exception as e:
-		logger.record(msg = "Error occurred while trying to load devices' configuration, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+		logger.record(msg = "Error occurred while trying to load devices' configuration, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exc = e)
 		sys.exit(1)
 
 	# Register the sensors to the ControlSingals handler
 	for sensor in devices_list["sensors"]:
 		try:
-			controlSignals.registerSensor(sensor = int(sensor["GPIO"]))
+			controlSignals.addSensors(id = int(sensor["id"]), pin = int(sensor["GPIO"]))
 			
-			if serialInterface.addDevice(id = int(sensor["id"]), port = sensor["port"]) == True:
+			if serialInterface.addDevice(id = int(sensor["id"]), port = sensor["UART"]) == True:
 				converted_uid = f"{sensor['id']:010}"
-				serialInterface.send(id = int(sensor["id"]), msg = f"SA{converted_uid}")
+				current_time = int(datetime.datetime.now().timestamp())
+				serialInterface.send(id = int(sensor["id"]), message = f"SA{converted_uid}{current_time:010}")
 				resp = serialInterface.receive(id = int(sensor["id"]), timeout = 5)
 
 				if "OK" in resp:
@@ -86,12 +87,12 @@ if __name__ == "__main__":
 				else:
 					logger.record(msg = f"Sensor {sensor['id']} didn't respond OK the SA request", logLevel = diagnostic.ERROR, module = _MODULE, code = 1)
 		except Exception as e:
-			logger.record(msg = f"Error occurred while trying to register sensor {sensor['id']} ", logLevel = diagnostic.ERROR, module = _MODULE, code = 1, exception = e)
+			logger.record(msg = f"Error occurred while trying to register sensor {sensor['id']} ", logLevel = diagnostic.ERROR, module = _MODULE, code = 1, exc = e)
 			continue
 
 	for actuator in devices_list["actuators"]:
 		try:
-			if serialInterface.addDevice(id = int(actuator["id"]), port = actuator["port"]) == True:
+			if serialInterface.addDevice(id = int(actuator["id"]), port = actuator["UART"]) == True:
 				converted_uid = f"{sensor['id']:010}"
 				serialInterface.send(id = int(sensor["id"]), msg = f"SA{converted_uid}")
 				resp = serialInterface.receive(id = int(sensor["id"]), timeout = 5)
@@ -101,7 +102,7 @@ if __name__ == "__main__":
 				else:
 					logger.record(msg = f"Actuator {actuator['id']} didn't respond OK the SA request", logLevel = diagnostic.ERROR, module = _MODULE, code = 1)
 		except Exception as e:
-			logger.record(msg = f"Error occurred while trying to register actuator {actuator['id']} ", logLevel = diagnostic.ERROR, module = _MODULE, code = 1, exception = e)
+			logger.record(msg = f"Error occurred while trying to register actuator {actuator['id']} ", logLevel = diagnostic.ERROR, module = _MODULE, code = 1, exc = e)
 			continue
 
 	# Notify the sensor list to the server
@@ -119,11 +120,12 @@ if __name__ == "__main__":
 			logger.record(msg = "Server refused our sensor list, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1)
 			sys.exit(1)
 	except Exception as e:
-		logger.record(msg = "Error occurred while trying to notify the sensor list to the server, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+		logger.record(msg = "Error occurred while trying to notify the sensor list to the server, abort main", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exc = e)
 		sys.exit(1)
 
 	# Open the WebSocket connection to server in order to get the actuators commands
-	asyncio.create_task(serverHandler.getActuatorsCommands())
+	loop = asyncio.get_event_loop()
+	loop.create_task(serverHandler.getActuatorsCommands())
 
 	# Main messaging loop
 	while True:
@@ -133,7 +135,7 @@ if __name__ == "__main__":
 			sensor_res = eventInterface.pend(name = SensorEvents.SENSOR_REQUEST_TO_TALK, timeout = 1)
 			actuator_res = eventInterface.pend(name = ActuatorEvents.COMMAND_FOR_ACTUATOR, timeout = 1)
 		except Exception as e:
-			logger.record(msg = "The SENSOR_REQUEST_TO_TALK does not exists", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exception = e)
+			logger.record(msg = "The SENSOR_REQUEST_TO_TALK does not exists", logLevel = diagnostic.CRITICAL, module = _MODULE, code = 1, exc = e)
 			sys.exit(1)
 
 		# Process the sensor request queue, one by one
@@ -145,15 +147,33 @@ if __name__ == "__main__":
 				sensor_id = dataInterface.popQueue(name = SensorEvents.SENSOR_REQUEST_TO_TALK)
 
 				# Request to the sensor to provide the data
-				serialInterface.send(id = sensor_id, msg = "SD")
+				serialInterface.send(id = sensor_id, message = "SD")
 				resp = serialInterface.receive(id = sensor_id, timeout = 5)
 
-				#TODO: Parse the response
-				#TODO: Send to the server the packet
+				if type(resp) != str:
+					continue
 
 				# The message is a Data Packet, with the recorded values and the shape: DP<id><start_time><end_time><values>
-				if "DP" in resp:
-					pass
+				if "SD" in resp:
+					if sensor_list[sensor_id] == "FLO":
+						liters = float(resp[2:9])
+						temp = float(resp[9:15])
+						start = datetime.datetime.fromtimestamp(int(resp[15:25]))
+						end = datetime.datetime.fromtimestamp(int(resp[25:35]))
+
+						start = start.strftime("%Y-%m-%d %H:%M:%S")
+						end = end.strftime("%Y-%m-%d %H:%M:%S")
+						
+						serverHandler.sendSensorData(sensor_id = sensor_id, start_timestamp = start, end_timestamp = end, payload = {"temperature": temp, "water_liters": liters})
+					elif sensor_list[sensor_id] == "LEV":
+						start = datetime.datetime.fromtimestamp(int(resp[2:12]))
+						end = start
+
+						start = start.strftime("%Y-%m-%d %H:%M:%S")
+						end = end.strftime("%Y-%m-%d %H:%M:%S")
+						
+						serverHandler.sendSensorData(sensor_id = sensor_id, start_timestamp = start, end_timestamp = end, payload = {"water_liters": 20.0})
+
 
 		if actuator_res is True:
 			eventInterface.clear(name = ActuatorEvents.COMMAND_FOR_ACTUATOR)

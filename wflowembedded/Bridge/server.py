@@ -87,7 +87,7 @@ class ServerConnector():
 
             result = requests.post(self._address + ServerAPI.SENSOR_REGISTER, json = body, headers = {"Authorization": "Token " + self._token})
 
-            if result.status_code == 200:
+            if result.status_code == 201:
                 return True
             else:
                 self._logger.record(msg = "Sensor register failed with code " + str(result.status_code), logLevel = diagnostic.WARNING, module = self._MODULE, code = 3)
@@ -97,7 +97,7 @@ class ServerConnector():
         return False
 
     def sendSensorData(self, sensor_id: int, start_timestamp: int, end_timestamp: int, payload: dict) -> bool:
-        if type(sensor_id) != int or type(start_timestamp) != int or type(end_timestamp) != int or type(payload) != dict:
+        if type(sensor_id) != int or type(start_timestamp) != str or type(end_timestamp) != str or type(payload) != dict:
             raise TypeError("Error: Invalid type of arguments")
         
         # Prepare the payload
@@ -117,7 +117,7 @@ class ServerConnector():
             self._logger.record(msg = "Error while sending sensor data", logLevel = diagnostic.ERROR, module = self._MODULE, code = 4, exc = e)
             return False
         
-        if resp.status_code != 200:
+        if resp.status_code != 201:
             self._logger.record(msg = f"Server replied with {resp.status_code} to our SEND_SENSOR_DATA call", logLevel = diagnostic.WARNING, module = self._MODULE, code = 5)
             return False
     

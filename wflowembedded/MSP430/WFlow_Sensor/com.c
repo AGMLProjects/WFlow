@@ -123,6 +123,39 @@ bool isDigit(uint8_t *txt, int8_t len)
    return true;
 }
 
+void floatEncode(uint8_t *buffer, float number, uint8_t int_len, uint8_t dec_len)
+{
+    uint32_t integer_part = 0, decimal_part = 0;
+    uint8_t tmp;
+
+    // Extract the decimal part of given len
+    tmp = dec_len;
+    integer_part = (uint32_t) number;       // Keep only the integer
+
+    while(tmp > 0)
+    {
+        if(decimal_part == 0)
+        {
+            decimal_part = 10;
+        }
+        else
+        {
+            decimal_part = decimal_part * 10;
+        }
+
+        number = number * 10;
+        tmp = tmp - 1;
+    }
+
+    // Keep only the decimal part
+    decimal_part = (uint32_t) number % decimal_part;
+
+    // Encode the two parts
+    intEncode(integer_part, buffer, int_len);
+    buffer[int_len] = '.';
+    intEncode(decimal_part, &buffer[int_len + 1], dec_len);
+}
+
 void create_ack_message(uint8_t *message, uint32_t device_address, uint16_t *count)
 {
     message[0] = 'O';
@@ -142,37 +175,34 @@ void create_error_message(uint8_t *message, uint32_t device_address, uint16_t *c
 }
 
 #ifdef FLO
-void create_sd_message(uint8_t *message, float liters, float temperature, uint32_t seconds, uint16_t *count)
+void create_sd_message(uint8_t *message, float liters, float temperature, uint32_t start, uint32_t end, uint16_t *count)
 {
-    char str[20];   // TMP string to convert the numbers
-
     message[0] = 'S';
     message[1] = 'D';
 
     // Convert the liters into string
-    sprintf(str, "%.2f", liters);
-
-    message[2] = str[6];
-    message[3] = str[5];
-    message[4] = str[4];
-    message[5] = str[3];
-    message[6] = str[2];
-    message[7] = str[1];
-    message[8] = str[0];
+    floatEncode(&message[2], liters, 4, 2);
 
     // Convert the temperature
-    sprintf(str, "%.2f", temperature);
+    floatEncode(&message[9], temperature, 3, 2);
 
-    message[9] = str[5];
-    message[10] = str[4];
-    message[11] = str[3];
-    message[12] = str[2];
-    message[13] = str[1];
-    message[14] = str[0];
+    intEncode(start, &message[15], 10);
+    intEncode(end, &message[25], 10);
+    message[35] = '\n';
 
-    intEncode(seconds, &message[15], 5);
+    *count = 36;
 
-    *count = 21;
+}
+#elif defined(LEV)
+void create_sd_message(uint8_t *message, uint32_t start, uint16_t *count)
+{
+    message[0] = 'S';
+    message[1] = 'D';
+
+    intEncode(start, &message[2], 10);
+    message[12] = '\n';
+
+    *count = 13;
 
 }
 #else
@@ -189,9 +219,5 @@ void create_sd_message(uint8_t *message, uint16_t *count)
 float convert_hall_to_liters(uint32_t hall_pulses, uint32_t seconds)
 {
     // Flow rate in Hz
-    float flow_rate = hall_pulses / seconds;
-    float flow_rate_lpm = 1 + (flow_rate - 1) * (30 - 1) / (30 - 1);
-
-    return flow_rate_lpm * (seconds / 60);
-
+    return ((float)hall_pulses / (float)seconds) / 35.0;
 }

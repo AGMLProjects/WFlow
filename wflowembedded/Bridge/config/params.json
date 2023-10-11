@@ -1,0 +1,8 @@
+{
+    "server_address": "https://wflow.online",
+    "server_device_id": 2,
+    "server_secret": "FLzdTj@22EV74gflnyN6^9qKD$37AOL4kQD3&dm^@61Qb1p96z",
+    "websocket_address": "wss://wflow.online",
+    "timeoutTimerToAuthAttempt": 60,
+    "logLevel": 30
+}

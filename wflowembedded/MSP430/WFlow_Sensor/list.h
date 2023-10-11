@@ -9,6 +9,13 @@ typedef struct {
     float temperature;
     uint32_t hall_ticks_old;
     uint32_t seconds;
+    uint32_t start;
+    uint32_t end;
+    bool ready;
+} SensorInput;
+#elif defined(LEV)
+typedef struct {
+    uint32_t timestamp;
     bool ready;
 } SensorInput;
 #else
@@ -22,8 +29,8 @@ typedef struct {
 } Node;
 
 Node* createNode(SensorInput);
-void insertNode(Node *, SensorInput);
-SensorInput popNode(Node *);
+void insertNode(Node **, SensorInput);
+SensorInput popNode(Node **);
 bool available_data(Node *);
 
 #endif /* LIST_H_ */

@@ -12,7 +12,7 @@ class Resources(_AbstractEnum):
 	Defines the resources that can be used by the system.
 	'''
 
-	CUSTOM_DIR = "/home/wflow/config/"
+	CUSTOM_DIR = "/home/wflow/Bridge/config/"
 	PARAMETERS_FILE = CUSTOM_DIR + "params.json"
 	LOGGER_FILE = CUSTOM_DIR + "logger.txt"
 	BACKUP_FILE = CUSTOM_DIR + "logger.backup"
@@ -27,9 +27,9 @@ class DeviceLoginRequest(_AbstractEnum):
 	PASSWORD = "password"
 
 class ServerAPI(_AbstractEnum):
-	DEVICE_AUTH = "/devices/login"
-	SENSOR_REGISTER = "/sensors/register"
-	SEND_SENSOR_DATA = "/sensors/upload"
+	DEVICE_AUTH = "/devices/login/"
+	SENSOR_REGISTER = "/sensors/register/"
+	SEND_SENSOR_DATA = "/sensors/upload/"
 
 class NotifyActiveSensorRequest(_AbstractEnum):
 	SENSOR_LIST = "active_sensors"

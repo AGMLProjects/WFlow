@@ -13,17 +13,17 @@ Node* createNode(SensorInput data)
     return newNode;
 }
 
-void insertNode(Node *head, SensorInput data)
+void insertNode(Node **head, SensorInput data)
 {
     Node *newNode = createNode(data);
 
-    if(head == NULL)
+    if(*head == NULL)
     {
-        head = newNode;
+        *head = newNode;
     }
     else
     {
-        Node *temp = head;
+        Node *temp = *head;
 
         while(temp->next != NULL)
         {
@@ -34,14 +34,29 @@ void insertNode(Node *head, SensorInput data)
     }
 }
 
-SensorInput popNode(Node *head)
+SensorInput popNode(Node **head)
 {
-    Node *next = head->next;
-    SensorInput data = head->data;
+    if (*head == NULL) {
+        // Handle empty list (optional)
+        // You might want to return a special value or handle the case differently
+#ifdef FLO
+        SensorInput empty = {.seconds = 0};
+        return empty;
+#elif defined(LEV)
+        SensorInput empty = {.timestamp = 0};
+        return empty;
+#else
+        return 0;
+#endif
+    }
 
-    free(head);
-    head = next;
-    return data;
+    Node *temp = *head; // Store the current head node
+    SensorInput data = temp->data; // Get the data from the head node
+
+    *head = (*head)->next; // Update the head pointer to the next node
+
+    free(temp); // Free the memory of the popped node
+    return data; // Return the data from the popped node
 }
 
 bool available_data(Node *head)

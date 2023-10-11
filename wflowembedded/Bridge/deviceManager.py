@@ -29,14 +29,14 @@ class ControlSignals():
 
         self._logger.record(msg = "ControlSignals module initialized", logLevel = diagnostic.INFO, module = self._MODULE, code = 0)
 
-    def addSensors(self, pin: int) -> bool:
-        if type(pin) != int:
+    def addSensors(self, id: int, pin: int) -> bool:
+        if type(pin) != int or type(id) != int:
             raise TypeError
         
-        if pin not in self._registeredSensors:
-            self._registeredSensors.add(pin)
+        if (id, pin) not in self._registeredSensors:
+            self._registeredSensors.add((id, pin))
 
-            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.setup(pin, GPIO.IN)
             GPIO.add_event_detect(pin, GPIO.FALLING, callback = lambda pin = pin: self._sensorRequestCallback(pin), bouncetime = 200)
             return True
         
@@ -45,9 +45,12 @@ class ControlSignals():
     def _sensorRequestCallback(self, pin: int) -> None:
         if type(pin) != int:
             raise TypeError
+        
+        for element in self._registeredSensors:
+            if element[1] == pin:
+                self._event.set(SensorEvents.SENSOR_REQUEST_TO_TALK)
+                self._data.pushQueue(name = SensorEvents.SENSOR_REQUEST_TO_TALK, newItem = element[0])
 
-        self._event.set(SensorEvents.SENSOR_REQUEST_TO_TALK)
-        self._data.pushQueue(name = SensorEvents.SENSOR_REQUEST_TO_TALK, newItem = pin)
         return None
     
 class SerialInterface():
@@ -88,22 +91,26 @@ class SerialInterface():
         if id not in self._devices:
             return False
         
+        message = message + '\n'
+
         try:
             self._devices[id].write(message.encode())
             return True
         except Exception as e:
-            self._logger.record(msg = "Error occurred while trying to send message to device", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exception = e)
+            self._logger.record(msg = "Error occurred while trying to send message to device", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exc = e)
             return False
         
-    def receive(self, id: int) -> str:
-        if type(id) != int:
+    def receive(self, id: int, timeout: int) -> str:
+        if type(id) != int or type(timeout) != int:
             raise TypeError
         
         if id not in self._devices:
             return None
         
         try:
-            return self._devices[id].readline().decode()
+            self._devices[id].timeout = timeout
+            x = self._devices[id].readline()
+            return x.decode("UTF-8")
         except Exception as e:
-            self._logger.record(msg = "Error occurred while trying to receive message from device", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exception = e)
+            self._logger.record(msg = "Error occurred while trying to receive message from device", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exc = e)
             return None
