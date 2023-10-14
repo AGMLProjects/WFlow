@@ -237,6 +237,40 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
             'predicted_data': predicted_data_serializer.data,
         }
 
+        # ------------------------------------- device list
+        devices = Device.objects.filter(house_id=instance)
+        response['devices'] = DeviceSerializer(devices, many=True).data
+
+        for index, device in enumerate(devices):
+            sensors = Sensor.objects.filter(device_id=device)
+            print(sensors)
+            response['devices'][index]['sensors'] = SensorSerializer(
+                sensors, many=True).data
+            
+        # -------------------------------------- last events
+        # devices = Device.objects.filter(house_id=instance)
+        # response['devices'] = DeviceSerializer(devices, many=True).data
+
+        # for index, device in enumerate(devices):
+        #     sensors = Sensor.objects.filter(device_id=device)
+        #     response['devices'][index]['sensors'] = SensorSerializer(
+        #         sensors, many=True).data
+        
+
+        # TODO: get last 5 events (sensorData)
+
+        # response['last_events'] = 
+
+        # {
+        #     "sensor_id":"444444444",
+        #     "sensor_type":"FLO",
+        #     "start_timestamp": "2023-08-13 23:10:50",
+        #     "end_timestamp": "2023-08-13 23:10:50",
+        #     "values" : {
+        #         "temperature": "690004.0"
+        #     }
+        # }
+
         return Response(response)
     
 
