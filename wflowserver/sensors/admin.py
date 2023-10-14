@@ -3,7 +3,7 @@ from .models import Sensor, SensorData, PredictedSensorData, SensorTypeDefinitio
 
 
 class SensorAdmin(admin.ModelAdmin):
-    list_display = ('device_id', 'active', 'sensor_id', 'sensor_type')
+    list_display = ('sensor_id', 'device_id', 'active', 'sensor_type')
 
 
 class SensorTypeDefinitionAdmin(admin.ModelAdmin):

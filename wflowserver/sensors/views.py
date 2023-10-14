@@ -107,12 +107,13 @@ class UploadActuatorDataAPIView(CreateAPIView):
         actuator_id = request.data['sensor_id']
         message = request.data['values']
 
-        # TODO: get device_id from actuator_id
+        sensor = Sensor.objects.filter(sensor_id=actuator_id).first()
+        # Handle the case where no matching device is found
+        if sensor is None:
+            return Response({'error': 'Sensor (Actuator) not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        device_id = 1
-
-        # if actuator_id not in ACTIVE_ACTUATORS:
-        #     return Response("Actuator not found.")
+        device = sensor.device_id
+        device_id = device.device_id
 
         try:
             channel_layer = get_channel_layer()

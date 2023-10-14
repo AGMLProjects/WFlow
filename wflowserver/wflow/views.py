@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from calendar import monthrange
 
 from django.http import JsonResponse
@@ -16,7 +16,7 @@ from rest_framework import mixins
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
-from .models import House
+from .models import House, PredictedConsumes
 from .serializers import HouseSerializer, HouseIdSerializer, PredictedConsumesSerializer
 
 from users.models import CustomUser
@@ -154,13 +154,24 @@ class HousesDetailAPIView(RetrieveUpdateDestroyAPIView):
             device_id__in=Device.objects.filter(house_id=instance)))
         sensor_datas = SensorDataSerializer(sensor_datas, many=True).data
 
-        response['total_liters'] = sum(
-            float(item['values'].get('water_liters', 0)) for item in sensor_datas)
-        response['total_gas'] = sum(
-            float(item['values'].get('gas_volume', 0)) for item in sensor_datas)
+        # Calculate the date 20 days ago from today
+        twenty_days_ago = datetime.now() - timedelta(days=20)
 
-        response['future_total_liters'] = -1
-        response['future_total_gas'] = -1
+        # Filter SensorData objects within the last 20 days
+        sensor_datas = SensorData.objects.filter(
+            sensor_id__in=Sensor.objects.filter(
+                device_id__in=Device.objects.filter(house_id=instance)
+            ),
+            start_timestamp__gte=twenty_days_ago,
+        )
+
+        response['mean_liters'] = sum(float(item.values.get('water_liters', 0)) for item in sensor_datas)/20
+        response['mean_volume'] = sum(float(item.values.get('gas_volume', 0)) for item in sensor_datas)/20
+        
+        predicted_consumes = PredictedConsumes.objects.filter(house_id=instance)
+
+        response['future_mean_liters'] = sum(float(item.predicted_liters) for item in predicted_consumes)/20
+        response['future_mean_volume'] = sum(float(item.predicted_volumes) for item in predicted_consumes)/20
 
         return Response(response)
 
@@ -180,101 +191,51 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        response = serializer.data
 
         # get all the sensor_datas from all the sensor of all the devices of house provided
         sensor_datas = SensorData.objects.filter(sensor_id__in=Sensor.objects.filter(
             device_id__in=Device.objects.filter(house_id=instance)))
-
-        # get current year and month
-        year = date.today().year
-        month = date.today().month
-
-        # filter sensor_datas by the current month
-        sensor_datas = sensor_datas.filter(start_timestamp__year__gte=year,
-                                           start_timestamp__month__gte=month,
-                                           end_timestamp__year__lte=year,
-                                           end_timestamp__month__lte=month)
-
-        # get number of days to create the list of queries
-        number_of_days = monthrange(year, month)[1]
-
-        sensor_datas_per_day = [sensor_datas.filter(start_timestamp__day__gte=(day+1),
-                                                    end_timestamp__day__lte=(day+1)) for day in range(number_of_days)]
-
-        # serialize the data
-        sensor_datas_per_day = [SensorDataSerializer(
-            item, many=True).data for item in sensor_datas_per_day]
-
-        water_liters_per_day = [sum(float(item['values'].get(
-            'water_liters', 0)) for item in day) for day in sensor_datas_per_day]
-        gas_volume_per_day = [sum(float(item['values'].get(
-            'gas_volume', 0)) for item in day) for day in sensor_datas_per_day]
-
-        literConsumes = []
-        for day, value in enumerate(water_liters_per_day, 1):
-            tmpdate = str(day)+'/'+str(month)+'/'+str(year)
-            tmpdict = {'x': tmpdate, 'y': value,
-                       'predicted': False if day <= date.today().day else True}
-            literConsumes.append(tmpdict)
-
-        gasConsumes = []
-        for day, value in enumerate(gas_volume_per_day, 1):
-            tmpdate = str(day)+'/'+str(month)+'/'+str(year)
-            tmpdict = {'x': tmpdate, 'y': value,
-                       'predicted': False if day <= date.today().day else True}
-            gasConsumes.append(tmpdict)
-
-        response['literConsumes'] = literConsumes
-        response['gasConsumes'] = gasConsumes
-
-        # ------------------------------- FIXME: do better
-        # get all the sensor_datas from all the sensor of all the devices of house provided
-        sensor_datas = SensorData.objects.filter(sensor_id__in=Sensor.objects.filter(
-            device_id__in=Device.objects.filter(house_id=instance)))
-        sensor_datas = SensorDataSerializer(sensor_datas, many=True).data
-
-        response['total_liters'] = sum(
-            float(item['values'].get('water_liters', 0)) for item in sensor_datas)
-        response['total_gas'] = sum(
-            float(item['values'].get('gas_volume', 0)) for item in sensor_datas)
-
-        response['future_total_liters'] = -1
-        response['future_total_gas'] = -1
-
-        # ------------------------------------- device list
-        devices = Device.objects.filter(house_id=instance)
-        response['devices'] = DeviceSerializer(devices, many=True).data
-
-        for index, device in enumerate(devices):
-            sensors = Sensor.objects.filter(device_id=device)
-            print(sensors)
-            response['devices'][index]['sensors'] = SensorSerializer(
-                sensors, many=True).data
-            
-        # -------------------------------------- last events
-        # devices = Device.objects.filter(house_id=instance)
-        # response['devices'] = DeviceSerializer(devices, many=True).data
-
-        # for index, device in enumerate(devices):
-        #     sensors = Sensor.objects.filter(device_id=device)
-        #     response['devices'][index]['sensors'] = SensorSerializer(
-        #         sensors, many=True).data
         
+        # Calculate the date 20 days ago from today
+        twenty_days_ago = datetime.now() - timedelta(days=20)
 
-        # TODO: get last 5 events (sensorData)
+        # Filter SensorData objects within the last 20 days
+        sensor_datas = SensorData.objects.filter(
+            sensor_id__in=Sensor.objects.filter(
+                device_id__in=Device.objects.filter(house_id=instance)
+            ),
+            start_timestamp__gte=twenty_days_ago,
+        )
 
-        # response['last_events'] = 
+        # sommare i dati
+        # Group the SensorData by day and sum their values
+        aggregated_data = sensor_datas.annotate(
+            date=TruncDate('start_timestamp')
+        ).values('date').annotate(
+            total_water_liters=Sum(Case(
+                When(values__water_liters__isnull=False, then=F('values__water_liters')),
+                default=Value(0),
+                output_field=IntegerField()
+            )),
+            total_gas_volumes=Sum(Case(
+                When(values__gas_volumes__isnull=False, then=F('values__gas_volumes')),
+                default=Value(0),
+                output_field=IntegerField()
+            ))
+        ).values('date', 'total_water_liters', 'total_gas_volumes')
 
-        # {
-        #     "sensor_id":"444444444",
-        #     "sensor_type":"FLO",
-        #     "start_timestamp": "2023-08-13 23:10:50",
-        #     "end_timestamp": "2023-08-13 23:10:50",
-        #     "values" : {
-        #         "temperature": "690004.0"
-        #     }
-        # }
+        predicted_consumes = PredictedConsumes.objects.filter(house_id=instance)
+
+        # Serialize the objects
+        house_serializer = HouseSerializer(instance)
+        aggregated_data_serializer = SensorDataConsumesSerializer(aggregated_data, many=True)
+        predicted_data_serializer = PredictedConsumesSerializer(predicted_consumes, many=True)
+        
+        response = {
+            'house': house_serializer.data,
+            'sensor_data': aggregated_data_serializer.data,
+            'predicted_data': predicted_data_serializer.data,
+        }
 
         return Response(response)
     
@@ -393,7 +354,6 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
                 output_field=IntegerField()
             ))
         ).values('date', 'total_water_liters', 'total_gas_volumes')
-        print(aggregated_data)
 
         # Serialize the aggregated data
         aggregated_data_serializer = SensorDataConsumesSerializer(aggregated_data, many=True)
