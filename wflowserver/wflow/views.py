@@ -6,7 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.db.models import Sum
+from django.db.models import Sum, F, Case, When, Value, IntegerField
+from django.db.models.functions import TruncDate
 
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -23,7 +24,7 @@ from users.serializers import CustomUserSerializer
 from devices.models import Device
 from devices.serializers import DeviceSerializer
 from sensors.models import Sensor, SensorData
-from sensors.serializers import SensorDataSerializer, SensorSerializer, SensorDataDetailedSerializer
+from sensors.serializers import SensorDataSerializer, SensorSerializer, SensorDataDailySerializer, SensorDataConsumesSerializer
 
 ACTIVE_ACTUATORS = {}
 
@@ -277,6 +278,7 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
 
         return Response(response)
     
+
 class GetHouseIdListAPIView(ListAPIView):
     serializer_class = HouseIdSerializer
     queryset = House.objects.all()
@@ -322,12 +324,84 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
         # Serialize the objects
         house_serializer = HouseSerializer(house)
         custom_user_serializer = CustomUserSerializer(user)
-        sensor_data_serializer = SensorDataDetailedSerializer(sensor_data_query, many=True)
+        sensor_data_serializer = SensorDataDailySerializer(sensor_data_query, many=True)
         
         response = {
             'house': house_serializer.data,
-            'custom_user': custom_user_serializer.data,
+            'user': custom_user_serializer.data,
             'sensor_data': sensor_data_serializer.data,
+        }
+
+        return Response(response)
+
+
+class FetchTrainDataConsumesAPIView(RetrieveAPIView):
+    def retrieve(self, request, *args, **kwargs):
+        house_id = request.data.get('house_id')
+        all_data = request.data.get('all_data')
+
+        house = House.objects.filter(house_id=house_id).first()
+        # Handle the case where no matching house is found
+        if house is None:
+            return Response({'error': 'House not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        user = house.user_id
+        # Handle the case where no matching user is found (SHOULDNT BE POSSIBLE BUT OKAY)
+        if house is None:
+            return Response({'error': 'User not found... EHHHH????'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the House and CustomUser objects
+        house_serializer = HouseSerializer(house)
+        custom_user_serializer = CustomUserSerializer(user)
+
+        # get all the sensor_datas from all the sensor of all the devices of house provided
+        sensor_data_query = SensorData.objects.filter(
+            sensor_id__in=Sensor.objects.filter(
+                device_id__in=Device.objects.filter(house_id=house_id)
+            )
+        )
+
+        # if not all data, get only the data of yesterday
+        if all_data == 'False':
+            # Calculate the date for the day before the current day
+            previous_day = date.today() - timedelta(days=1)
+
+            # Filter SensorData objects for the day before
+            sensor_data_query = sensor_data_query.filter(
+                start_timestamp__date=previous_day,
+                end_timestamp__date=previous_day,
+            )
+
+        # Serialize the objects
+        house_serializer = HouseSerializer(house)
+        custom_user_serializer = CustomUserSerializer(user)
+
+
+        # sommare i dati
+        # Group the SensorData by day and sum their values
+        aggregated_data = sensor_data_query.annotate(
+            date=TruncDate('start_timestamp')
+        ).values('date').annotate(
+            total_water_liters=Sum(Case(
+                When(values__water_liters__isnull=False, then=F('values__water_liters')),
+                default=Value(0),
+                output_field=IntegerField()
+            )),
+            total_gas_volumes=Sum(Case(
+                When(values__gas_volumes__isnull=False, then=F('values__gas_volumes')),
+                default=Value(0),
+                output_field=IntegerField()
+            ))
+        ).values('date', 'total_water_liters', 'total_gas_volumes')
+        print(aggregated_data)
+
+        # Serialize the aggregated data
+        aggregated_data_serializer = SensorDataConsumesSerializer(aggregated_data, many=True)
+        
+        response = {
+            'house': house_serializer.data,
+            'user': custom_user_serializer.data,
+            'sensor_data': aggregated_data_serializer.data,
         }
 
         return Response(response)

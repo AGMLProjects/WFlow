@@ -49,8 +49,10 @@ urlpatterns = [
          APIviews.SendMessageToActuatorAPIView.as_view()),
     path('AI/get_house_id_list',
          APIviews.GetHouseIdListAPIView.as_view()),
-    path('AI/fetch_train_data',
+    path('AI/fetch_train_data_daily',
          APIviews.FetchTrainDataDailyAPIView.as_view()),
+    path('AI/fetch_train_data_consumes',
+         APIviews.FetchTrainDataConsumesAPIView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

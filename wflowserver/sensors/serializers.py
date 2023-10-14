@@ -25,7 +25,7 @@ class SensorDataSerializer(serializers.ModelSerializer):
         fields = ('sensor_id', 'start_timestamp', 'end_timestamp', 'values')
 
 
-class SensorDataDetailedSerializer(serializers.ModelSerializer):
+class SensorDataDailySerializer(serializers.ModelSerializer):
     day_of_week = serializers.SerializerMethodField()
     day_of_month = serializers.SerializerMethodField()
     month = serializers.SerializerMethodField()
@@ -52,3 +52,28 @@ class SensorDataDetailedSerializer(serializers.ModelSerializer):
     def get_holiday(self, obj):
         # Determine if the day is a Saturday or Sunday
         return obj.start_timestamp.weekday() in [5, 6]  # Saturday or Sunday
+
+
+class SensorDataConsumesSerializer(serializers.Serializer):
+    day_of_week = serializers.SerializerMethodField()
+    day_of_month = serializers.SerializerMethodField()
+    month = serializers.SerializerMethodField()
+    holiday = serializers.SerializerMethodField()
+    total_water_liters = serializers.IntegerField()
+    total_gas_volumes = serializers.IntegerField()
+
+    def get_day_of_week(self, obj):
+        # Calculate the name of the day of the week
+        return obj['date'].strftime('%A')
+
+    def get_day_of_month(self, obj):
+        # Calculate the day of the month
+        return obj['date'].day
+
+    def get_month(self, obj):
+        # Calculate the month
+        return obj['date'].month
+
+    def get_holiday(self, obj):
+        # Determine if the day is a Saturday or Sunday
+        return obj['date'].weekday() in [5, 6]
