@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from calendar import monthrange
 
 from django.http import JsonResponse
@@ -16,12 +16,14 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from .models import House
-from .serializers import HouseSerializer
+from .serializers import HouseSerializer, HouseIdSerializer
 
+from users.models import CustomUser
+from users.serializers import CustomUserSerializer
 from devices.models import Device
 from devices.serializers import DeviceSerializer
 from sensors.models import Sensor, SensorData
-from sensors.serializers import SensorDataSerializer, SensorSerializer
+from sensors.serializers import SensorDataSerializer, SensorSerializer, SensorDataDetailedSerializer
 
 ACTIVE_ACTUATORS = {}
 
@@ -272,6 +274,61 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
         #         "temperature": "690004.0"
         #     }
         # }
+
+        return Response(response)
+    
+class GetHouseIdListAPIView(ListAPIView):
+    serializer_class = HouseIdSerializer
+    queryset = House.objects.all()
+    
+
+class FetchTrainDataDailyAPIView(RetrieveAPIView):
+    def retrieve(self, request, *args, **kwargs):
+        house_id = request.data.get('house_id')
+        all_data = request.data.get('all_data')
+
+        house = House.objects.filter(house_id=house_id).first()
+        # Handle the case where no matching house is found
+        if house is None:
+            return Response({'error': 'House not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        user = house.user_id
+        # Handle the case where no matching user is found (SHOULDNT BE POSSIBLE BUT OKAY)
+        if house is None:
+            return Response({'error': 'User not found... EHHHH????'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the House and CustomUser objects
+        house_serializer = HouseSerializer(house)
+        custom_user_serializer = CustomUserSerializer(user)
+
+        # get all the sensor_datas from all the sensor of all the devices of house provided
+        sensor_data_query = SensorData.objects.filter(
+            sensor_id__in=Sensor.objects.filter(
+                device_id__in=Device.objects.filter(house_id=house_id)
+            )
+        )
+
+        # if not all data, get only the data of yesterday
+        if all_data == 'False':
+            # Calculate the date for the day before the current day
+            previous_day = date.today() - timedelta(days=1)
+
+            # Filter SensorData objects for the day before
+            sensor_data_query = sensor_data_query.filter(
+                start_timestamp__date=previous_day,
+                end_timestamp__date=previous_day,
+            )
+
+        # Serialize the objects
+        house_serializer = HouseSerializer(house)
+        custom_user_serializer = CustomUserSerializer(user)
+        sensor_data_serializer = SensorDataDetailedSerializer(sensor_data_query, many=True)
+        
+        response = {
+            'house': house_serializer.data,
+            'custom_user': custom_user_serializer.data,
+            'sensor_data': sensor_data_serializer.data,
+        }
 
         return Response(response)
 

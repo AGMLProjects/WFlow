@@ -9,3 +9,9 @@ class HouseSerializer(serializers.ModelSerializer):
         read_only_fields = ('house_id', 'user_id')
         fields = ('house_id', 'user_id', 'name',
                   'address', 'city', 'house_type')
+
+
+class HouseIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = House
+        fields = ('house_id',)
