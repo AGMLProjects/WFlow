@@ -412,7 +412,6 @@ class CreatePredictedConsumesAPIView(CreateAPIView):
     This view is responsible for the creation of
     a new data prediction for the specified house and day.
     """
-    permission_classes = (IsAuthenticated,)
     serializer_class = PredictedConsumesSerializer
 
 
