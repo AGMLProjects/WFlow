@@ -53,6 +53,8 @@ urlpatterns = [
          APIviews.FetchTrainDataDailyAPIView.as_view()),
     path('AI/fetch_train_data_consumes',
          APIviews.FetchTrainDataConsumesAPIView.as_view()),
+    path('AI/put_consumes_prediction',
+         APIviews.FetchTrainDataConsumesAPIView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

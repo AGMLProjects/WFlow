@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import House
+from .models import House, PredictedConsumes
 
 
 class HouseSerializer(serializers.ModelSerializer):
@@ -15,3 +15,11 @@ class HouseIdSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = ('house_id',)
+
+
+class PredictedConsumesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PredictedConsumes
+        read_only_fields = ('id')
+        fields = ('house_id', 'date', 'predicted_liters', 'predicted_volumes')

@@ -26,3 +26,15 @@ class House(models.Model):
 
     def __str__(self):
         return "House:%s of User:%s" % (self.house_id, self.user_id)
+
+
+class PredictedConsumes(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    house_id = models.ForeignKey(House, on_delete=models.CASCADE)
+
+    date = models.DateTimeField()
+    predicted_liters = models.FloatField()
+    predicted_volumes = models.FloatField()
+
+    def __str__(self):
+        return "Predicted total consumes:%s of House:%s in Date:%s" % (self.id, self.house_id, self.date)

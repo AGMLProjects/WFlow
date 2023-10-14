@@ -17,7 +17,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from .models import House
-from .serializers import HouseSerializer, HouseIdSerializer
+from .serializers import HouseSerializer, HouseIdSerializer, PredictedConsumesSerializer
 
 from users.models import CustomUser
 from users.serializers import CustomUserSerializer
@@ -306,7 +306,7 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
         # get all the sensor_datas from all the sensor of all the devices of house provided
         sensor_data_query = SensorData.objects.filter(
             sensor_id__in=Sensor.objects.filter(
-                device_id__in=Device.objects.filter(house_id=house_id)
+                device_id__in=Device.objects.filter(house_id=house_id), sensor_type='HEA'
             )
         )
 
@@ -405,6 +405,15 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
         }
 
         return Response(response)
+    
+
+class CreatePredictedConsumesAPIView(CreateAPIView):
+    """
+    This view is responsible for the creation of
+    a new data prediction for the specified house and day.
+    """
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PredictedConsumesSerializer
 
 
 # @api_view(['GET', 'POST'])

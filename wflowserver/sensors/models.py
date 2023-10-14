@@ -42,3 +42,13 @@ class SensorData(models.Model):
     end_timestamp = models.DateTimeField()
 
     values = models.JSONField()
+
+
+# class PredictedSensorData(models.Model):
+#     data_id = models.AutoField(primary_key=True)
+
+#     sensor_id = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+#     start_timestamp = models.DateTimeField()
+#     end_timestamp = models.DateTimeField()
+
+#     values = models.JSONField()
