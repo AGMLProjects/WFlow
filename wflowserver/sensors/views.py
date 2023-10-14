@@ -12,7 +12,7 @@ from asgiref.sync import async_to_sync
 from devices.permissions import DeviceAuthentication
 
 from .models import Sensor, SensorTypeDefinition, SensorData
-from .serializers import SensorSerializer, SensorTypeDefinitionSerializer, SensorDataSerializer
+from .serializers import SensorSerializer, SensorTypeDefinitionSerializer, SensorDataSerializer, PredictedSensorDataSerializer
 
 import json
 
@@ -97,6 +97,58 @@ class UploadActuatorDataAPIView(CreateAPIView):
     """
     permission_classes = (IsAuthenticated,)
     serializer_class = SensorDataSerializer
+
+    # override the create method to perform create for active sensors
+    def create(self, request, *args, **kwargs):
+        # get and validate the serializer on a single object
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        actuator_id = request.data['sensor_id']
+        message = request.data['values']
+
+        # TODO: get device_id from actuator_id
+
+        device_id = 1
+
+        # if actuator_id not in ACTIVE_ACTUATORS:
+        #     return Response("Actuator not found.")
+
+        try:
+            channel_layer = get_channel_layer()
+            channel_name = f"device_{device_id}"
+
+            # Channel exists, send the message
+            async_to_sync(channel_layer.group_send)(
+                channel_name,
+                {
+                    "type": "send.message",
+                    "actuator_id": actuator_id,
+                    "message": message,
+                },
+            )
+        except Exception as e:
+            return Response("ERROR")
+
+        # return Response("Message sent to Raspberry Pi.")
+
+        self.perform_create(serializer)
+
+        # generate response with success headers
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(data={'message': 'data uploaded successfully'}, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class UploadPredictedActuatorDataAPIView(CreateAPIView):
+    """
+    This view is responsible for the upload of new data sent  
+    from the app for the specified actuator for the currently authenticated user
+    """
+    serializer_class = PredictedSensorDataSerializer
 
     # override the create method to perform create for active sensors
     def create(self, request, *args, **kwargs):

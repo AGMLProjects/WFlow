@@ -25,6 +25,14 @@ class SensorDataSerializer(serializers.ModelSerializer):
         fields = ('sensor_id', 'start_timestamp', 'end_timestamp', 'values')
 
 
+class PredictedSensorDataSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SensorData
+        read_only_fields = ('data_id',)
+        fields = ('sensor_id', 'start_timestamp', 'end_timestamp', 'values')
+
+
 class SensorDataDailySerializer(serializers.ModelSerializer):
     day_of_week = serializers.SerializerMethodField()
     day_of_month = serializers.SerializerMethodField()
