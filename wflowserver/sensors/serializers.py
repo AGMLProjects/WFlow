@@ -30,12 +30,13 @@ class SensorDataDailySerializer(serializers.ModelSerializer):
     day_of_month = serializers.SerializerMethodField()
     month = serializers.SerializerMethodField()
     holiday = serializers.SerializerMethodField()
+    weather = serializers.SerializerMethodField()
 
     class Meta:
         model = SensorData
         read_only_fields = ('data_id',)
         fields = ('sensor_id', 'start_timestamp', 'end_timestamp',
-                  'values', 'day_of_week', 'day_of_month', 'month', 'holiday')
+                  'values', 'day_of_week', 'day_of_month', 'month', 'holiday', 'weather')
 
     def get_day_of_week(self, obj):
         # Calculate the name of the day of the week
@@ -53,6 +54,11 @@ class SensorDataDailySerializer(serializers.ModelSerializer):
         # Determine if the day is a Saturday or Sunday
         return obj.start_timestamp.weekday() in [5, 6]  # Saturday or Sunday
 
+    def get_weather(self, obj):
+        # TODO: weather call api
+        weather = {'temperature': 80, 'rain': False}
+        return weather
+
 
 class SensorDataConsumesSerializer(serializers.Serializer):
     day_of_week = serializers.SerializerMethodField()
@@ -61,6 +67,7 @@ class SensorDataConsumesSerializer(serializers.Serializer):
     holiday = serializers.SerializerMethodField()
     total_water_liters = serializers.IntegerField()
     total_gas_volumes = serializers.IntegerField()
+    weather = serializers.SerializerMethodField()
 
     def get_day_of_week(self, obj):
         # Calculate the name of the day of the week
@@ -77,3 +84,8 @@ class SensorDataConsumesSerializer(serializers.Serializer):
     def get_holiday(self, obj):
         # Determine if the day is a Saturday or Sunday
         return obj['date'].weekday() in [5, 6]
+
+    def get_weather(self, obj):
+        # TODO: weather call api
+        weather = {'temperature': 80, 'rain': False}
+        return weather
