@@ -7,7 +7,7 @@ from model.lstm import LSTM
 if __name__ == "__main__":
 
     MODEL_DIRECTORY = "./house_models/"
-    BASE_DIR = "C:/Users/ventu/Documents/GitHub/WFlow/wflowai/smart_heater/"
+    BASE_DIR = "./"
 
     DAY_OF_WEEK = {
         "Monday": 0,
@@ -102,7 +102,7 @@ if __name__ == "__main__":
             normalized_values_liters = liters * (random_values_liters / np.sum(random_values_liters))
             normalized_values_gas_volume = gas_volume * (random_values_gas / np.sum(random_values_gas))
 
-            # Assing values to bins
+            # Assign values to bins
             bins_values_liters = np.zeros(int(duration))
             bins_values_gas_volume = np.zeros(int(duration))
 
