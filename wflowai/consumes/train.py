@@ -5,13 +5,13 @@ import torch
 from torch.autograd import Variable
 
 
-def train(training_set, config):
+def train(training_set, family_members, config):
     # Scale y in [0, 1]
-    consume_max = config['consume']['maxWater']
-    consume_min = config['consume']['minWater']
+    consume_max = family_members * config['consume']['avgWater']
+    consume_min = 0
     training_set[:, -2:-1] = (training_set[:, -2:-1] - consume_min) / (consume_max - consume_min)
-    consume_max = config['consume']['maxGas']
-    consume_min = config['consume']['minGas']
+    consume_max = family_members * config['consume']['avgGas']
+    consume_min = 0
     training_set[:, -1:] = (training_set[:, -1:] - consume_min) / (consume_max - consume_min)
     training_data = training_set
 
@@ -61,18 +61,18 @@ def train(training_set, config):
     return lstm
 
 
-def retrain(training_set, config):
+def retrain(training_set, family_members, config):
     # Scale y in [0, 1]
-    consume_max = config['consume']['maxWater']
-    consume_min = config['consume']['minWater']
+    consume_max = family_members * config['consume']['avgWater']
+    consume_min = 0
     training_set[:, -2:-1] = (training_set[:, -2:-1] - consume_min) / (consume_max - consume_min)
-    consume_max = config['consume']['maxGas']
-    consume_min = config['consume']['minGas']
+    consume_max = family_members * config['consume']['avgGas']
+    consume_min = 0
     training_set[:, -1:] = (training_set[:, -1:] - consume_min) / (consume_max - consume_min)
     training_data = training_set
 
     seq_length = config['hyperparams']['sequence_length']
-    # TODO: try this
+    # TODO: try this, maybe replace with unsqueeze
     x, y = sliding_windows(training_data, seq_length)
     x = x[:, :, :-2]
     y = y[:, -2:]

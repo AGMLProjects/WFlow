@@ -1,9 +1,7 @@
 seed: 0
 consume:
-  maxWater: 1100
-  minWater: 350
-  maxGas: 10
-  minGas: 0.1
+  avgWater: 400
+  avgGas: 5
 hyperparams:
   sequence_length: 3
   epochs: 2000

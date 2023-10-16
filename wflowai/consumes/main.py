@@ -56,15 +56,20 @@ for house in houses:
             training_set = df.values
             training_set = training_set.astype('float32')
 
-            lstm = train(training_set, config)
+            family_members = int(training_set[0, 3])
+
+            lstm = train(training_set, family_members, config)
 
             torch.save(lstm, f'{BASE_PATH}/checkpoint/{house}.pth')
 
-            inference_data = create_inference_data(int(training_set[0, 3]))
+            inference_data = create_inference_data(family_members)
 
             # Inference
             lstm.eval()
             predictions_water, predictions_gas = lstm(inference_data)
+
+            predictions_water = predictions_water * family_members * config['consume']['avgWater']
+            predictions_gas = predictions_gas * family_members * config['consume']['avgGas']
 
             # Upload predicted values
             url = 'https://wflow.online/AI/put_consumes_prediction'
@@ -106,16 +111,21 @@ for house in houses:
             training_set = df.values
             training_set = training_set.astype('float32')
 
+            family_members = int(training_set[0, 3])
+
             print('Retraining model')
-            lstm = retrain(training_set, config)
+            lstm = retrain(training_set, family_members, config)
 
             torch.save(lstm, f'{BASE_PATH}/checkpoint/{house}.pth')
 
-            inference_data = create_inference_data(family_members=int(training_set[0, 3]))
+            inference_data = create_inference_data(family_members)
 
             # Inference
             lstm.eval()
             predictions_water, predictions_gas = lstm(inference_data)
+
+            predictions_water = predictions_water * family_members * config['consume']['avgWater']
+            predictions_gas = predictions_gas * family_members * config['consume']['avgGas']
 
             # Upload predicted values
             url = 'https://wflow.online/AI/put_consumes_prediction'
