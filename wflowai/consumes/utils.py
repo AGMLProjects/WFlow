@@ -54,8 +54,8 @@ def sliding_windows(data, seq_length):
     return np.array(x), np.array(y)
 
 
-def create_mock_dataframe():
-    df = pd.read_csv('input.csv', delimiter=';', header=0, index_col='date', parse_dates=True, dayfirst=True)
+def create_mock_dataframe(file):
+    df = pd.read_csv(file, delimiter=';', header=0, index_col='date', parse_dates=True, dayfirst=True)
 
     label_encoder = LabelEncoder()
     min_max_scaler = MinMaxScaler()

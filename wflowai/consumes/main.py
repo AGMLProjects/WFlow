@@ -1,11 +1,13 @@
 import requests
-import torch
 from utils import *
 from train import *
 from inference import *
 import yaml
 
-with open('application.yaml') as file:
+BASE_PATH = '/home/wflow/WFlow/wflowai/consumes'
+BASE_PATH = '.'
+
+with open(f'{BASE_PATH}/application.yaml') as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
 
 print('Config: %s' % config)
@@ -29,7 +31,7 @@ for house in houses:
     print(f'Loading model {house}.pth')
     initial_train = False
     try:
-        lstm = torch.load(f'checkpoint/{house}.pth')
+        lstm = torch.load(f'{BASE_PATH}/checkpoint/{house}.pth')
     except FileNotFoundError:
         initial_train = True
 
@@ -48,7 +50,7 @@ for house in houses:
             print(f'Warning: no sensor data!')
         else:
             # df = parse_response(data)
-            df = create_mock_dataframe()
+            df = create_mock_dataframe(f'{BASE_PATH}/input.csv')
 
             # Training
             training_set = df.values
@@ -56,7 +58,7 @@ for house in houses:
 
             lstm = train(training_set, config)
 
-            # torch.save(lstm, f'checkpoint/{house}.pth')
+            torch.save(lstm, f'{BASE_PATH}/checkpoint/{house}.pth')
 
             inference_data = create_inference_data(int(training_set[0, 3]))
 
@@ -96,7 +98,7 @@ for house in houses:
 
         data = response.json()
         if len(data['sensor_data']) == 0:
-            print(f'Warning: no sensor data!')
+            print('Warning: no sensor data!')
         else:
             df = parse_response(data)
 
@@ -107,7 +109,7 @@ for house in houses:
             print('Retraining model')
             lstm = retrain(training_set, config)
 
-            torch.save(lstm, f'checkpoint/{house}.pth')
+            torch.save(lstm, f'{BASE_PATH}/checkpoint/{house}.pth')
 
             inference_data = create_inference_data(family_members=int(training_set[0, 3]))
 

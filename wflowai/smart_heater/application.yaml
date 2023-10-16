@@ -3,7 +3,7 @@ test_size: 0.3
 consume:
   max: 1100
   min: 350
-hyperparams:
+hyperparameters:
   sequence_length: 3
   epochs: 2000
   learning_rate: 0.005

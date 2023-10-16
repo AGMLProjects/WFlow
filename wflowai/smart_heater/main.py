@@ -19,6 +19,9 @@ if __name__ == "__main__":
         "Sunday": 6
     }
 
+    HOURS = [i for i in range(24)]
+    MINUTES = [0, 10, 20, 30, 40, 50]
+
     # Load the model hyperparameters
     try:
         with open(BASE_DIR + "application.yaml", "r") as f:
@@ -155,7 +158,35 @@ if __name__ == "__main__":
         df["water_liters"] = df["water_liters"] / (750 * family_members)
         df["gas_volume"] = df["gas_volume"] / (10 * family_members)
 
-        #TODO: Riempire il training set con valori mancanti (intervalli di 10 min con dati a 0 se non già presenti)
+        intervals_in_df = (df['start_hour'].astype(str) + ':' + df['start_minute'].astype(str)).tolist()
+
+        # TODO: Riempire il training set con valori mancanti (intervalli di 10 min con dati a 0 se non già presenti)
+        df_index = 0
+        for HOUR in HOURS:
+            for MINUTE in MINUTES:
+                start_hour = HOUR
+                start_minute = MINUTE
+                end_hour = start_hour
+                end_minute = start_minute + 10
+                if end_minute == 60:
+                    end_hour = start_hour + 1
+                    end_minute = 0
+                interval = f'{start_hour:02}:{start_minute:02}'
+
+                if interval not in intervals_in_df:
+                    line = pd.DataFrame(df.iloc[0:1], index=[0])
+                    line['start_hour'] = start_hour
+                    line['start_minute'] = start_minute
+                    line['end_hour'] = end_hour
+                    line['end_minute'] = end_minute
+                    line['water_liters'] = 0
+                    line['gas_volume'] = 0
+                    line['duration'] = 0
+                    df = pd.concat([df.iloc[:df_index], line, df.iloc[df_index:]]).reset_index(drop=True)
+                else:
+                    print('interval already in df')
+
+                df_index += 1
 
         # Convert the dataframe to a tensor splitting the data and the labels
         X = df.drop(["water_liters", "gas_volume"], axis = 1).values
@@ -173,7 +204,7 @@ if __name__ == "__main__":
         X, y = utils.create_sliding_window_dataset(X, y, 10)
 
         # Define the model topology
-        input_size = X.shape[1]
+        input_size = X.shape[2]
         num_layers = 1
         num_classes_water = 1
         num_classes_gas = 1
@@ -184,7 +215,7 @@ if __name__ == "__main__":
 
         criterion_water = torch.nn.MSELoss()
         criterion_gas = torch.nn.MSELoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
         # Train the model
         for epoch in range(num_epochs):
@@ -200,9 +231,9 @@ if __name__ == "__main__":
                 print("Epoch: %d, loss: %1.5f" % (epoch, loss.item()))
 
         # Save the model
-        torch.save(model, MODEL_DIRECTORY + str(house_id) + ".pt")
+        torch.save(model, MODEL_DIRECTORY + str(house_id) + ".pth")
 
         # Evaluate the model
         model.eval()
 
-        #TODO: Fare la predizione e caricare i dati sul server
+        # TODO: Fare la predizione e caricare i dati sul server
