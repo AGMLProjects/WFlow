@@ -1,6 +1,6 @@
 seed: 0
 consume:
-  avgWater: 400
+  avgWater: 300
   avgGas: 5
 hyperparams:
   sequence_length: 3

@@ -160,7 +160,6 @@ if __name__ == "__main__":
 
         intervals_in_df = (df['start_hour'].astype(str) + ':' + df['start_minute'].astype(str)).tolist()
 
-        # TODO: Riempire il training set con valori mancanti (intervalli di 10 min con dati a 0 se non già presenti)
         df_index = 0
         for HOUR in HOURS:
             for MINUTE in MINUTES:
@@ -183,10 +182,12 @@ if __name__ == "__main__":
                     line['gas_volume'] = 0
                     line['duration'] = 0
                     df = pd.concat([df.iloc[:df_index], line, df.iloc[df_index:]]).reset_index(drop=True)
-                else:
-                    print('interval already in df')
 
                 df_index += 1
+
+        df.set_index(['start_hour', 'start_minute', 'end_hour', 'end_minute'], inplace=True)
+        df.sort_index(inplace=True)
+        df.reset_index(inplace=True)
 
         # Convert the dataframe to a tensor splitting the data and the labels
         X = df.drop(["water_liters", "gas_volume"], axis = 1).values
