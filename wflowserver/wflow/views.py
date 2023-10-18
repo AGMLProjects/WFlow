@@ -277,6 +277,17 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
 class GetHouseIdListAPIView(ListAPIView):
     serializer_class = HouseIdSerializer
     queryset = House.objects.all()
+
+
+class GetHACIdAPIView(RetrieveAPIView):
+    serializer_class = SensorSerializer
+    
+    # field used to lookup the object
+    lookup_field = "house_id"
+
+    # access only objects created by the user
+    def get_queryset(self):
+        return Sensor.objects.filter(house_id=self.instance, sensor_type='HAC')
     
 
 class FetchTrainDataDailyAPIView(RetrieveAPIView):

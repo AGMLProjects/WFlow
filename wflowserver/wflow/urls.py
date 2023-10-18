@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from wflow import views as APIviews
+from sensors import views as sensorviews
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from users import views as users_views
@@ -55,6 +56,10 @@ urlpatterns = [
          APIviews.FetchTrainDataConsumesAPIView.as_view()),
     path('AI/put_consumes_prediction',
          APIviews.CreatePredictedConsumesAPIView.as_view()),
+    path('AI/get_hac_id/<int:house_id>',
+         APIviews.GetHACIdAPIView.as_view()),
+    path('AI/put_daily_prediction',
+         sensorviews.UploadPredictedActuatorDataAPIView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
