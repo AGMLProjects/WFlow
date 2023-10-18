@@ -56,6 +56,8 @@ urlpatterns = [
          APIviews.FetchTrainDataConsumesAPIView.as_view()),
     path('AI/put_consumes_prediction',
          APIviews.CreatePredictedConsumesAPIView.as_view()),
+    path('AI/get_hac_id/<int:house_id>',
+         APIviews.GetHACIdAPIView.as_view()),
     path('AI/put_daily_prediction',
          sensorviews.UploadPredictedActuatorDataAPIView.as_view()),
 ]
