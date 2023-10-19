@@ -221,8 +221,8 @@ if __name__ == "__main__":
         # Train the model
         for epoch in range(num_epochs):
             outputs_water, outputs_gas = model(X)
-            loss_water = criterion_water(outputs_water, y[:, 0])
-            loss_gas = criterion_gas(outputs_gas, y[:, 1])
+            loss_water = criterion_water(outputs_water[:, 0], y[:, 0])
+            loss_gas = criterion_gas(outputs_gas[:, 0], y[:, 1])
             loss = loss_water + loss_gas
             optimizer.zero_grad()
             loss.backward()
@@ -238,3 +238,129 @@ if __name__ == "__main__":
         model.eval()
 
         # TODO: Fare la predizione e caricare i dati sul server
+        response = requests.get(f'https://wflow.online/AI/get_hac_id/{house_id}')
+
+        if response.status_code != 200:
+            print(f'Request failed with status code {response.status_code}')
+            # exit(1)
+
+        # data = response.json()
+        data = {'sensor_id': 555555555}
+        sensor_id = data['sensor_id']
+
+        inference_data = utils.create_inference_data(family_members)
+
+        # TODO: capire perché vengono dei numeri negativi e maggiori di 1
+        relu = torch.nn.ReLU()
+        predicted_water, predicted_gas = model(inference_data)
+        predicted_water = relu(predicted_water[:, 0])
+        predicted_water = torch.min(predicted_water, torch.tensor(1.0))
+        predicted_gas = relu(predicted_gas[:, 0])
+        predicted_gas = torch.min(predicted_gas, torch.tensor(1.0))
+
+        heater_activation_threshold = 0.5
+        temperature_max = 40
+        temperature_min = 24
+        activation_consecutive_times_slot = 2
+
+        # A list of tuples (time_slot, temperature)
+        activations = []
+
+        index = 0
+        for HOUR in HOURS:
+            for MINUTE in MINUTES:
+                start_hour = HOUR
+                start_minute = MINUTE
+                end_hour = start_hour
+                end_minute = start_minute + 10
+                if end_minute == 60:
+                    end_hour = start_hour + 1
+                    end_minute = 0
+
+                # FIXME: to fix this, we must modify the inference data in a way that the sliding window
+                #  doesn't "eat" the borders
+                if 5 <= index < 134:
+                    predicted_water_value = predicted_water[index].item()
+                    predicted_gas_value = predicted_gas[index].item()
+                    # We activate the heater only if the predicted consumed water
+                    # is higher than a certain threshold
+                    if predicted_water_value >= heater_activation_threshold:
+                        # We set the temperature based on the predicted consumed gas
+                        temperature = predicted_gas_value * (temperature_max - temperature_min) + temperature_min
+                        activations.append((f'{start_hour}:{start_minute}', temperature))
+                    else:
+                        # If no activation, we set -1 in activations list
+                        activations.append((f'{start_hour}:{start_minute}', -1))
+                index += 1
+
+        activation_ranges = []
+        start_time = None
+        current_range = None
+        temperatures = []
+
+        for time, value in activations:
+            if value > 0:
+                temperatures.append(value)
+                if current_range is None:
+                    start_time = time
+                    current_range = [(time, value)]
+                else:
+                    current_range.append((time, value))
+            else:
+                if current_range is not None:
+                    end_time = time
+                    temperature = sum(temperatures) / len(temperatures)
+                    temperatures = []
+                    activation_ranges.append((start_time, end_time, temperature))
+                    current_range = None
+
+        if current_range is not None:
+            temperature = sum(temperatures) / len(temperatures)
+            activation_ranges.append((start_time, "23:59", temperature))
+
+        if len(activation_ranges) > 0:
+            print(f'Sending activations: {activation_ranges}')
+            today = datetime.datetime.today()
+            temperature, time_start, time_end = [], [], []
+            for activation in activation_ranges:
+                temperature.append(activation[2])
+
+                time_start_datetime = today
+                time_start_datetime = time_start_datetime\
+                    .replace(hour=datetime.datetime.strptime(activation[0], '%H:%M').hour)
+                time_start_datetime = time_start_datetime\
+                    .replace(minute=datetime.datetime.strptime(activation[0], '%H:%M').minute)
+                time_start_datetime = time_start_datetime\
+                    .replace(second=0)
+                time_start.append(time_start_datetime.strftime('%Y-%m-%d %H:%M:%S'))
+
+                time_end_datetime = today
+                time_end_datetime = time_end_datetime\
+                    .replace(hour=datetime.datetime.strptime(activation[1], '%H:%M').hour)
+                time_end_datetime = time_end_datetime\
+                    .replace(minute=datetime.datetime.strptime(activation[1], '%H:%M').minute)
+                time_end_datetime = time_end_datetime\
+                    .replace(second=0)
+                time_end.append(time_end_datetime.strftime('%Y-%m-%d %H:%M:%S'))
+            json_data = {
+                'sensor_id': sensor_id,
+                'start_timestamp': today.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                'end_timestamp': today.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                'values': {
+                    "status": True,
+                    "temperature": temperature,
+                    "time_start": time_start,
+                    "time_end": time_end,
+                    "automatic": True
+                }
+            }
+            response = requests.post('https://wflow.online/AI/put_daily_prediction', json=json_data)
+
+            if response.status_code != 201:
+                print(f'Request failed with status code {response.status_code}')
+                exit(1)
+
+            print('Successfully uploaded values')
+
+        else:
+            print('No activations detected, not sending anything')
