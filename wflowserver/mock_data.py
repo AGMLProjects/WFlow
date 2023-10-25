@@ -1,71 +1,115 @@
-import requests, threading, time, sys, random, datetime
+import requests
+import sys
+import random
+import datetime
 
 running = True
 valid_types = ["Flow Sensor", "Water Level", "Water Heater"]
 
 SECRET = "FLzdTj@22EV74gflnyN6^9qKD$37AOL4kQD3&dm^@61Qb1p96z"
 API_KEY = None
-SENSOR_ID_LIST = [111111111, 222222222, 333333333]
+SENSOR_ID_LIST = [10, 20, 30]
 DEVICE_ID = 1
 
-SERVER_URL = "https://wflow.online/"
+SERVER_URL = "http://localhost:8000/"
 SENSORT_REGISTER = "sensors/register/"
 SENSORT_DATA_UPLOAD = "sensors/upload/"
 
+
 def generate_data():
-    
-    # Generate a random amount of time aftwe which send new data (1 min - 10 min)
-    new_interval = random.randint(10, 60)
+    # Define the start and end dates
+    start_date = datetime.date(2023, 9, 1)
+    end_date = datetime.date(2023, 10, 25)
 
-    # Reschedule the timer
-    timer = threading.Timer(interval = new_interval, function = generate_data)
+    current_date = start_date
+    while current_date <= end_date:
+        for sensor_type in range(len(SENSOR_ID_LIST)):
+            # Choose the data type
+            sensor_id = SENSOR_ID_LIST[sensor_type]
+            payload = dict()
 
-    # Choose the data type
-    sensor_type = random.randint(0, len(valid_types) - 1)
+            # Define time intervals for each sensor type
+            if sensor_type == 0:
+                # Define time intervals for sensor_type 0
+                # 8-9 AM, 12-2 PM, 6-8 PM
+                time_intervals = [(8, 9), (12, 14), (18, 20)]
+            elif sensor_type == 1:
+                # Define time intervals for sensor_type 1
+                # 10-11 AM, 3-4 PM, 7-8 PM
+                time_intervals = [(10, 11), (15, 16), (19, 20)]
+            else:
+                # Define time intervals for other sensor types
+                # 9-10 AM, 1-3 PM, 5-7 PM
+                time_intervals = [(9, 10), (13, 15), (17, 19)]
 
-    # Depending on the type, create the data packet
-    sensor_id = SENSOR_ID_LIST[sensor_type]
-    payload = dict()
-    start_timestamp = int(time.time()) - 10 * 60   # Tempo di inizio 10 minuti nel passato rispetto ad adesso
-    end_timestamp = 0
+            for interval in time_intervals:
+                # Generate random data
+                if sensor_type == 0:
+                    start_hour = random.randint(interval[0], interval[1])
+                    start_minute = random.randint(0, 59)
+                    duration = random.randint(5, 30)
+                    multiplier = random.randint(800, 1200) / 100
+                    start_time = datetime.datetime.combine(
+                        current_date, datetime.time(start_hour, start_minute, 0))
+                    end_time = start_time + \
+                        datetime.timedelta(minutes=duration)
 
-    if sensor_type == 0:
-        payload["temperature"] = float(random.randint(100, 1000)) / 10.0
-        payload["water_liters"] = float(random.randint(100, 1000)) / 10.0
-        end_timestamp = start_timestamp + (random.randint(1, 9) * 60)
-    elif sensor_type == 1:
-        payload["water_liters"] = 10.0
-        end_timestamp = start_timestamp
-    else:
-        payload["water_liters"] = float(random.randint(1000, 100000)) / 10.0
-        payload["gas_volume"] = float(random.randint(10, 50)) / 10.0
-        end_timestamp = int(time.time())
+                    payload["temperature"] = round((float(
+                        random.randint(100, 400)) / 10.0), 2)
+                    payload["water_liters"] = round(
+                        float(multiplier * duration), 2)
+                elif sensor_type == 1:
+                    start_hour = random.randint(interval[0], interval[1])
+                    start_minute = random.randint(0, 59)
+                    start_time = datetime.datetime.combine(
+                        current_date, datetime.time(start_hour, start_minute, 0))
+                    end_time = start_time
+                    payload["water_liters"] = 30.0
+                else:
+                    start_hour = random.randint(interval[0], interval[1])
+                    start_minute = random.randint(0, 59)
+                    duration = random.randint(10, 120)
+                    water_multiplier = random.randint(600, 1200) / 100
+                    gas_multiplier = water_multiplier / 1000
+                    gas_multiplier *= (random.randint(9, 11) / 10)
+                    start_time = datetime.datetime.combine(
+                        current_date, datetime.time(start_hour, start_minute, 0))
+                    end_time = start_time + \
+                        datetime.timedelta(minutes=duration)
 
-    # Send the request to server
-    body = {
-        "sensor_id": sensor_id,
-        "start_timestamp": datetime.datetime.fromtimestamp(start_timestamp).strftime("%Y-%m-%d %H:%M:%S"),
-        "end_timestamp": datetime.datetime.fromtimestamp(end_timestamp).strftime("%Y-%m-%d %H:%M:%S"),
-        "values": payload
-    }
+                    payload["water_liters"] = round(float(
+                        duration * water_multiplier), 2)
+                    payload["gas_volume"] = round(
+                        float(duration * gas_multiplier), 2)
 
-    header = {
-        "Authorization": "Token " + API_KEY,
-    }
+                # Send the request to the server
+                body = {
+                    "sensor_id": sensor_id,
+                    "start_timestamp": start_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "end_timestamp": end_time.strftime("%Y-%m-%d %H:%M:%S"),
+                    "values": payload
+                }
 
-    try:
-        req = requests.post(url = SERVER_URL + SENSORT_DATA_UPLOAD, json = body, headers = header)
-    except Exception as e:
-        print("Error: ", e)
-        sys.exit(1)
-    
-    if req.status_code == 201:
-        print("Data upload successful for sensor " + str(sensor_id))
-    else:
-        print("Data upload failed with status code " + str(req.status_code))
+                header = {
+                    "Authorization": "Token " + API_KEY,
+                }
 
-    if running is True:
-        timer.start()
+                try:
+                    req = requests.post(
+                        url=SERVER_URL + SENSORT_DATA_UPLOAD, json=body, headers=header)
+                except Exception as e:
+                    print("Error: ", e)
+                    sys.exit(1)
+
+                if req.status_code == 201:
+                    print("Data upload successful for sensor " + str(sensor_id))
+                else:
+                    print("Data upload failed with status code " +
+                          str(req.status_code))
+
+        # Move to the next day
+        current_date += datetime.timedelta(days=1)
+
 
 def sensor_register() -> bool:
     body = {
@@ -90,10 +134,11 @@ def sensor_register() -> bool:
     }
 
     try:
-        resp = requests.post(url = SERVER_URL + SENSORT_REGISTER, json = body, headers = header)
+        resp = requests.post(
+            url=SERVER_URL + SENSORT_REGISTER, json=body, headers=header)
     except Exception as e:
         print("Error: ", e)
-    
+
     if resp.status_code == 201:
         print("Sensor registration successful")
         return True
@@ -101,20 +146,21 @@ def sensor_register() -> bool:
         print("Sensor registration failed with status code " + str(resp.status_code))
         return False
 
+
 def device_login():
     global API_KEY
-    
+
     body = {
         "device_id": DEVICE_ID,
         "password": SECRET
     }
 
     try:
-        resp = requests.post(url = SERVER_URL + "devices/login/", data = body)
+        resp = requests.post(url=SERVER_URL + "devices/login/", data=body)
     except Exception as e:
         print("Error: ", e)
         return False
-    
+
     if resp.status_code == 200:
         print("Device login successful")
         API_KEY = resp.json()["key"]
@@ -122,6 +168,7 @@ def device_login():
     else:
         print("Device login failed with status code " + str(resp.status_code))
         return False
+
 
 if __name__ == "__main__":
 
@@ -133,13 +180,8 @@ if __name__ == "__main__":
     if sensor_register() == False:
         sys.exit(1)
 
-    # Create a timer object to throw random data
-    timer = threading.Timer(interval = 10, function = generate_data)
-    timer.start()
-
     try:
-        while True:
-            time.sleep(1)
+        generate_data()
     except KeyboardInterrupt:
         print("Exiting... Waiting for the last record to be sent, it might take up to one minute")
         running = False
