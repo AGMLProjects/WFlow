@@ -281,13 +281,28 @@ class GetHouseIdListAPIView(ListAPIView):
 
 class GetHACIdAPIView(RetrieveAPIView):
     serializer_class = SensorSerializer
-    
-    # field used to lookup the object
     lookup_field = "house_id"
 
-    # access only objects created by the user
     def get_queryset(self):
-        return Sensor.objects.filter(house_id=self.instance, sensor_type='HAC')
+        house_id = self.kwargs['house_id']
+        devices = Device.objects.filter(house_id=house_id)
+        sensor_list = []
+
+        for device in devices:
+            sensor = Sensor.objects.filter(device_id=device.device_id, sensor_type='HAC')
+            if sensor:
+                sensor_list.extend(sensor)
+
+        return sensor_list
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset:
+            return Response({'error': 'HAC Sensor not found for this house'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
     
 
 class FetchTrainDataDailyAPIView(RetrieveAPIView):
