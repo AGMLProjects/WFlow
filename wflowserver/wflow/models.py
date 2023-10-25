@@ -32,7 +32,7 @@ class PredictedConsumes(models.Model):
     id = models.BigAutoField(primary_key=True)
     house_id = models.ForeignKey(House, on_delete=models.CASCADE)
 
-    date = models.DateTimeField()
+    date = models.DateField()
     predicted_liters = models.FloatField()
     predicted_volumes = models.FloatField()
 

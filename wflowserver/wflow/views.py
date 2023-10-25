@@ -25,7 +25,7 @@ from users.serializers import CustomUserSerializer
 from devices.models import Device
 from devices.serializers import DeviceSerializer
 from sensors.models import Sensor, SensorData
-from sensors.serializers import SensorDataSerializer, SensorSerializer, SensorDataDailySerializer, SensorDataConsumesSerializer
+from sensors.serializers import SensorDataSerializer, SensorSerializer, SensorDataDailySerializer, SensorDataConsumesSerializer, SensorDataConsumesRetrieveSerializer
 
 ACTIVE_ACTUATORS = {}
 
@@ -229,7 +229,7 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
 
         # Serialize the objects
         house_serializer = HouseSerializer(instance)
-        aggregated_data_serializer = SensorDataConsumesSerializer(aggregated_data, many=True)
+        aggregated_data_serializer = SensorDataConsumesRetrieveSerializer(aggregated_data, many=True)
         predicted_data_serializer = PredictedConsumesSerializer(predicted_consumes, many=True)
         
         response = {
@@ -249,28 +249,16 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
                 sensors, many=True).data
             
         # -------------------------------------- last events
-        # devices = Device.objects.filter(house_id=instance)
-        # response['devices'] = DeviceSerializer(devices, many=True).data
+        # Get the last 5 sensor data events for the house
+        last_events = SensorData.objects.filter(
+            sensor_id__in=Sensor.objects.filter(
+                device_id__in=Device.objects.filter(house_id=instance)
+            )
+        ).order_by('-start_timestamp')[:5]
 
-        # for index, device in enumerate(devices):
-        #     sensors = Sensor.objects.filter(device_id=device)
-        #     response['devices'][index]['sensors'] = SensorSerializer(
-        #         sensors, many=True).data
-        
+        last_events_serializer = SensorDataSerializer(last_events, many=True)
 
-        # TODO: get last 5 events (sensorData)
-
-        # response['last_events'] = 
-
-        # {
-        #     "sensor_id":"444444444",
-        #     "sensor_type":"FLO",
-        #     "start_timestamp": "2023-08-13 23:10:50",
-        #     "end_timestamp": "2023-08-13 23:10:50",
-        #     "values" : {
-        #         "temperature": "690004.0"
-        #     }
-        # }
+        response['last_events'] = last_events_serializer.data
 
         return Response(response)
     
@@ -445,9 +433,7 @@ class CreatePredictedConsumesAPIView(CreateAPIView):
 
         # Create new PredictedConsumes instances
         created_instances = []
-
         
-
         for item in requestlist:
             serializer = self.get_serializer(data=item)
             serializer.is_valid(raise_exception=True)

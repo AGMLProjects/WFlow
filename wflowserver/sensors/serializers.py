@@ -1,3 +1,6 @@
+import pandas as pd
+from datetime import datetime
+
 from rest_framework import serializers
 from .models import Sensor, SensorTypeDefinition, SensorData
 
@@ -63,9 +66,39 @@ class SensorDataDailySerializer(serializers.ModelSerializer):
         return obj.start_timestamp.weekday() in [5, 6]  # Saturday or Sunday
 
     def get_weather(self, obj):
-        # TODO: weather call api
-        weather = {'temperature': 80, 'rain': False}
-        return weather
+        # Load the weather data from the CSV file into a DataFrame
+        weather_df = pd.read_csv("weather_data.csv")
+
+        # Find the closest date and time in the weather data
+        sensor_timestamp = obj.start_timestamp  # Assuming it's a datetime object
+        sensor_date_str = sensor_timestamp.strftime("%Y-%m-%d")
+        sensor_time_str = sensor_timestamp.strftime("%H:%M")
+
+        def calculate_date_difference(x):
+            weather_date = datetime.strptime(x, "%Y-%m-%d")
+            return abs((sensor_timestamp.date() - weather_date.date()).days)
+
+        closest_index = weather_df['Date'].apply(
+            calculate_date_difference).idxmin()
+
+        # Extract the weather information from the closest row
+        closest_weather = weather_df.loc[closest_index]
+
+        # Create a dictionary with the expected keys
+        weather_info = {
+            'Temperature_2m': closest_weather['Temperature_2m'],
+            'RelativeHumidity_2m': closest_weather['RelativeHumidity_2m'],
+            'Windspeed_10m': closest_weather['Windspeed_10m'],
+            'Rain': closest_weather['Rain'],
+        }
+
+        return weather_info
+
+
+class SensorDataConsumesRetrieveSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    total_water_liters = serializers.IntegerField()
+    total_gas_volumes = serializers.IntegerField()
 
 
 class SensorDataConsumesSerializer(serializers.Serializer):

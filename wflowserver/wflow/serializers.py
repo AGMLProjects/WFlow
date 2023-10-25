@@ -22,4 +22,4 @@ class PredictedConsumesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PredictedConsumes
         read_only_fields = ('id',)
-        fields = ('house_id', 'date', 'predicted_liters', 'predicted_volumes')
+        fields = ('date', 'predicted_liters', 'predicted_volumes')
