@@ -116,8 +116,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 final citiesInJson = json.decode(data);
                 log('Selected region: $_selectedRegion');
                 setState(() {
-                  cities =
-                      List<String>.from(citiesInJson[_selectedRegion] as List);
+                  cities = List<String>.from(
+                      citiesInJson[_selectedRegion.toUpperCase()] as List);
                 });
                 if (_selectedRegion.toUpperCase() != value.toUpperCase()) {
                   setState(() {

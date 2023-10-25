@@ -102,12 +102,12 @@ class _ActionsPageState extends State<ActionsPage> {
     var sensors = [];
     for (Sensor sensor in device.sensors) {
       // TODO: change!!!
-      if (sensor.type == 'FLO') {
+      if (sensor.type == 'SAC') {
         if (!showerSensorMap.containsKey(sensor.id)) {
           showerSensorMap[sensor.id] = 22;
         }
         sensors.add(sensor);
-      } else if (sensor.type == 'HEA') {
+      } else if (sensor.type == 'HAC') {
         if (!smartHeaterSensorMap.containsKey(sensor.id)) {
           smartHeaterSensorMap[sensor.id] = sensor;
         }

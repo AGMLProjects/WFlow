@@ -1,0 +1,2 @@
+[ ] Allineare il server per salvare anche la regione
+[ ] Aggiustare specific house information
