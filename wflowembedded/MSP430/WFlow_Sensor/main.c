@@ -38,6 +38,10 @@ SensorInput sensor_input = {
     .start = 0,
     .end = 0
 };
+
+ActuatorState actuator_state = {
+    .active = false
+};
 #elif defined(LEV)
 SensorInput sensor_input = {
     .timestamp = 0,
@@ -59,17 +63,33 @@ void main (void)
     USB_setup(TRUE, TRUE); // Init USB & events; if a host is present, connect
 
 #ifdef FLO
-    // Configure the P1.3 as input for the sensor
+    // Configure the P1.3 as input for the water flow sensor
     P1DIR &= ~BIT3;     // P1.3 as input
     P1REN |= BIT3;      // Enable pull-up resistor
     P1IES |= BIT3;      // Falling edge trigger
     P1IFG &= ~BIT3;     // Clear the interrupt flag
     P1IE |= BIT3;       // Enable the interrupt
 
-    // Configure ONE_WIRE_PIN (P1.4) as an output
+    // Configure the P1.4 as output. Will be used for 1-Wire communication with temperature sensor
     P1DIR |= BIT4;
-    // Set ONE_WIRE_PIN to a known state (high)
     P1OUT |= BIT4;
+
+    // Configure RED LED P1.0 to mimic the hot water output
+    P1DIR |= BIT0;
+    P1OUT |= BIT0;
+
+    // Configure GREEN LED P4.7 to mimic cold water output
+    P4DIR |= BIT7;
+    P4OUT |= BIT7;
+
+    // Configure P6.0, P6.1, P6.2, P6.3 as output to define the level of hot water
+    P6DIR |= BIT0 | BIT1 | BIT2 | BIT3;
+    P6OUT |= BIT0 | BIT1 | BIT2 | BIT3;
+
+    // Configure P3.0, P3.1, P3.2, P3.3 as output to define the level of cold water
+    P3DIR |= BIT0 | BIT1 | BIT2 | BIT3;
+    P3OUT |= BIT0 | BIT1 | BIT2 | BIT3;
+
 #elif defined(LEV)
     // Configure the P1.3 as input for the sensor
     P1DIR &= ~BIT3;     // P1.3 as input
@@ -206,6 +226,16 @@ void main (void)
                     create_ack_message(dataBuffer, device_address, &count);
                 }
             }
+            else if (message_code == EX)
+            {
+#ifdef FLO
+                parse_ex_command(dataBuffer, &actuator_state);
+                create_ack_message(dataBuffer, device_address, &count);
+#elif defined(HEA)
+#else
+                create_error_message(dataBuffer, device_address, &count);
+#endif
+            }
             else
             {
                 create_error_message(dataBuffer, device_address, &count);
@@ -321,6 +351,36 @@ __interrupt void Timer_A_ISR(void)
 
         // Store this item as the input is ready
         insertNode(&input_list, sensor_input);
+    }
+
+    // If the actuator is active, behave accordingly
+    if (actuator_state.active == true)
+    {
+        // Get the current temperature
+        actuator_state.current_temperature = ds18b20_get_temp();
+
+        // The water is too hot, we need to cool down
+        if (actuator_state.current_temperature - actuator_state.target_temperature > 0.5)
+        {
+            // If we still have space to cool down
+            if (actuator_state.cold_level < 10)
+            {
+                actuator_state.cold_level = actuator_state.cold_level + 1;
+                actuator_state.hot_level = actuator_state.hot_level - 1;
+            }
+        }
+        else if (actuator_state.target_temperature - actuator_state.current_temperature > 0.5)
+        {
+            // In this case the water is too cold, if there is space warm it up
+            if (actuator_state.hot_level < 10)
+            {
+                actuator_state.cold_level = actuator_state.cold_level - 1;
+                actuator_state.hot_level = actuator_state.hot_level + 1;
+            }
+        }
+
+        // Apply the change
+        set_water_output(actuator_state.hot_level, actuator_state.cold_level);
     }
 #endif
 

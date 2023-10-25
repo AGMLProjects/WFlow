@@ -13,6 +13,17 @@ typedef struct {
     uint32_t end;
     bool ready;
 } SensorInput;
+
+typedef struct {
+    bool active;
+    float target_temperature;
+    float current_temperature;
+    bool cold_active;
+    bool hot_active;
+    uint8_t cold_level;
+    uint8_t hot_level;
+} ActuatorState;
+
 #elif defined(LEV)
 typedef struct {
     uint32_t timestamp;

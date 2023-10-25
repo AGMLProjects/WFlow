@@ -193,6 +193,76 @@ void create_sd_message(uint8_t *message, float liters, float temperature, uint32
     *count = 36;
 
 }
+
+void parse_ex_command(uint8_t *message, ActuatorState *actuator_state)
+{
+    uint16_t target = 0.0;
+
+    target = intDecode(&message[2], 3) / 10.0;
+
+    // If the actuator was active, just turn it off
+    if (actuator_state->active == true)
+    {
+        actuator_state->active = false;
+        return;
+    }
+    else
+    {
+        // Set the initial state to open both hot and cold water
+        actuator_state->target_temperature = target;
+        actuator_state->hot_active = true;
+        actuator_state->cold_active = true;
+        actuator_state->hot_level = 5;
+        actuator_state->cold_level = 5;
+
+        set_water_output(5, 5);
+        actuator_state->active = true;
+    }
+}
+
+void set_water_output(uint8_t hot_value, uint8_t cold_value)
+{
+    uint8_t bitmask;
+
+    // Ensure that the values are correct
+    if (hot_value + cold_value != 10)
+    {
+        return;
+    }
+
+    // Set the HOT WATER level output
+    bitmask = 0b00001111;
+    bitmask &= ~(1 << hot_value);
+    P6OUT = bitmask;
+
+    // Update the indicator
+    if (hot_value > 0)
+    {
+        P1OUT |= BIT0;
+    }
+    else
+    {
+        P1OUT &= ~BIT0;
+    }
+
+    // Set the COLD WATER level output
+    bitmask = 0b00001111;
+    bitmask &= ~(1 << cold_value);
+    P3OUT = bitmask;
+
+    // Update the indicator
+    if (cold_value > 0)
+    {
+        P4OUT |= BIT7;
+    }
+    else
+    {
+        P4OUT &= ~BIT7;
+    }
+
+
+}
+
 #elif defined(LEV)
 void create_sd_message(uint8_t *message, uint32_t start, uint16_t *count)
 {
