@@ -45,6 +45,9 @@ SensorInput popNode(Node **head)
 #elif defined(LEV)
         SensorInput empty = {.timestamp = 0};
         return empty;
+#elif defined(HEA)
+        SensorInput empty = {.start = 0, .end = 0, .ready = false};
+        return empty;
 #else
         return 0;
 #endif

@@ -29,6 +29,34 @@ typedef struct {
     uint32_t timestamp;
     bool ready;
 } SensorInput;
+
+#elif defined(HEA)
+typedef struct {
+    float liters;
+    float temperature;
+    float gas_volume;
+    uint32_t start;
+    uint32_t end;
+    bool ready;
+} SensorInput;
+
+typedef struct {
+    float target_temperature;
+    bool warming_up;
+} ActuatorState;
+
+typedef struct {
+    uint32_t start;
+    uint32_t end;
+    float temperature;
+    uint16_t sequence_number;
+} HeaterInterval;
+
+typedef struct {
+    HeaterInterval timeslots[144];
+    bool complete;
+} HeaterSequence;
+
 #else
 typedef uint32_t SensorInput;
 #endif

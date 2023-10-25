@@ -196,7 +196,7 @@ void create_sd_message(uint8_t *message, float liters, float temperature, uint32
 
 void parse_ex_command(uint8_t *message, ActuatorState *actuator_state)
 {
-    uint16_t target = 0.0;
+    float target = 0.0;
 
     target = intDecode(&message[2], 3) / 10.0;
 
@@ -274,6 +274,72 @@ void create_sd_message(uint8_t *message, uint32_t start, uint16_t *count)
 
     *count = 13;
 
+}
+#elif defined(HEA)
+void create_sd_message(uint8_t *message, float liters, float temperature, float gas_volume, uint32_t start, uint32_t end, uint16_t *count)
+{
+    message[0] = 'S';
+    message[1] = 'D';
+
+    // Convert the liters into string
+    floatEncode(&message[2], liters, 4, 2);
+
+    // Convert the temperature
+    floatEncode(&message[9], temperature, 3, 2);
+
+    // Convert the gas
+    floatEncode(&message[15], gas_volume, 2, 3);
+
+    intEncode(start, &message[21], 10);
+    intEncode(end, &message[31], 10);
+    message[46] = '\n';
+
+    *count = 47;
+
+}
+
+void parse_ex_command(uint8_t *message, HeaterSequence *heater_sequence)
+{
+    float target = 0.0;
+    uint32_t start = 0, end = 0;
+    uint16_t sequence_number = 0;
+
+    sequence_number = intDecode(&message[2], 3);
+    start = intDecode(&message[5], 10);
+    end = intDecode(&message[15], 10);
+    target = intDecode(&message[25], 3) / 10.0;
+
+    // If the previous sequence was completed, clean all
+    if (heater_sequence->complete == true)
+    {
+        HeaterInterval empty = {.start = 0, .end = 0, .sequence_number = 0, .temperature = 0.0};
+
+        for (int i = 0; i < 144; i = i + 1)
+        {
+            heater_sequence->timeslots[i] = empty;
+        }
+    }
+
+    // Search the slot to insert the new sequence
+    HeaterInterval new = {.sequence_number = sequence_number, .start = start, .end = end, .temperature = target};
+
+    for(int i = 0; i < 144; i = i + 1)
+    {
+        if (heater_sequence->timeslots[i].sequence_number == 0)
+        {
+            heater_sequence->timeslots[i] = new;
+        }
+    }
+
+    // If this packet has a sequence number of 0, it completes the sequence
+    if(sequence_number == 0)
+    {
+        heater_sequence->complete = true;
+    }
+    else
+    {
+        heater_sequence->complete = false;
+    }
 }
 #else
 void create_sd_message(uint8_t *message, uint16_t *count)

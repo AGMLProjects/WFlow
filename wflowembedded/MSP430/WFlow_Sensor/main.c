@@ -47,6 +47,24 @@ SensorInput sensor_input = {
     .timestamp = 0,
     .ready = true
 };
+#elif defined(HEA)
+SensorInput sensor_input = {
+    .liters = 0.0,
+    .gas_volume = 0.0,
+    .temperature = 0.0,
+    .start = 0,
+    .end = 0,
+    .ready = false
+};
+
+ActuatorState actuator_state = {
+    .target_temperature = 0.0,
+    .warming_up = false
+};
+
+HeaterSequence heater_sequence = {
+    .complete = true,
+};
 #endif
 
 void main (void)
@@ -97,6 +115,9 @@ void main (void)
     P1IES |= BIT3;      // Falling edge trigger
     P1IFG &= ~BIT3;     // Clear the interrupt flag
     P1IE |= BIT3;       // Enable the interrupt
+#elif defined(HEA)
+    //TODO: Inserire gestione input (non ci sono, se non quelli per comunicare con il raspberry) e degli output
+    // Gli output sono: 1 LED per accensione, 1 LED per warm-up, volendo 3 led per stato carica
 #endif
 
     // Configure P1.5 as output for signaling USB messages
@@ -217,7 +238,7 @@ void main (void)
 #elif defined(LEV)
                     create_sd_message(dataBuffer, data.timestamp, &count);
 #else
-                    create_sd_message(dataBuffer, &count);
+                    //TODO: Create SD message con i dati presi dal sensore
 #endif
                 }
                 else
@@ -232,6 +253,7 @@ void main (void)
                 parse_ex_command(dataBuffer, &actuator_state);
                 create_ack_message(dataBuffer, device_address, &count);
 #elif defined(HEA)
+                parse_ex_command(dataBuffer, &heater_sequence);
 #else
                 create_error_message(dataBuffer, device_address, &count);
 #endif
@@ -381,6 +403,21 @@ __interrupt void Timer_A_ISR(void)
 
         // Apply the change
         set_water_output(actuator_state.hot_level, actuator_state.cold_level);
+    }
+#elif defined(HEA)
+
+    // If the sequence is not complete, do nothing
+    if(heater_sequence.complete == true)
+    {
+        // Find the sequence element
+        for(int i = 0; i < 144; i = i + 1)
+        {
+            // This element is the current one
+            if (heater_sequence.timeslots[i].start >= timestamp && heater_sequence.timeslots[i].end <= timestamp)
+            {
+
+            }
+        }
     }
 #endif
 

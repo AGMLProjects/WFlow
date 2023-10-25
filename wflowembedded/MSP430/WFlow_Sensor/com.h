@@ -17,13 +17,15 @@ void floatEncode(uint8_t *, float, uint8_t, uint8_t);
 void create_ack_message(uint8_t *, uint32_t, uint16_t *);
 void create_error_message(uint8_t *, uint32_t, uint16_t *);
 
-void parse_ex_command(uint8_t *, ActuatorState *);
-
 #ifdef FLO
 void create_sd_message(uint8_t *, float, float, uint32_t, uint32_t, uint16_t *);
 void set_water_output(uint8_t, uint8_t);
+void parse_ex_command(uint8_t *, ActuatorState *);
 #elif defined(LEV)
 void create_sd_message(uint8_t *, uint32_t, uint16_t *);
+#elif defined(HEA)
+void create_sd_message(uint8_t *, float, float, float, uint32_t, uint32_t, uint16_t *);
+void parse_ex_command(uint8_t *, HeaterSequence *);
 #else
 void create_sd_message(uint8_t *, uint16_t *);
 #endif
