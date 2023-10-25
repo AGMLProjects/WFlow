@@ -1,5 +1,6 @@
 from datetime import date, timedelta, datetime
 from calendar import monthrange
+import pandas as pd
 
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
@@ -351,7 +352,7 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
             'house': house_serializer.data,
             'user': custom_user_serializer.data,
             'sensor_data': sensor_data_serializer.data,
-        }
+        }        
 
         return Response(response)
 
@@ -429,10 +430,35 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
 
 class CreatePredictedConsumesAPIView(CreateAPIView):
     """
-    This view is responsible for the creation of
-    a new data prediction for the specified house and day.
+    This view is responsible for the creation of new data predictions
+    for the specified house and day.
     """
     serializer_class = PredictedConsumesSerializer
+
+    def create(self, request, *args, **kwargs):
+        requestlist = request.data['list']
+
+        house_id = requestlist[0].get('house_id')  # Assuming house_id is present in the request data
+
+        # Delete existing PredictedData instances with the same house_id
+        PredictedConsumes.objects.filter(house_id=house_id).delete()
+
+        # Create new PredictedConsumes instances
+        created_instances = []
+
+        
+
+        for item in requestlist:
+            serializer = self.get_serializer(data=item)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            created_instances.append(serializer.instance)
+
+        return Response(self.get_serializer(created_instances, many=True).data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
 
 
 # @api_view(['GET', 'POST'])
