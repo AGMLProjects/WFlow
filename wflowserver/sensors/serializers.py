@@ -97,8 +97,8 @@ class SensorDataDailySerializer(serializers.ModelSerializer):
 
 class SensorDataConsumesRetrieveSerializer(serializers.Serializer):
     date = serializers.DateField()
-    total_water_liters = serializers.IntegerField()
-    total_gas_volumes = serializers.IntegerField()
+    total_water_liters = serializers.FloatField()
+    total_gas_volume = serializers.FloatField()
 
 
 class SensorDataConsumesSerializer(serializers.Serializer):

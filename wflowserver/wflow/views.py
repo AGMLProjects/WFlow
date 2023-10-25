@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.db.models import Sum, F, Case, When, Value, IntegerField
+from django.db.models import Sum, F, Case, When, Value, FloatField
 from django.db.models.functions import TruncDate
 
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, GenericAPIView
@@ -216,14 +216,14 @@ class HousesSpecificDetailAPIView(RetrieveAPIView):
             total_water_liters=Sum(Case(
                 When(values__water_liters__isnull=False, then=F('values__water_liters')),
                 default=Value(0),
-                output_field=IntegerField()
+                output_field=FloatField()
             )),
-            total_gas_volumes=Sum(Case(
-                When(values__gas_volumes__isnull=False, then=F('values__gas_volumes')),
+            total_gas_volume=Sum(Case(
+                When(values__gas_volume__isnull=False, then=F('values__gas_volume')),
                 default=Value(0),
-                output_field=IntegerField()
+                output_field=FloatField()
             ))
-        ).values('date', 'total_water_liters', 'total_gas_volumes')
+        ).values('date', 'total_water_liters', 'total_gas_volume')
 
         predicted_consumes = PredictedConsumes.objects.filter(house_id=instance)
 
