@@ -106,8 +106,8 @@ class SensorDataConsumesSerializer(serializers.Serializer):
     day_of_month = serializers.SerializerMethodField()
     month = serializers.SerializerMethodField()
     holiday = serializers.SerializerMethodField()
-    total_water_liters = serializers.IntegerField()
-    total_gas_volumes = serializers.IntegerField()
+    total_water_liters = serializers.FloatField()
+    total_gas_volume = serializers.FloatField()
     weather = serializers.SerializerMethodField()
 
     def get_day_of_week(self, obj):
