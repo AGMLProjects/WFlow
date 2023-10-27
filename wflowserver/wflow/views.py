@@ -397,12 +397,12 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
                 default=Value(0),
                 output_field=FloatField()
             )),
-            total_gas_volumes=Sum(Case(
-                When(values__gas_volumes__isnull=False, then=F('values__gas_volumes')),
+            total_gas_volume=Sum(Case(
+                When(values__gas_volume__isnull=False, then=F('values__gas_volume')),
                 default=Value(0),
                 output_field=FloatField()
             ))
-        ).values('date', 'total_water_liters', 'total_gas_volumes')
+        ).values('date', 'total_water_liters', 'total_gas_volume')
 
         # Serialize the aggregated data
         aggregated_data_serializer = SensorDataConsumesSerializer(aggregated_data, many=True)

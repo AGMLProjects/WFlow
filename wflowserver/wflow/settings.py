@@ -72,6 +72,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_AUTH = {
+    'SESSION_LOGIN': False
+}
+
 ROOT_URLCONF = 'wflow.urls'
 
 TEMPLATES = [
