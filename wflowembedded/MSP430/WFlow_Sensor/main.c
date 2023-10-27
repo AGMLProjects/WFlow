@@ -94,19 +94,19 @@ void main (void)
 
     // Configure RED LED P1.0 to mimic the hot water output
     P1DIR |= BIT0;
-    P1OUT |= BIT0;
+    P1OUT &= ~BIT0;
 
     // Configure GREEN LED P4.7 to mimic cold water output
     P4DIR |= BIT7;
-    P4OUT |= BIT7;
+    P4OUT &= ~BIT7;
 
     // Configure P6.0, P6.1, P6.2, P6.3 as output to define the level of hot water
     P6DIR |= BIT0 | BIT1 | BIT2 | BIT3;
-    P6OUT |= BIT0 | BIT1 | BIT2 | BIT3;
+    P6OUT &= ~(BIT0 | BIT1 | BIT2 | BIT3);
 
     // Configure P3.0, P3.1, P3.2, P3.3 as output to define the level of cold water
     P3DIR |= BIT0 | BIT1 | BIT2 | BIT3;
-    P3OUT |= BIT0 | BIT1 | BIT2 | BIT3;
+    P3OUT &= ~(BIT0 | BIT1 | BIT2 | BIT3);
 
 #elif defined(LEV)
     // Configure the P1.3 as input for the sensor
@@ -116,13 +116,22 @@ void main (void)
     P1IFG &= ~BIT3;     // Clear the interrupt flag
     P1IE |= BIT3;       // Enable the interrupt
 #elif defined(HEA)
-    //TODO: Inserire gestione input (non ci sono, se non quelli per comunicare con il raspberry) e degli output
-    // Gli output sono: 1 LED per accensione, 1 LED per warm-up, volendo 3 led per stato carica
+    // Configure RED LED P1.0 to mimic 'water is warming up'
+    P1DIR |= BIT0;
+    P1OUT &= ~BIT0;
+
+    // Configure GREEN LED P4.7 to mimic 'heater is on'
+    P4DIR |= BIT7;
+    P4OUT &= ~BIT7;
+
+    // Configure P6.0, P6.1, P6.2 as output to define the water heating level (from 0% to 100%)
+    P6DIR |= BIT0 | BIT1 | BIT2;
+    P6OUT &= ~(BIT0 | BIT1 | BIT2);
 #endif
 
     // Configure P1.5 as output for signaling USB messages
     P1DIR |= BIT5;
-    P1OUT |= BIT0;
+    P1OUT |= BIT5;
 
     // Set up Timer A to trigger an interrupt every second
     TA0CCTL0 = CCIE;           // Enable Timer A interrupt
@@ -409,14 +418,25 @@ __interrupt void Timer_A_ISR(void)
     // If the sequence is not complete, do nothing
     if(heater_sequence.complete == true)
     {
+        // Check if there is an active event
+        bool active = false;
+
         // Find the sequence element
         for(int i = 0; i < 144; i = i + 1)
         {
             // This element is the current one
             if (heater_sequence.timeslots[i].start >= timestamp && heater_sequence.timeslots[i].end <= timestamp)
             {
-
+                active = true;
+                //TODO: Completare la logica di gestione acqua calda
+                break;
             }
+        }
+
+        // If the heater is not active, turn it off if it was on
+        if (active == false)
+        {
+            //TODO: Spegni tutto, archivia i dati di consumo e mandalo al bridge
         }
     }
 #endif
