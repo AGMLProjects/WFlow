@@ -8,7 +8,7 @@ class HouseSerializer(serializers.ModelSerializer):
         model = House
         read_only_fields = ('house_id', 'user_id')
         fields = ('house_id', 'user_id', 'name',
-                  'address', 'city', 'house_type')
+                  'address', 'city', 'region', 'country', 'house_type')
 
 
 class HouseIdSerializer(serializers.ModelSerializer):

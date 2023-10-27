@@ -38,6 +38,10 @@ class CustomUser(AbstractUser):
         choices=OCCUPATION_CHOICES, max_length=3, default=None, blank=True, null=True)
     date_of_birth = models.DateField(default=None, blank=True, null=True)
     city = models.CharField(max_length=50, default=None, blank=True, null=True)
+    region = models.CharField(
+        max_length=50, default=None, blank=True, null=True)
+    country = models.CharField(
+        max_length=50, default=None, blank=True, null=True)
     status = models.CharField(
         choices=STATUS_CHOICES, max_length=3, default=None, blank=True, null=True)
     family_members = models.IntegerField(default=None, blank=True, null=True)

@@ -11,7 +11,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('email', 'first_name', 'last_name',
-                  'age', 'occupation', 'date_of_birth', 'city',
+                  'age', 'occupation', 'date_of_birth',
                   'status', 'family_members', 'personal_data')
         read_only_fields = ('email',)
 
@@ -35,7 +35,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     class Meta:
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email', 'password',
-                  'age', 'occupation', 'date_of_birth', 'city',)
+                  'age', 'occupation', 'date_of_birth')
 
     # override get_cleaned_data of RegisterSerializer
 
@@ -50,7 +50,6 @@ class CustomRegisterSerializer(RegisterSerializer):
             'age': self.validated_data.get('age'),
             'occupation': self.validated_data.get('occupation'),
             'date_of_birth': self.validated_data.get('date_of_birth'),
-            'city': self.validated_data.get('city'),
             'personal_data': self.validated_data.get('personal_data')
         }
 
@@ -62,7 +61,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.age = self.cleaned_data.get('age')
         user.occupation = self.cleaned_data.get('occupation')
         user.date_of_birth = self.cleaned_data.get('date_of_birth')
-        user.city = self.cleaned_data.get('city')
         user.personal_data = self.cleaned_data.get('personal_data')
         user.save()
         adapter.save_user(request, user, self)

@@ -60,6 +60,9 @@ urlpatterns = [
          APIviews.GetHACIdAPIView.as_view()),
     path('AI/put_daily_prediction',
          sensorviews.UploadPredictedActuatorDataAPIView.as_view()),
+    path('API/global/city_region_data', APIviews.GlobalConsumesAPIView.as_view()),
+    path('API/global/all_regions_data',
+         APIviews.GlobalConsumesEveryRegionAPIView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

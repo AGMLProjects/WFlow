@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from django.db.models import Sum, F, Case, When, Value, FloatField
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, ExtractMonth
 
 from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -395,12 +395,12 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
             total_water_liters=Sum(Case(
                 When(values__water_liters__isnull=False, then=F('values__water_liters')),
                 default=Value(0),
-                output_field=IntegerField()
+                output_field=FloatField()
             )),
             total_gas_volumes=Sum(Case(
                 When(values__gas_volumes__isnull=False, then=F('values__gas_volumes')),
                 default=Value(0),
-                output_field=IntegerField()
+                output_field=FloatField()
             ))
         ).values('date', 'total_water_liters', 'total_gas_volumes')
 
@@ -444,6 +444,115 @@ class CreatePredictedConsumesAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class GlobalConsumesAPIView(RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        # Get region and city from the request data
+        region = request.data.get('region')
+        city = request.data.get('city')
+
+        if not region or not city:
+            return Response({"error": "Both 'region' and 'city' must be provided in the request data."}, status=400)
+
+        # Query the database to get the global consumes data for the specified region and city
+        city_house_data = House.objects.filter(city=city)
+        region_house_data = House.objects.filter(region=region)
+        city_sensor_data = SensorData.objects.filter(sensor_id__device_id__house_id__in=city_house_data).prefetch_related('sensor_id__device_id__house_id')
+        region_sensor_data =SensorData.objects.filter(sensor_id__device_id__house_id__in=region_house_data).prefetch_related('sensor_id__device_id__house_id')
+
+        # Initialize dictionaries to store the aggregated data
+        mont_city_consume = {}
+        month_region_consume = {}
+
+        for data in city_sensor_data:
+            month = data.start_timestamp.month
+
+            # Check if 'values' JSON contains 'water_liters' and sum it
+            values = data.values
+            if 'water_liters' in values:
+                consume = values['water_liters']
+            else:
+                consume = 0
+
+            mont_city_consume.setdefault(month, 0)
+            mont_city_consume[month] += consume
+
+        for data in region_sensor_data:
+            month = data.start_timestamp.month
+
+            # Check if 'values' JSON contains 'water_liters' and sum it
+            values = data.values
+            if 'water_liters' in values:
+                consume = values['water_liters']
+            else:
+                consume = 0
+
+            month_region_consume.setdefault(month, 0)
+            month_region_consume[month] += consume
+
+        # Format the response data
+        response_data = {
+            "mont_city_consume": [
+                {
+                    "city": city,
+                    "year": data.start_timestamp.year,
+                    "month": month,
+                    "consume": consume
+                }
+                for month, consume in mont_city_consume.items()
+            ],
+            "month_region_consume": [
+                {
+                    "region": region,
+                    "year": data.start_timestamp.year,
+                    "month": month,
+                    "consume": consume
+                }
+                for month, consume in month_region_consume.items()
+            ]
+        }
+
+        return Response(response_data)
+    
+
+class GlobalConsumesEveryRegionAPIView(RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        # Get the current month and year
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+
+        # Query the database to get the global consumes data for the current month and year
+        sensor_data = SensorData.objects.filter(start_timestamp__month=current_month, start_timestamp__year=current_year)
+        sensor_data = sensor_data.prefetch_related('sensor_id__device_id__house_id')
+
+        # Initialize a dictionary to store aggregated data for each region
+        region_consume = {}
+
+        for data in sensor_data:
+            region = data.sensor_id.device_id.house_id.region
+
+            # Check if 'values' JSON contains 'water_liters' and sum it
+            values = data.values
+            consume = values.get('water_liters', 0)
+
+            region_consume.setdefault(region, 0)
+            region_consume[region] += consume
+
+        # Format the response data
+        response_data = {
+            "current_month": current_month,
+            "current_year": current_year,
+            "region_consumes": [
+                {
+                    "region": region,
+                    "consume": consume
+                }
+                for region, consume in region_consume.items()
+            ]
+        }
+
+        return Response(response_data)
 
 
 

@@ -21,6 +21,8 @@ class House(models.Model):
 
     address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
+    region = models.CharField(max_length=200)
+    country = models.CharField(max_length=200)
     house_type = models.CharField(
         choices=HOUSE_TYPE_CHOICES, max_length=3)
 

@@ -4,7 +4,7 @@ from .models import House, PredictedConsumes
 
 class HouseAdmin(admin.ModelAdmin):
     list_display = ('house_id', 'user_id', 'name', 'address',
-                    'city', 'house_type')
+                    'city', 'region', 'country', 'house_type')
 
 
 class PredictedConsumesAdmin(admin.ModelAdmin):
