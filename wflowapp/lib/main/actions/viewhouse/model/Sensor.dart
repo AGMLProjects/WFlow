@@ -1,15 +1,15 @@
 class Sensor {
-  final int id;
-  final String type;
+  final int sensor_id;
+  final String sensor_type;
   bool automatic = false;
   bool set = false;
 
-  Sensor({required this.id, required this.type});
+  Sensor({required this.sensor_id, required this.sensor_type});
 
   factory Sensor.fromJson(Map<String, dynamic> json) {
     return Sensor(
-      id: json['sensor_id'],
-      type: json['sensor_type'],
+      sensor_id: json['sensor_id'],
+      sensor_type: json['sensor_type'],
     );
   }
 }

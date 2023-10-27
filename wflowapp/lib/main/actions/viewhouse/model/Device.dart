@@ -1,15 +1,13 @@
 import 'package:wflowapp/main/actions/viewhouse/model/Sensor.dart';
 
 class Device {
-  final int deviceId;
+  final int device_id;
   final String name;
-  final String type;
   final List<Sensor> sensors;
 
   Device({
-    required this.deviceId,
+    required this.device_id,
     required this.name,
-    required this.type,
     required this.sensors,
   });
 
@@ -26,9 +24,6 @@ class Device {
     }
 
     return Device(
-        deviceId: json['device_id'],
-        name: json['name'],
-        type: type,
-        sensors: sensors);
+        device_id: json['device_id'], name: json['name'], sensors: sensors);
   }
 }

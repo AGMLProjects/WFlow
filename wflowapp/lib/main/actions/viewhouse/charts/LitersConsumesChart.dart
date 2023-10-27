@@ -3,24 +3,36 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/Consume.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/DayConsume.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
 
 class LitersConsumesChart extends StatelessWidget {
-  const LitersConsumesChart({super.key, required this.consumes});
+  LitersConsumesChart({super.key, required this.real, required this.predicted});
 
-  final List<LitersConsumed> consumes;
+  List<DayConsume> real;
+  List<DayConsume> predicted;
+
+  List<Consume> consumes = [];
 
   @override
   Widget build(BuildContext context) {
-    // TODO: replace this
-    final _random = new Random();
+    int i = 0;
+    for (int j = 0; j < real.length; j++, i++) {
+      consumes
+          .add(Consume(x: i, y: real[j].total_water_liters, predicted: false));
+    }
+    for (int j = 0; j < real.length; j++, i++) {
+      consumes
+          .add(Consume(x: i, y: real[j].total_water_liters, predicted: true));
+    }
+
     final List<FlSpot> data = [];
     dynamic maxY = 0;
-    for (int i = 0; i < 30; i++) {
-      double random = _random.nextDouble() * 20;
-      data.add(FlSpot(i.toDouble(), random));
-      if (random > maxY) {
-        maxY = random;
+    for (int i = 0; i < consumes.length; i++) {
+      data.add(FlSpot(i.toDouble(), consumes[i].y.toDouble()));
+      if (consumes[i].y > maxY) {
+        maxY = consumes[i].y;
       }
     }
 
@@ -59,7 +71,10 @@ class LitersConsumesChart extends StatelessWidget {
   }
 
   FlDotPainter dots(spot, percent, barData, index) {
-    bool predicted = consumes.elementAt(index).predicted;
+    bool predicted = false;
+    if (index >= 20) {
+      predicted = true;
+    }
     Color color;
     if (predicted == false) {
       color = Colors.cyan;
@@ -80,7 +95,7 @@ class LitersConsumesChart extends StatelessWidget {
   List<LineTooltipItem> tooltipWidgets(List<LineBarSpot> lineBarsSpot) {
     return lineBarsSpot.map((lineBarSpot) {
       Color color;
-      if (consumes.elementAt(lineBarSpot.x.round()).predicted) {
+      if (consumes[lineBarSpot.x.round()].predicted) {
         color = Colors.white;
       } else {
         color = Colors.cyan;
@@ -150,8 +165,9 @@ class LitersConsumesChart extends StatelessWidget {
     );
     Widget text;
     if (value.toInt() < consumes.length) {
-      LitersConsumed day = consumes.elementAt(value.toInt());
-      String date = "${day.x.split("/")[0]}/${day.x.split("/")[1]}";
+      Consume day = consumes[value.toInt()];
+      //String date = "${day.x.split("/")[0]}/${day.x.split("/")[1]}";
+      String date = "todo";
       text = Text(date, style: style);
     } else {
       text = const Text('', style: style);

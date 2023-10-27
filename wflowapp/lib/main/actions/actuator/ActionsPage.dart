@@ -3,9 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
+import 'package:wflowapp/main/actions/viewhouse/client/HouseResponseAPI.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/HouseResponse.dart';
 
 import '../../../config/AppConfig.dart';
-import '../viewhouse/client/HouseResponse.dart';
 import '../viewhouse/model/Device.dart';
 import '../viewhouse/model/House.dart';
 import '../viewhouse/model/Sensor.dart';
@@ -26,7 +27,7 @@ class _ActionsPageState extends State<ActionsPage> {
   final HouseClient houseClient = HouseClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getHouseInfoPath());
 
-  Future<HouseResponse>? _futureHouseResponse;
+  Future<HouseResponseAPI>? _futureHouseResponse;
 
   @override
   void initState() {
@@ -67,16 +68,16 @@ class _ActionsPageState extends State<ActionsPage> {
     );
   }
 
-  FutureBuilder<HouseResponse> buildActions() {
-    return FutureBuilder<HouseResponse>(
+  FutureBuilder<HouseResponseAPI> buildActions() {
+    return FutureBuilder<HouseResponseAPI>(
       future: _futureHouseResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
             return const SizedBox.shrink();
           }
-          House house = snapshot.data!.house;
-          return buildActionsFromHouse(house);
+          HouseResponse houseResponse = snapshot.data!.houseResponse;
+          return buildActionsFromHouseResponse(houseResponse);
         } else if (snapshot.hasError) {
           log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
           //dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
@@ -89,10 +90,10 @@ class _ActionsPageState extends State<ActionsPage> {
     );
   }
 
-  Widget buildActionsFromHouse(House house) {
+  Widget buildActionsFromHouseResponse(HouseResponse houseResponse) {
     return Column(
       children: [
-        for (Device device in house.devices) buildAction(device),
+        for (Device device in houseResponse.devices) buildAction(device),
         const SizedBox(height: 120.0),
       ],
     );
@@ -102,14 +103,14 @@ class _ActionsPageState extends State<ActionsPage> {
     var sensors = [];
     for (Sensor sensor in device.sensors) {
       // TODO: change!!!
-      if (sensor.type == 'SAC') {
-        if (!showerSensorMap.containsKey(sensor.id)) {
-          showerSensorMap[sensor.id] = 22;
+      if (sensor.sensor_type == 'SAC') {
+        if (!showerSensorMap.containsKey(sensor.sensor_id)) {
+          showerSensorMap[sensor.sensor_id] = 22;
         }
         sensors.add(sensor);
-      } else if (sensor.type == 'HAC') {
-        if (!smartHeaterSensorMap.containsKey(sensor.id)) {
-          smartHeaterSensorMap[sensor.id] = sensor;
+      } else if (sensor.sensor_type == 'HAC') {
+        if (!smartHeaterSensorMap.containsKey(sensor.sensor_id)) {
+          smartHeaterSensorMap[sensor.sensor_id] = sensor;
         }
         sensors.add(sensor);
       }
@@ -132,7 +133,7 @@ class _ActionsPageState extends State<ActionsPage> {
 
   Widget _buildAction(Device device, Sensor sensor) {
     String sensorTytle = 'Smart Heater';
-    if (sensor.type == 'FLO') {
+    if (sensor.sensor_type == 'FLO') {
       sensorTytle = 'Shower';
     }
     return Padding(
@@ -146,18 +147,18 @@ class _ActionsPageState extends State<ActionsPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (sensor.type == 'FLO') {
+              if (sensor.sensor_type == 'FLO') {
                 Navigator.pushNamed(context, '/showerAction', arguments: {
                   'id': id,
-                  'sensorId': sensor.id,
-                  'deviceId': device.deviceId,
+                  'sensorId': sensor.sensor_id,
+                  'deviceId': device.device_id,
                   'deviceName': device.name
                 });
               } else {
                 Navigator.pushNamed(context, '/heaterAction', arguments: {
                   'id': id,
-                  'sensorId': sensor.id,
-                  'deviceId': device.deviceId,
+                  'sensorId': sensor.sensor_id,
+                  'deviceId': device.device_id,
                   'deviceName': device.name
                 });
               }

@@ -8,13 +8,14 @@ import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesBarChart.da
 import 'package:wflowapp/main/actions/viewhouse/charts/LitersConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/GasConsumesChart.dart';
 import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
+import 'package:wflowapp/main/actions/viewhouse/client/HouseResponseAPI.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Device.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Event.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/HouseResponse.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Sensor.dart';
 
 import '../../../config/AppConfig.dart';
-import 'client/HouseResponse.dart';
 
 class HousePage extends StatefulWidget {
   const HousePage({super.key});
@@ -35,7 +36,7 @@ class _HousePageState extends State<HousePage> {
   final HouseClient houseClient = HouseClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getHouseInfoPath());
 
-  Future<HouseResponse>? _futureHouseResponse;
+  Future<HouseResponseAPI>? _futureHouseResponse;
 
   @override
   void initState() {
@@ -120,16 +121,16 @@ class _HousePageState extends State<HousePage> {
     });
   }
 
-  FutureBuilder<HouseResponse> buildHouseInfo() {
-    return FutureBuilder<HouseResponse>(
+  FutureBuilder<HouseResponseAPI> buildHouseInfo() {
+    return FutureBuilder<HouseResponseAPI>(
       future: _futureHouseResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {
             return const SizedBox.shrink();
           }
-          House house = snapshot.data!.house;
-          return buildFromHouse(house);
+          HouseResponse houseResponse = snapshot.data!.houseResponse;
+          return buildFromHouseResponse(houseResponse);
         } else if (snapshot.hasError) {
           log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
           //dynamic json = jsonDecode(AppConfig.getFakeHouseInfo());
@@ -142,16 +143,16 @@ class _HousePageState extends State<HousePage> {
     );
   }
 
-  Widget buildFromHouse(House house) {
-    String month =
-        toStringMonth(house.litersConsumes.elementAt(0).x.split("/")[1]);
+  Widget buildFromHouseResponse(HouseResponse houseResponse) {
     return Column(
       children: [
-        Text(
-          'Water consumes ($month)',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        const Text(
+          'Water consumes (25 days)',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        LitersConsumesChart(consumes: house.litersConsumes),
+        LitersConsumesChart(
+            real: houseResponse.sensor_data,
+            predicted: houseResponse.predicted_data),
         const Padding(
           padding: EdgeInsets.only(left: 20, top: 20),
           child: Column(
@@ -167,29 +168,13 @@ class _HousePageState extends State<HousePage> {
           ),
         ),
         const SizedBox(height: 10.0),
-        ExpansionTile(
-          title: const Text(
-            'Other statistics',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          children: [
-            ListTile(
-              title:
-                  Text('Total liters consumed: ${house.totalLitersConsumed} L'),
-            ),
-            ListTile(
-              title: Text(
-                  'Total liters predicted: ${house.totalLitersPredicted} L'),
-            )
-          ],
-        ),
-        const SizedBox(height: 20.0),
         const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
         const Text(
           'This week water consumes',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+        /*
         LitersConsumesBarChart(consumes: house.weeklyLitersConsumes),
         Padding(
           padding: const EdgeInsets.only(left: 20),
@@ -268,6 +253,7 @@ class _HousePageState extends State<HousePage> {
             ],
           ),
         ),
+        */
         const SizedBox(height: 20.0),
         const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
@@ -275,7 +261,7 @@ class _HousePageState extends State<HousePage> {
           'Connected devices',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        for (Device device in house.devices) drawDevice(device),
+        for (Device device in houseResponse.devices) drawDevice(device),
         const SizedBox(height: 20.0),
         const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
@@ -287,11 +273,11 @@ class _HousePageState extends State<HousePage> {
         Container(
           height: 200.0,
           child: ListView.builder(
-            itemCount: house.recentEvents.length,
+            itemCount: houseResponse.last_events.length,
             itemBuilder: (context, index) {
-              final Event event = house.recentEvents[index];
+              final Event event = houseResponse.last_events[index];
               return ListTile(
-                title: Text('• ${event.description}'),
+                title: Text('• Gugu gaga'),
               );
             },
           ),
@@ -324,7 +310,7 @@ class _HousePageState extends State<HousePage> {
         subtitle: Text('${sensors.length} sensors'),
         children: [
           for (Sensor sensor in sensors)
-            ListTile(title: Text(translateSensor(sensor.type)))
+            ListTile(title: Text(translateSensor(sensor.sensor_type)))
         ],
       ),
     );
