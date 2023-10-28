@@ -38,9 +38,11 @@ class ActuatorConsumer(AsyncWebsocketConsumer):
         # This method will handle messages with type "send.message"
         message = event['message']
         actuator_id = event['actuator_id']
+        actuator_type = event['actuator_type']
 
         # Send the message to the WebSocket connection
         await self.send(text_data=json.dumps({
             'actuator_id': actuator_id,
+            'actuator_type': actuator_type,
             'message': message,
         }))
