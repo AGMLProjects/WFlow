@@ -11,7 +11,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('email', 'first_name', 'last_name',
-                  'age', 'occupation', 'date_of_birth',
+                  'occupation', 'date_of_birth',
                   'status', 'family_members', 'personal_data')
         read_only_fields = ('email',)
 
@@ -27,7 +27,6 @@ class CustomRegisterSerializer(RegisterSerializer):
     first_name = serializers.CharField(max_length=150)
     last_name = serializers.CharField(max_length=150)
 
-    age = serializers.IntegerField(max_value=None, min_value=1)
     occupation = serializers.CharField(max_length=50)
     date_of_birth = serializers.DateField()
     city = serializers.CharField(max_length=20)
@@ -35,7 +34,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     class Meta:
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email', 'password',
-                  'age', 'occupation', 'date_of_birth')
+                  'occupation', 'date_of_birth')
 
     # override get_cleaned_data of RegisterSerializer
 
@@ -47,7 +46,6 @@ class CustomRegisterSerializer(RegisterSerializer):
             'password1': self.validated_data.get('password1', ''),
             'password2': self.validated_data.get('password2', ''),
             'email': self.validated_data.get('email', ''),
-            'age': self.validated_data.get('age'),
             'occupation': self.validated_data.get('occupation'),
             'date_of_birth': self.validated_data.get('date_of_birth'),
             'personal_data': self.validated_data.get('personal_data')
@@ -58,7 +56,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         adapter = get_adapter()
         user = adapter.new_user(request)
         self.cleaned_data = self.get_cleaned_data()
-        user.age = self.cleaned_data.get('age')
         user.occupation = self.cleaned_data.get('occupation')
         user.date_of_birth = self.cleaned_data.get('date_of_birth')
         user.personal_data = self.cleaned_data.get('personal_data')

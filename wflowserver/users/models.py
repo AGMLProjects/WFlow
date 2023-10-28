@@ -33,7 +33,6 @@ class CustomUser(AbstractUser):
         _("last name"), max_length=150, default=None, blank=True, null=True)
 
     # custom fields
-    age = models.PositiveIntegerField(default=None, blank=True, null=True)
     occupation = models.CharField(
         choices=OCCUPATION_CHOICES, max_length=3, default=None, blank=True, null=True)
     date_of_birth = models.DateField(default=None, blank=True, null=True)

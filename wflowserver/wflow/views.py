@@ -77,6 +77,7 @@ class CreateHouseAPIView(CreateAPIView):
         return serializer.save(user_id=self.request.user)
 
 
+# TODO: update
 class ListHousesAPIView(ListAPIView):
     """
     This view should return a list of all the houses

@@ -28,6 +28,7 @@ class RegisterSensorAPIView(CreateAPIView):
 
     # override the create method to perform create for active sensors
     def create(self, request, *args, **kwargs):
+        print(self.request.user)
         # get active sensors
         active_sensors = request.data['active_sensors']
         # active_sensors = [json.loads(idx.replace("'", '"'))
