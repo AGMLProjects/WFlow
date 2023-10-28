@@ -11,7 +11,7 @@ API_KEY = None
 SENSOR_ID_LIST = [10, 20, 30]
 DEVICE_ID = 2
 
-SERVER_URL = "http://localhost:8000/"
+SERVER_URL = "https://wflow.online/"
 SENSORT_REGISTER = "sensors/register/"
 SENSORT_DATA_UPLOAD = "sensors/upload/"
 
