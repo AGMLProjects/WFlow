@@ -116,6 +116,8 @@ class UploadActuatorDataAPIView(CreateAPIView):
         device = sensor.device_id
         device_id = device.device_id
 
+        actuator_type = sensor.sensor_type
+
         try:
             channel_layer = get_channel_layer()
             channel_name = f"device_{device_id}"
@@ -126,6 +128,7 @@ class UploadActuatorDataAPIView(CreateAPIView):
                 {
                     "type": "send.message",
                     "actuator_id": actuator_id,
+                    "actuator_type": actuator_type,
                     "message": message,
                 },
             )
