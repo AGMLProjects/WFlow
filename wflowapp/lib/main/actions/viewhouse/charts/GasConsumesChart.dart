@@ -1,27 +1,40 @@
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:wflowapp/config/AppConfig.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/GasConsumed.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
+import 'package:wflowapp/main/actions/viewhouse/charts/Consume.dart';
+import 'package:wflowapp/main/actions/viewhouse/model/DayConsume.dart';
 
 class GasConsumesChart extends StatelessWidget {
-  const GasConsumesChart({super.key, required this.consumes});
+  GasConsumesChart({super.key, required this.real, required this.predicted});
 
-  final List<GasConsumed> consumes;
+  List<DayConsume> real;
+  List<DayConsume> predicted;
+
+  List<Consume> consumes = [];
 
   @override
   Widget build(BuildContext context) {
-    // TODO: replace this
-    final _random = new Random();
+    int i = 0;
+    for (int j = 0; j < real.length; j++, i++) {
+      consumes.add(Consume(
+          x: i,
+          y: real[j].total_gas_volumes,
+          day: real[j].date,
+          predicted: false));
+    }
+    for (int j = 0; j < predicted.length; j++, i++) {
+      consumes.add(Consume(
+          x: i,
+          y: predicted[j].total_gas_volumes,
+          day: predicted[j].date,
+          predicted: true));
+    }
+
     final List<FlSpot> data = [];
-    dynamic maxY = 0;
-    for (int i = 0; i < 30; i++) {
-      double random = _random.nextDouble() * 20;
-      data.add(FlSpot(i.toDouble(), random));
-      if (random > maxY) {
-        maxY = random;
+    double maxY = 0.0;
+    for (int i = 0; i < consumes.length; i++) {
+      data.add(FlSpot(i.toDouble(), consumes[i].y.toDouble()));
+      if (consumes[i].y > maxY) {
+        maxY = consumes[i].y;
       }
     }
 
@@ -32,7 +45,7 @@ class GasConsumesChart extends StatelessWidget {
       child: LineChart(
         LineChartData(
           minY: 0,
-          maxY: maxY + 3,
+          maxY: maxY + 3.0,
           lineTouchData: lineTouchData(),
           titlesData: titlesData(),
           borderData: FlBorderData(
@@ -45,6 +58,7 @@ class GasConsumesChart extends StatelessWidget {
           ),
           lineBarsData: [
             LineChartBarData(
+              color: Colors.orangeAccent,
               spots: data,
               isCurved: true,
               barWidth: 1.5,
@@ -63,7 +77,7 @@ class GasConsumesChart extends StatelessWidget {
     bool predicted = consumes.elementAt(index).predicted;
     Color color;
     if (predicted == false) {
-      color = Colors.cyan;
+      color = Colors.orangeAccent;
     } else {
       color = const Color.fromARGB(200, 195, 195, 195);
     }
@@ -81,13 +95,13 @@ class GasConsumesChart extends StatelessWidget {
   List<LineTooltipItem> tooltipWidgets(List<LineBarSpot> lineBarsSpot) {
     return lineBarsSpot.map((lineBarSpot) {
       Color color;
-      if (consumes.elementAt(lineBarSpot.x.round()).predicted) {
+      if (consumes[lineBarSpot.x.round()].predicted) {
         color = Colors.white;
       } else {
-        color = Colors.cyan;
+        color = Colors.orangeAccent;
       }
       return LineTooltipItem(
-        "${lineBarSpot.y.toStringAsFixed(2)} m3\n${consumes.elementAt(lineBarSpot.x.round()).x}",
+        "${lineBarSpot.y.toStringAsFixed(2)} m3",
         TextStyle(
           color: color,
           fontWeight: FontWeight.bold,
@@ -151,8 +165,8 @@ class GasConsumesChart extends StatelessWidget {
     );
     Widget text;
     if (value.toInt() < consumes.length) {
-      GasConsumed day = consumes.elementAt(value.toInt());
-      String date = "${day.x.split("/")[0]}/${day.x.split("/")[1]}";
+      Consume day = consumes[value.toInt()];
+      String date = "${day.day.split("-")[2]}/${day.day.split("-")[1]}";
       text = Text(date, style: style);
     } else {
       text = const Text('', style: style);

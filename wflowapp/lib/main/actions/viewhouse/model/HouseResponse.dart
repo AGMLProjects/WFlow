@@ -1,10 +1,7 @@
 import 'package:wflowapp/main/actions/viewhouse/model/DayConsume.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Device.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/Event.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/GasConsumed.dart';
 import 'package:wflowapp/main/actions/viewhouse/model/House.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/WeeklyConsume.dart';
 
 class HouseResponse {
   final House house;

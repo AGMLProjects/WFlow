@@ -156,10 +156,9 @@ class _HousePageState extends State<HousePage> {
     return Column(
       children: [
         const Text(
-          'Water consumes (25 days)',
+          'Water consumes',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        /*
         LitersConsumesChart(
             real: houseResponse.sensor_data,
             predicted: houseResponse.predicted_data),
@@ -168,7 +167,9 @@ class _HousePageState extends State<HousePage> {
           child: Column(
             children: [
               Indicator(
-                  color: Colors.cyan, text: 'Real consumes', isSquare: true),
+                  color: Colors.cyan,
+                  text: 'Real water consumes',
+                  isSquare: true),
               SizedBox(height: 4.0),
               Indicator(
                   color: Color.fromARGB(200, 195, 195, 195),
@@ -181,41 +182,20 @@ class _HousePageState extends State<HousePage> {
         const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
         const Text(
-          'This week water consumes',
+          'Gas consumes',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        
-        LitersConsumesBarChart(consumes: house.weeklyLitersConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
+        GasConsumesChart(
+            real: houseResponse.sensor_data,
+            predicted: houseResponse.predicted_data),
+        const Padding(
+          padding: EdgeInsets.only(left: 20, top: 20),
           child: Column(
-            children: const [
+            children: [
               Indicator(
-                  color: Color.fromARGB(200, 195, 195, 195),
-                  text: 'Average consumes',
+                  color: Colors.orangeAccent,
+                  text: 'Real gas consumes',
                   isSquare: true),
-              SizedBox(height: 4.0),
-              Indicator(
-                  color: Colors.cyan,
-                  text: 'Actual consumes (this week)',
-                  isSquare: true),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20.0),
-        const Divider(color: Colors.black, thickness: 0.4),
-        const SizedBox(height: 20.0),
-        Text(
-          'Gas consumes ($month)',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        GasConsumesChart(consumes: house.gasConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20, top: 20),
-          child: Column(
-            children: const [
-              Indicator(
-                  color: Colors.cyan, text: 'Real consumes', isSquare: true),
               SizedBox(height: 4.0),
               Indicator(
                   color: Color.fromARGB(200, 195, 195, 195),
@@ -224,46 +204,6 @@ class _HousePageState extends State<HousePage> {
             ],
           ),
         ),
-        const SizedBox(height: 10.0),
-        ExpansionTile(
-          title: const Text(
-            'Other statistics',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          children: [
-            ListTile(
-              title: Text('Total gas consumed: ${house.totalGasConsumed} m3'),
-            ),
-            ListTile(
-              title: Text('Total gas predicted: ${house.totalGasPredicted} m3'),
-            )
-          ],
-        ),
-        const SizedBox(height: 20.0),
-        const Divider(color: Colors.black, thickness: 0.4),
-        const SizedBox(height: 20.0),
-        Text(
-          'This week gas consumes',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        GasConsumesBarChart(consumes: house.weeklyGasConsumes),
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: Column(
-            children: const [
-              Indicator(
-                  color: Color.fromARGB(200, 195, 195, 195),
-                  text: 'Average consumes',
-                  isSquare: true),
-              SizedBox(height: 4.0),
-              Indicator(
-                  color: Colors.cyan,
-                  text: 'Actual consumes (this week)',
-                  isSquare: true),
-            ],
-          ),
-        ),
-        */
         const SizedBox(height: 20.0),
         const Divider(color: Colors.black, thickness: 0.4),
         const SizedBox(height: 20.0),
@@ -286,9 +226,7 @@ class _HousePageState extends State<HousePage> {
             itemCount: houseResponse.last_events.length,
             itemBuilder: (context, index) {
               final Event event = houseResponse.last_events[index];
-              return ListTile(
-                title: Text('• Gugu gaga'),
-              );
+              return drawEvent(event);
             },
           ),
         ),
@@ -305,6 +243,40 @@ class _HousePageState extends State<HousePage> {
       tooltip: 'Add Device',
       child: const Icon(Icons.add),
     );
+  }
+
+  Widget drawEvent(Event event) {
+    String ts = event.start_timestamp;
+    String hour = ts.split('T')[1].split(':')[0];
+    String minute = ts.split('T')[1].split(':')[1];
+    String day = ts.split('T')[0].split('-')[2];
+    String month = ts.split('T')[0].split('-')[1];
+    if (event.water_liters > 0 &&
+        event.gas_volume < 0 &&
+        event.temperature < 0) {
+      // Water flush
+      return ListTile(
+        title: const Text('Water flush'),
+        subtitle: Text('${event.water_liters} L'),
+        trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
+      );
+    } else if (event.water_liters > 0 &&
+        event.gas_volume < 0 &&
+        event.temperature > 0) {
+      // Tap activation
+      return ListTile(
+        title: const Text('Tap activation'),
+        subtitle: Text('${event.water_liters} L (${event.temperature} °C)'),
+        trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
+      );
+    } else {
+      // Another event
+      return ListTile(
+        title: Text('Generic event'),
+        subtitle: Text('null'),
+        trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
+      );
+    }
   }
 
   Widget drawDevice(Device device) {
@@ -333,7 +305,7 @@ class _HousePageState extends State<HousePage> {
       case "HEA":
         return "Smart heater sensor";
       case "LEV":
-        return "Flush sensor";
+        return "Water flush sensor";
       case "SAC":
         return "Shower";
       case "HAC":

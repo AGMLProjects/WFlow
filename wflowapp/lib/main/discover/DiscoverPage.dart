@@ -8,9 +8,10 @@ import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/Indicator.dart';
 import 'package:wflowapp/main/discover/charts/ConsumesLineChart.dart';
 import 'package:wflowapp/main/discover/charts/ConsumesPieChart.dart';
-import 'package:wflowapp/main/discover/client/DiscoverClient.dart';
 import 'package:wflowapp/main/discover/model/Consume.dart';
-import 'package:wflowapp/main/discover/model/DiscoverResponse.dart';
+
+import 'client/DiscoverClientRegionCity.dart';
+import 'model/DiscoverResponseCityRegion.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -27,10 +28,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
   String _selectedCity = 'Not selected';
   String _selectedStatistic = 'Water';
 
-  final DiscoverClient discoverClient = DiscoverClient(
-      url: AppConfig.getBaseUrl(), path: AppConfig.getDiscoverPath());
+  final DiscoverClientRegionCity discoverClientCityRegion =
+      DiscoverClientRegionCity(
+          url: AppConfig.getBaseUrl(),
+          path: AppConfig.getDiscoverCityRegionPath());
 
-  Future<DiscoverResponse>? _futureResponse;
+  Future<DiscoverResponseCityRegion>? _futureResponseCityRegion;
 
   @override
   void initState() {
@@ -87,26 +90,26 @@ class _DiscoverPageState extends State<DiscoverPage> {
             mode: Mode.BOTTOM_SHEET,
             showSelectedItems: true,
             items: const [
-              "Lombardia",
-              "Lazio",
-              "Campania",
-              "Veneto",
-              "Sicilia",
-              "Emilia-Romagna",
-              "Piemonte",
-              "Puglia",
-              "Toscana",
-              "Calabria",
-              "Sardegna",
-              "Liguria",
-              "Marche",
-              "Abruzzo",
-              "Friuli-Venezia Giulia",
-              "Trentino-Alto Adige",
-              "Umbria",
-              "Basilicata",
-              "Molise",
-              "Valle d'Aosta"
+              "LOMBARDIA",
+              "LAZIO",
+              "CAMPANIA",
+              "VENETO",
+              "SICILIA",
+              "EMILIA-ROMAGNA",
+              "PIEMONTE",
+              "PUGLIA",
+              "TOSCANA",
+              "CALABRIA",
+              "SARDEGNA",
+              "LIGURIA",
+              "MARCHE",
+              "ABRUZZO",
+              "FRIULI-VENEZIA GIULA",
+              "TRENTINO-ALTO ADIGE",
+              "UMBRIA",
+              "BASILICATA",
+              "MOLISE",
+              "VALLE D'AOSTA"
             ],
             showSearchBox: true,
             onChanged: (value) async {
@@ -126,8 +129,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 }
                 if (checksOnValues()) {
                   setState(() {
-                    _futureResponse = discoverClient.getStatistics(token,
-                        _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                    _futureResponseCityRegion =
+                        discoverClientCityRegion.getStatistics(
+                            token,
+                            _selectedRegion,
+                            _selectedCity,
+                            _selectedStatistic[0]);
                   });
                 }
               }
@@ -139,7 +146,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
             children: [
               Padding(
                 padding: EdgeInsets.only(left: 4, bottom: 4),
-                child: Text('City (comune)'),
+                child: Text('City'),
               ),
             ],
           ),
@@ -158,8 +165,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
               log('Selected city: $value');
               if (checksOnValues()) {
                 setState(() {
-                  _futureResponse = discoverClient.getStatistics(token,
-                      _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                  _futureResponseCityRegion =
+                      discoverClientCityRegion.getStatistics(
+                          token,
+                          _selectedRegion,
+                          _selectedCity,
+                          _selectedStatistic[0]);
                 });
               }
             },
@@ -185,8 +196,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
               log('Selected statistics: $value');
               if (checksOnValues()) {
                 setState(() {
-                  _futureResponse = discoverClient.getStatistics(token,
-                      _selectedRegion, _selectedCity, _selectedStatistic[0]);
+                  _futureResponseCityRegion =
+                      discoverClientCityRegion.getStatistics(
+                          token,
+                          _selectedRegion,
+                          _selectedCity,
+                          _selectedStatistic[0]);
                 });
               }
             },
@@ -210,9 +225,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return _buildStatistics();
   }
 
-  FutureBuilder<DiscoverResponse> _buildStatistics() {
-    return FutureBuilder<DiscoverResponse>(
-      future: _futureResponse,
+  FutureBuilder<DiscoverResponseCityRegion> _buildStatistics() {
+    return FutureBuilder<DiscoverResponseCityRegion>(
+      future: _futureResponseCityRegion,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.code != 200) {

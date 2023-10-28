@@ -44,8 +44,8 @@ class AppConfig {
     return '/API/houses/specific/{id}';
   }
 
-  static String getDiscoverPath() {
-    return '/API/discover';
+  static String getDiscoverCityRegionPath() {
+    return '/API/global/city_region_data';
   }
 
   static String getPostActuatorPath() {

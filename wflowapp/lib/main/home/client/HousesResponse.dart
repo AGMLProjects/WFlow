@@ -21,14 +21,6 @@ class HousesResponse {
       if (dhouse['total_gas'] != null) {
         total_gas = dhouse['total_gas'];
       }
-      dynamic future_total_liters = 0.0;
-      if (dhouse['future_total_liters'] != null) {
-        future_total_liters = dhouse['future_total_liters'];
-      }
-      dynamic future_total_gas = 0.0;
-      if (dhouse['future_total_gas'] != null) {
-        total_liters = dhouse['future_total_gas'];
-      }
       House house = House(
           house_id: dhouse['house_id'],
           user_id: dhouse['user_id'],
@@ -37,7 +29,8 @@ class HousesResponse {
           name: dhouse['name'],
           address: dhouse['address'],
           city: dhouse['city'],
-          house_type: dhouse['house_type']);
+          house_type: dhouse['house_type'],
+          region: dhouse['region']);
       houses.add(house);
     }
     return HousesResponse(

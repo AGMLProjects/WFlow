@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/config/AppConfig.dart';
-import 'package:wflowapp/main/actions/viewhouse/model/LitersConsumed.dart';
 import 'package:wflowapp/main/discover/model/Consume.dart';
 
 class ConsumesLineChart extends StatelessWidget {
