@@ -116,7 +116,7 @@ class UploadActuatorDataAPIView(CreateAPIView):
         device = sensor.device_id
         device_id = device.device_id
 
-        actuator_type = sensor.sensor_type
+        actuator_type = sensor.sensor_type.sensor_type
 
         try:
             channel_layer = get_channel_layer()
