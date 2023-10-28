@@ -8,7 +8,10 @@ import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/Indicator.dart';
 import 'package:wflowapp/main/discover/charts/ConsumesLineChart.dart';
 import 'package:wflowapp/main/discover/charts/ConsumesPieChart.dart';
+import 'package:wflowapp/main/discover/client/DiscoverClientAllRegion.dart';
 import 'package:wflowapp/main/discover/model/Consume.dart';
+import 'package:wflowapp/main/discover/model/DiscoverResponseAllRegion.dart';
+import 'package:wflowapp/main/discover/model/GenericConsume.dart';
 
 import 'client/DiscoverClientRegionCity.dart';
 import 'model/DiscoverResponseCityRegion.dart';
@@ -33,7 +36,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
           url: AppConfig.getBaseUrl(),
           path: AppConfig.getDiscoverCityRegionPath());
 
+  final DiscoverClientAllRegion discoverClientAllRegion =
+      DiscoverClientAllRegion(
+          url: AppConfig.getBaseUrl(),
+          path: AppConfig.getDiscoverAllRegionPath());
+
   Future<DiscoverResponseCityRegion>? _futureResponseCityRegion;
+  Future<DiscoverResponseAllRegion>? _futureResponseAllRegion;
 
   @override
   void initState() {
@@ -130,11 +139,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 if (checksOnValues()) {
                   setState(() {
                     _futureResponseCityRegion =
-                        discoverClientCityRegion.getStatistics(
-                            token,
-                            _selectedRegion,
-                            _selectedCity,
-                            _selectedStatistic[0]);
+                        discoverClientCityRegion.getStatistics(token,
+                            _selectedRegion, _selectedCity, _selectedStatistic);
+                    _futureResponseAllRegion =
+                        discoverClientAllRegion.getStatistics();
                   });
                 }
               }
@@ -166,16 +174,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
               if (checksOnValues()) {
                 setState(() {
                   _futureResponseCityRegion =
-                      discoverClientCityRegion.getStatistics(
-                          token,
-                          _selectedRegion,
-                          _selectedCity,
-                          _selectedStatistic[0]);
+                      discoverClientCityRegion.getStatistics(token,
+                          _selectedRegion, _selectedCity, _selectedStatistic);
+                  _futureResponseAllRegion =
+                      discoverClientAllRegion.getStatistics();
                 });
               }
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           const Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -197,17 +204,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
               if (checksOnValues()) {
                 setState(() {
                   _futureResponseCityRegion =
-                      discoverClientCityRegion.getStatistics(
-                          token,
-                          _selectedRegion,
-                          _selectedCity,
-                          _selectedStatistic[0]);
+                      discoverClientCityRegion.getStatistics(token,
+                          _selectedRegion, _selectedCity, _selectedStatistic);
+                  _futureResponseAllRegion =
+                      discoverClientAllRegion.getStatistics();
                 });
               }
             },
           ),
           const SizedBox(height: 40),
-          buildStatistics()
+          buildCityRegionStatistics(),
+          buildAllRegionStatistics()
         ],
       );
     }
@@ -218,14 +225,21 @@ class _DiscoverPageState extends State<DiscoverPage> {
         _selectedRegion != 'Not selected');
   }
 
-  Widget buildStatistics() {
+  Widget buildCityRegionStatistics() {
     if (_selectedRegion == 'Not selected' || _selectedCity == 'Not selected') {
       return const SizedBox.shrink();
     }
-    return _buildStatistics();
+    return _buildCityRegionStatistics();
   }
 
-  FutureBuilder<DiscoverResponseCityRegion> _buildStatistics() {
+  Widget buildAllRegionStatistics() {
+    if (_selectedRegion == 'Not selected' || _selectedCity == 'Not selected') {
+      return const SizedBox.shrink();
+    }
+    return _buildAllRegionStatistics();
+  }
+
+  FutureBuilder<DiscoverResponseCityRegion> _buildCityRegionStatistics() {
     return FutureBuilder<DiscoverResponseCityRegion>(
       future: _futureResponseCityRegion,
       builder: (context, snapshot) {
@@ -233,7 +247,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           if (snapshot.data!.code != 200) {
             return const SizedBox.shrink();
           }
-          return _buildCharts(snapshot);
+          return _buildChartsCityRegion(snapshot);
         } else if (snapshot.hasError) {
           return const SizedBox.shrink();
         }
@@ -242,14 +256,30 @@ class _DiscoverPageState extends State<DiscoverPage> {
     );
   }
 
-  Widget _buildCharts(var snapshot) {
-    List<Consume> cityConsume = snapshot.data!.cityConsume;
-    List<Consume> averageRegionConsume = snapshot.data!.averageRegionConsume;
-    List<Consume> regionConsume = snapshot.data!.regionConsume;
-    List<Consume> averageCountryConsume = snapshot.data!.averageCountryConsume;
-    List<Consume> monthRegionConsume = snapshot.data!.monthRegionConsume;
-    List<Consume> regionsToConsider =
-        filterRegions(_selectedRegion, monthRegionConsume);
+  FutureBuilder<DiscoverResponseAllRegion> _buildAllRegionStatistics() {
+    return FutureBuilder<DiscoverResponseAllRegion>(
+      future: _futureResponseAllRegion,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.code != 200) {
+            return const SizedBox.shrink();
+          }
+          return _buildChartsAllRegion(snapshot);
+        } else if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget _buildChartsCityRegion(var snapshot) {
+    List<Consume> month_city_consume = snapshot.data!.month_city_consume;
+    List<Consume> month_region_consume = snapshot.data!.month_region_consume;
+    //List<Consume> regionConsume = snapshot.data!.regionConsume;
+    //List<Consume> averageCountryConsume = snapshot.data!.averageCountryConsume;
+    //List<Consume> monthRegionConsume = snapshot.data!.monthRegionConsume;
+    //List<Consume> regionsToConsider = filterRegions(_selectedRegion, monthRegionConsume);
     String zone = getRegionZone(_selectedRegion);
     String measurement = _selectedStatistic == 'Water' ? 'L' : 'm3';
     return Column(
@@ -260,7 +290,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ),
         const SizedBox(height: 20),
         ConsumesLineChart(
-            consumes1: cityConsume, consumes2: averageRegionConsume),
+            consumes1: month_city_consume, consumes2: month_region_consume),
         Padding(
           padding: const EdgeInsets.only(left: 20, top: 20),
           child: Column(
@@ -278,6 +308,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           ),
         ),
         const SizedBox(height: 40),
+        /*
         Text(
           '$_selectedStatistic consumes by region ($measurement)',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -308,14 +339,34 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ),
         const SizedBox(height: 20),
         ConsumesPieChart(consumes: regionsToConsider)
+        */
       ],
     );
   }
 
-  List<Consume> filterRegions(String selectedRegion, List<Consume> regions) {
-    List<Consume> subList = [];
+  Widget _buildChartsAllRegion(var snapshot) {
+    List<GenericConsume> region_consumes = snapshot.data!.region_consumes;
+    List<GenericConsume> regions =
+        filterRegions(_selectedRegion, region_consumes);
+    String zone = getRegionZone(_selectedRegion);
+    String measurement = _selectedStatistic == 'Water' ? 'L' : 'm3';
+    return Column(
+      children: [
+        Text(
+          '$_selectedStatistic consumes in $zone Italy',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ConsumesPieChart(consumes: regions, statistics: _selectedStatistic)
+      ],
+    );
+  }
+
+  List<GenericConsume> filterRegions(
+      String selectedRegion, List<GenericConsume> regions) {
+    List<GenericConsume> subList = [];
     String zone = getRegionZone(selectedRegion);
-    for (Consume consume in regions) {
+    for (GenericConsume consume in regions) {
       if (getRegionZone(consume.region) == zone) {
         subList.add(consume);
       }
@@ -325,28 +376,28 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   String getRegionZone(String region) {
     switch (region) {
-      case "Valle d'Aosta":
-      case "Liguria":
-      case "Lombardia":
-      case "Piemonte":
+      case "VALLE D'AOSTA":
+      case "LIGURIA":
+      case "LOMBARDIA":
+      case "PIEMONTE":
         return "Nord-ovest";
-      case "Trentino-Alto Adige":
-      case "Veneto":
-      case "Friuli-Venezia Giulia":
-      case "Emilia-Romagna":
+      case "TRENTINO-ALTO ADIGE":
+      case "VENETO":
+      case "FRIULI-VENEZIA GIULIA":
+      case "EMILIA-ROMAGNA":
         return "Nord-est";
-      case "Toscana":
-      case "Umbria":
-      case "Marche":
-      case "Lazio":
-      case "Abruzzo":
+      case "TOSCANA":
+      case "UMBRIA":
+      case "MARCHE":
+      case "LAZIO":
+      case "ABRUZZO":
         return "Centro";
-      case "Molise":
-      case "Campania":
-      case "Puglia":
-      case "Basilicata":
-      case "Calabria":
-      case "Sicilia":
+      case "MOLISE":
+      case "CAMPANIA":
+      case "PUGLIA":
+      case "BASILICATA":
+      case "CALABRIA":
+      case "SICILIA":
         return "Sud";
       default:
         return "";

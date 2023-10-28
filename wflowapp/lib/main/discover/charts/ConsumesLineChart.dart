@@ -18,7 +18,7 @@ class ConsumesLineChart extends StatelessWidget {
     final List<FlSpot> data2 = [];
     dynamic minY = double.maxFinite;
     dynamic maxY = 0;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < consumes1.length; i++) {
       data1.add(FlSpot(i.toDouble(), consumes1[i].consume.toDouble()));
       if (consumes1[i].consume.toDouble() > maxY) {
         maxY = consumes1[i].consume.toDouble();

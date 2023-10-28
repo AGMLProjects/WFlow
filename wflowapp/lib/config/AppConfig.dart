@@ -48,6 +48,10 @@ class AppConfig {
     return '/API/global/city_region_data';
   }
 
+  static String getDiscoverAllRegionPath() {
+    return '/API/global/all_regions_data';
+  }
+
   static String getPostActuatorPath() {
     return '/sensors/set/{id}';
   }

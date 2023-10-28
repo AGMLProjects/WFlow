@@ -22,7 +22,7 @@ class DiscoverResponseCityRegion {
     }
     log(json.toString());
 
-    var list = json['mont_city_consume'] as List;
+    var list = json['month_city_consume'] as List;
     List<Consume> month_city_consume =
         list.map((item) => Consume.fromJson(item)).toList();
     list = json['month_region_consume'] as List;

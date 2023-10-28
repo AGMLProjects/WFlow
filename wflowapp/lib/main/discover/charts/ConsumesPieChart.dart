@@ -2,12 +2,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:wflowapp/main/actions/viewhouse/charts/Indicator.dart';
 import 'package:wflowapp/main/discover/model/Consume.dart';
+import 'package:wflowapp/main/discover/model/GenericConsume.dart';
 import 'package:wflowapp/main/home/HouseWidget.dart';
 
 class ConsumesPieChart extends StatelessWidget {
-  final List<Consume> consumes;
+  final List<GenericConsume> consumes;
+  final String statistics;
 
-  ConsumesPieChart({super.key, required this.consumes});
+  ConsumesPieChart(
+      {super.key, required this.consumes, required this.statistics});
 
   List<Color> colors = [
     Colors.green,
@@ -28,18 +31,24 @@ class ConsumesPieChart extends StatelessWidget {
     List<Widget> indicators = [];
 
     int i = 0;
-    for (Consume consume in consumes) {
+    for (GenericConsume consume in consumes) {
+      double value;
+      String title;
+      if (statistics.toLowerCase() == 'water') {
+        value = consume.water_consume.toDouble();
+        title = consume.water_consume.toString();
+      } else {
+        value = consume.gas_consume.toDouble();
+        title = consume.gas_consume.toString();
+      }
       PieChartSectionData sectionData = PieChartSectionData(
-          color: colors[i],
-          value: consume.consume.toDouble(),
-          showTitle: true,
-          title: consume.consume.toString());
+          color: colors[i], value: value, showTitle: true, title: title);
       sections.add(sectionData);
       i++;
     }
 
     i = 0;
-    for (Consume consume in consumes) {
+    for (GenericConsume consume in consumes) {
       Indicator indicator = Indicator(
         color: colors[i],
         text: consume.region,
@@ -59,7 +68,7 @@ class ConsumesPieChart extends StatelessWidget {
             sections: sections,
           )),
         ),
-        const SizedBox(width: 50),
+        const SizedBox(width: 25),
         Column(
             crossAxisAlignment: CrossAxisAlignment.start, children: indicators)
       ],

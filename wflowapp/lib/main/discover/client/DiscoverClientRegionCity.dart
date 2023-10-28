@@ -15,7 +15,7 @@ class DiscoverClientRegionCity {
     String body = jsonEncode(<String, dynamic>{
       'region': region,
       'city': city,
-      'type': type.toUpperCase()
+      'type': type.toLowerCase()
     });
     log(name: 'HTTP', 'Calling $uri');
     final response = await http.post(
