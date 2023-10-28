@@ -9,7 +9,7 @@ valid_types = ["Flow Sensor", "Water Level", "Water Heater"]
 SECRET = "FLzdTj@22EV74gflnyN6^9qKD$37AOL4kQD3&dm^@61Qb1p96z"
 API_KEY = None
 SENSOR_ID_LIST = [10, 20, 30]
-DEVICE_ID = 1
+DEVICE_ID = 2
 
 SERVER_URL = "http://localhost:8000/"
 SENSORT_REGISTER = "sensors/register/"
