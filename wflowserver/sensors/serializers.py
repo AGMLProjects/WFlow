@@ -132,8 +132,6 @@ class SensorDataConsumesSerializer(serializers.Serializer):
         # Load the weather data from the CSV file into a DataFrame
         weather_df = pd.read_csv("weather_data.csv")
 
-        print(obj)
-
         # Find the closest date and time in the weather data
         sensor_date = obj['date']  # Assuming it's a date object
 

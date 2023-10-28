@@ -447,11 +447,18 @@ class CreatePredictedConsumesAPIView(CreateAPIView):
         serializer.save()
 
 
-class GlobalConsumesAPIView(RetrieveAPIView):
-    def get(self, request, *args, **kwargs):
+class GlobalConsumesAPIView(GenericAPIView):
+    def post(self, request, *args, **kwargs):
         # Get region and city from the request data
         region = request.data.get('region')
         city = request.data.get('city')
+        consume_type_request = request.data.get('type')
+        consume_type = ""
+
+        if consume_type_request == "water":
+            consume_type = "water_liters"
+        elif consume_type_request == "gas":
+            consume_type = "gas_volume"
 
         if not region or not city:
             return Response({"error": "Both 'region' and 'city' must be provided in the request data."}, status=400)
@@ -471,10 +478,7 @@ class GlobalConsumesAPIView(RetrieveAPIView):
 
             # Check if 'values' JSON contains 'water_liters' and sum it
             values = data.values
-            if 'water_liters' in values:
-                consume = values['water_liters']
-            else:
-                consume = 0
+            consume = values.get(consume_type, 0)
 
             mont_city_consume.setdefault(month, 0)
             mont_city_consume[month] += consume
@@ -484,17 +488,14 @@ class GlobalConsumesAPIView(RetrieveAPIView):
 
             # Check if 'values' JSON contains 'water_liters' and sum it
             values = data.values
-            if 'water_liters' in values:
-                consume = values['water_liters']
-            else:
-                consume = 0
+            consume = values.get(consume_type, 0)
 
             month_region_consume.setdefault(month, 0)
             month_region_consume[month] += consume
 
         # Format the response data
         response_data = {
-            "mont_city_consume": [
+            "month_city_consume": [
                 {
                     "city": city,
                     "year": data.start_timestamp.year,
@@ -535,10 +536,12 @@ class GlobalConsumesEveryRegionAPIView(RetrieveAPIView):
 
             # Check if 'values' JSON contains 'water_liters' and sum it
             values = data.values
-            consume = values.get('water_liters', 0)
+            water_consume = values.get('water_liters', 0)
+            gas_consume = values.get('gas_volume', 0)
 
-            region_consume.setdefault(region, 0)
-            region_consume[region] += consume
+            region_consume.setdefault(region, [0, 0])
+            region_consume[region][0] += water_consume
+            region_consume[region][1] += gas_consume
 
         # Format the response data
         response_data = {
@@ -547,7 +550,8 @@ class GlobalConsumesEveryRegionAPIView(RetrieveAPIView):
             "region_consumes": [
                 {
                     "region": region,
-                    "consume": consume
+                    "water_consume": consume[0],
+                    "gas_consume": consume[1],
                 }
                 for region, consume in region_consume.items()
             ]
