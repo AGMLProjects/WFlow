@@ -20,7 +20,7 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
   int sensorId = -1;
   int deviceId = -1;
   String deviceName = '';
-  double temperature = 24.0;
+  double temperature = 35.0;
 
   final ShowerActuatorClient client = ShowerActuatorClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getPostActuatorPath());
@@ -91,7 +91,7 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
               NumberPicker(
                 value: temperature.toInt(),
                 minValue: 10,
-                maxValue: 30,
+                maxValue: 45,
                 step: 1,
                 itemHeight: 60,
                 axis: Axis.horizontal,
@@ -170,13 +170,13 @@ class _ShowerActuatorPageState extends State<ShowerActuatorPage> {
   }
 
   Color getColorFromTemperature(double temp) {
-    if (temp < 14) {
+    if (temp < 20) {
       return const Color.fromARGB(255, 0, 217, 255);
-    } else if (temp >= 14 && temp < 18) {
+    } else if (temp >= 20 && temp < 26) {
       return const Color.fromARGB(255, 0, 136, 255);
-    } else if (temp >= 18 && temp < 22) {
+    } else if (temp >= 26 && temp < 35) {
       return const Color.fromARGB(255, 255, 157, 0);
-    } else if (temp >= 22 && temp < 26) {
+    } else if (temp >= 35 && temp < 41) {
       return const Color.fromARGB(255, 255, 102, 0);
     } else {
       return const Color.fromARGB(255, 255, 47, 0);

@@ -269,11 +269,28 @@ class _HousePageState extends State<HousePage> {
         subtitle: Text('${event.water_liters} L (${event.temperature} °C)'),
         trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
       );
-    } else {
-      // Another event
+    } else if (event.water_liters > 0 &&
+        event.gas_volume > 0 &&
+        event.temperature < 0) {
+      // Smart heater activation
       return ListTile(
-        title: Text('Generic event'),
-        subtitle: Text('null'),
+        title: const Text('Smart heater activation'),
+        subtitle: Text('${event.water_liters} L | ${event.gas_volume} m3'),
+        trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
+      );
+    } else if (event.water_liters < 0 &&
+        event.gas_volume < 0 &&
+        event.temperature > 0) {
+      // Shower activation
+      return ListTile(
+        title: const Text('Shower activation'),
+        subtitle: Text('${event.temperature} °C'),
+        trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
+      );
+    } else {
+      return ListTile(
+        title: const Text('Generic event'),
+        subtitle: const Text('null'),
         trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
       );
     }
@@ -307,7 +324,7 @@ class _HousePageState extends State<HousePage> {
       case "LEV":
         return "Water flush sensor";
       case "SAC":
-        return "Shower";
+        return "Shower (actuator)";
       case "HAC":
         return "Smart heater actuator";
       default:

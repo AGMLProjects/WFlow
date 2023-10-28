@@ -53,7 +53,7 @@ class AppConfig {
   }
 
   static String getPostActuatorPath() {
-    return '/sensors/set/{id}';
+    return '/sensors/set/';
   }
 
   static Color getDefaultColor() {

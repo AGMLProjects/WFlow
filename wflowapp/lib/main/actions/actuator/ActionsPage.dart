@@ -102,10 +102,9 @@ class _ActionsPageState extends State<ActionsPage> {
   Widget buildAction(Device device) {
     var sensors = [];
     for (Sensor sensor in device.sensors) {
-      // TODO: change!!!
       if (sensor.sensor_type == 'SAC') {
         if (!showerSensorMap.containsKey(sensor.sensor_id)) {
-          showerSensorMap[sensor.sensor_id] = 22;
+          showerSensorMap[sensor.sensor_id] = sensor.sensor_id;
         }
         sensors.add(sensor);
       } else if (sensor.sensor_type == 'HAC') {
@@ -133,8 +132,8 @@ class _ActionsPageState extends State<ActionsPage> {
 
   Widget _buildAction(Device device, Sensor sensor) {
     String sensorTytle = 'Smart Heater';
-    if (sensor.sensor_type == 'FLO') {
-      sensorTytle = 'Shower';
+    if (sensor.sensor_type == 'SAC') {
+      sensorTytle = 'Shower (actuator)';
     }
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 24),
@@ -143,11 +142,11 @@ class _ActionsPageState extends State<ActionsPage> {
         children: [
           Text(
             sensorTytle,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           ElevatedButton(
             onPressed: () {
-              if (sensor.sensor_type == 'FLO') {
+              if (sensor.sensor_type == 'SAC') {
                 Navigator.pushNamed(context, '/showerAction', arguments: {
                   'id': id,
                   'sensorId': sensor.sensor_id,

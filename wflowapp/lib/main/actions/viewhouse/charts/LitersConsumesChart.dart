@@ -129,8 +129,8 @@ class LitersConsumesChart extends StatelessWidget {
   SideTitles leftTitles() {
     return SideTitles(
       showTitles: true,
-      reservedSize: 30,
-      interval: 3,
+      reservedSize: 40,
+      interval: 400,
       getTitlesWidget: leftTitleWidgets,
     );
   }

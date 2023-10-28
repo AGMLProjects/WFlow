@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:wflowapp/config/AppConfig.dart';
 import 'package:wflowapp/main/actions/actuator/client/ShowerActuatorResponse.dart';
 
@@ -12,10 +13,13 @@ class ShowerActuatorClient {
 
   Future<ShowerActuatorResponse> activateShower(
       String key, int sensorId, int deviceId, double temperature) async {
+    var now = DateTime.now();
+    var formatter = DateFormat('yyyy-MM-dd hh:mm:ss');
+    String timestamp = formatter.format(now);
     Map<String, dynamic> map = {
       'sensor_id': sensorId,
-      'start_timestamp': '',
-      'end_timestamp': '',
+      'start_timestamp': timestamp,
+      'end_timestamp': timestamp,
       'values': {'temperature': temperature},
     };
 

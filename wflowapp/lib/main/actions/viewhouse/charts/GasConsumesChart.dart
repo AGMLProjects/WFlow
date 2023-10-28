@@ -17,14 +17,14 @@ class GasConsumesChart extends StatelessWidget {
     for (int j = 0; j < real.length; j++, i++) {
       consumes.add(Consume(
           x: i,
-          y: real[j].total_gas_volumes,
+          y: real[j].total_gas_volume,
           day: real[j].date,
           predicted: false));
     }
     for (int j = 0; j < predicted.length; j++, i++) {
       consumes.add(Consume(
           x: i,
-          y: predicted[j].total_gas_volumes,
+          y: predicted[j].total_gas_volume,
           day: predicted[j].date,
           predicted: true));
     }
@@ -45,7 +45,7 @@ class GasConsumesChart extends StatelessWidget {
       child: LineChart(
         LineChartData(
           minY: 0,
-          maxY: maxY + 3.0,
+          maxY: maxY + 1.0,
           lineTouchData: lineTouchData(),
           titlesData: titlesData(),
           borderData: FlBorderData(

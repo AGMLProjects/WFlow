@@ -48,6 +48,7 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   numberpicker: ^2.1.2
   dropdown_search: ^3.0.1
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
