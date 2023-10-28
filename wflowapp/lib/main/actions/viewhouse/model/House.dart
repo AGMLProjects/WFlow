@@ -4,6 +4,8 @@ class House {
   final String name;
   final String address;
   final String city;
+  final String region;
+  final String country;
   final String house_type;
 
   House(
@@ -12,6 +14,8 @@ class House {
       required this.name,
       required this.address,
       required this.city,
+      required this.region,
+      required this.country,
       required this.house_type});
 
   factory House.fromJson(Map<String, dynamic> json) {
@@ -21,6 +25,8 @@ class House {
         name: json['name'],
         address: json['address'],
         city: json['city'],
+        region: json['region'],
+        country: json['country'],
         house_type: json['house_type']);
   }
 }

@@ -16,6 +16,7 @@ class _SplashPageState extends State<SplashPage> {
     String? savedToken = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Read saved token: $savedToken');
     bool validToken = savedToken != null;
+    //validToken = false;
     // TODO: other checks on token...
     if (validToken) {
       Future.delayed(Duration.zero, () {

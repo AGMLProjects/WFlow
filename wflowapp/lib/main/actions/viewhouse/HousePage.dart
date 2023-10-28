@@ -31,6 +31,8 @@ class _HousePageState extends State<HousePage> {
   String name = '';
   String city = '';
   String address = '';
+  String country = '';
+  String region = '';
   String type = '';
 
   final HouseClient houseClient = HouseClient(
@@ -85,7 +87,9 @@ class _HousePageState extends State<HousePage> {
               'name': name,
               'city': city,
               'address': address,
-              'type': type
+              'type': type,
+              'country': country,
+              'region': region
             });
           }
         },
@@ -130,6 +134,11 @@ class _HousePageState extends State<HousePage> {
             return const SizedBox.shrink();
           }
           HouseResponse houseResponse = snapshot.data!.houseResponse;
+          House house = houseResponse.house;
+          address = house.address;
+          country = house.country;
+          city = house.city;
+          region = house.region;
           return buildFromHouseResponse(houseResponse);
         } else if (snapshot.hasError) {
           log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
@@ -150,6 +159,7 @@ class _HousePageState extends State<HousePage> {
           'Water consumes (25 days)',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
+        /*
         LitersConsumesChart(
             real: houseResponse.sensor_data,
             predicted: houseResponse.predicted_data),
@@ -174,7 +184,7 @@ class _HousePageState extends State<HousePage> {
           'This week water consumes',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        /*
+        
         LitersConsumesBarChart(consumes: house.weeklyLitersConsumes),
         Padding(
           padding: const EdgeInsets.only(left: 20),

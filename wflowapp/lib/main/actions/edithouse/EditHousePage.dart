@@ -71,6 +71,8 @@ class _EditHousePageState extends State<EditHousePage> {
     name = arg['name'];
     city = arg['city'];
     address = arg['address'];
+    _selectedRegion = arg['region'];
+    _selectedCity = arg['city'];
     if (houseType.isEmpty) {
       houseType = arg['type'];
     }
@@ -116,9 +118,9 @@ class _EditHousePageState extends State<EditHousePage> {
                 DropdownSearch<String>(
                   mode: Mode.BOTTOM_SHEET,
                   showSelectedItems: true,
-                  items: const ["Italy"],
+                  items: const ["ITALY"],
                   showSearchBox: true,
-                  selectedItem: "Italy",
+                  selectedItem: "ITALY",
                 ),
                 const SizedBox(height: 20),
                 const Row(
@@ -131,39 +133,40 @@ class _EditHousePageState extends State<EditHousePage> {
                   ],
                 ),
                 DropdownSearch<String>(
+                  selectedItem: _selectedRegion,
                   mode: Mode.BOTTOM_SHEET,
                   showSelectedItems: true,
                   items: const [
-                    "Lombardia",
-                    "Lazio",
-                    "Campania",
-                    "Veneto",
-                    "Sicilia",
-                    "Emilia-Romagna",
-                    "Piemonte",
-                    "Puglia",
-                    "Toscana",
-                    "Calabria",
-                    "Sardegna",
-                    "Liguria",
-                    "Marche",
-                    "Abruzzo",
-                    "Friuli-Venezia Giulia",
-                    "Trentino-Alto Adige",
-                    "Umbria",
-                    "Basilicata",
-                    "Molise",
-                    "Valle d'Aosta"
+                    "LOMBARDIA",
+                    "LAZIO",
+                    "CAMPANIA",
+                    "VENETO",
+                    "SICILIA",
+                    "EMILIA-ROMAGNA",
+                    "PIEMONTE",
+                    "PUGLIA",
+                    "TOSCANA",
+                    "CALABRIA",
+                    "SARDEGNA",
+                    "LIGURIA",
+                    "MARCHE",
+                    "ABRUZZO",
+                    "FRIULI-VENEZIA GIULA",
+                    "TRENTINO-ALTO ADIGE",
+                    "UMBRIA",
+                    "BASILICATA",
+                    "MOLISE",
+                    "VALLE D'AOSTA"
                   ],
                   showSearchBox: true,
                   showClearButton: true,
                   onChanged: (value) async {
                     if (_selectedRegion.toUpperCase() != value!.toUpperCase()) {
                       setState(() {
+                        _selectedRegion = value.toUpperCase();
                         _selectedCity = '';
                       });
                     }
-                    _selectedRegion = value.toUpperCase();
                     var data =
                         await rootBundle.loadString('assets/locations.json');
                     final citiesInJson = json.decode(data);
@@ -196,8 +199,25 @@ class _EditHousePageState extends State<EditHousePage> {
                         .toUpperCase()
                         .startsWith(filter!.toUpperCase());
                   },
+                  onChanged: (value) async {
+                    if (value != null) {
+                      setState(() {
+                        _selectedCity = value;
+                      });
+                    }
+                    log('Selected city: $_selectedCity');
+                  },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
+                TextField(
+                  enabled: true,
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Address",
+                  ),
+                ),
+                const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -365,8 +385,8 @@ class _EditHousePageState extends State<EditHousePage> {
       //AppConfig.setHouseColor(id, houseColor);
       editHousesClient.path =
           editHousesClient.path.replaceAll('{id}', id.toString());
-      _futureEditHouseResponse =
-          editHousesClient.editHouse(token!, id, name, city, address, type);
+      _futureEditHouseResponse = editHousesClient.editHouse(token!, id, name,
+          'ITALY', _selectedRegion, _selectedCity, address, type);
     });
   }
 

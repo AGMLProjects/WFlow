@@ -26,11 +26,7 @@ class _HomePageState extends State<HomePage> {
   final HousesClient housesClient = HousesClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getHousesListPath());
 
-  final ExpensesClient expensesClient =
-      ExpensesClient(url: AppConfig.getBaseUrl(), path: '/expenses');
-
   Future<HousesResponse>? _futureHousesResponse;
-  Future<ExpensesResponse>? _futureExpensesResponse;
 
   @override
   void initState() {
@@ -38,7 +34,6 @@ class _HomePageState extends State<HomePage> {
     String? key = AppConfig.getUserToken();
     log(name: 'CONFIG', 'Read user key from config: ${key!}');
     _futureHousesResponse = housesClient.getHouses(key);
-    //_futureExpensesResponse = expensesClient.getExpenses(key);
   }
 
   @override
@@ -90,45 +85,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget drawHousesTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const Text(
-          'My houses 🏡',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-        ),
-      ],
-    );
-  }
-
-  Widget drawConsumesTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const Text(
-          'My total consumes 💧',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.black),
-        )
-      ],
-    );
-  }
-
-  Widget drawExpensesTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          'Expected total cost 💸',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 22.0, color: Colors.black),
-        ),
-      ],
-    );
-  }
-
   FutureBuilder<HousesResponse> buildHousesCarousel() {
     return FutureBuilder<HousesResponse>(
       future: _futureHousesResponse,
@@ -164,79 +120,6 @@ class _HomePageState extends State<HomePage> {
           return const SizedBox.shrink();
         }
         return const Center(child: CircularProgressIndicator());
-      },
-    );
-  }
-
-  FutureBuilder<HousesResponse> buildWaterPieChart() {
-    return FutureBuilder<HousesResponse>(
-      future: _futureHousesResponse,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.code != 200) {
-            return const SizedBox.shrink();
-          }
-          double totalConsumes = 0;
-          for (HouseWidget houseWidget in _houseWidgets) {
-            totalConsumes += houseWidget.house.total_liters;
-          }
-          return Column(
-            children: [
-              drawConsumesTitle(),
-              const SizedBox(height: 24.0),
-              Text(
-                "Total: $totalConsumes L",
-                style: const TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 20.0,
-                    color: Colors.black),
-              ),
-              const SizedBox(height: 24.0),
-              WaterPieChart(
-                houseWidgets: _houseWidgets,
-              ),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return const SizedBox.shrink();
-        }
-        return const SizedBox.shrink();
-      },
-    );
-  }
-
-  FutureBuilder<ExpensesResponse> buildExpensesLineChart() {
-    return FutureBuilder<ExpensesResponse>(
-      future: _futureExpensesResponse,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.code != 200) {
-            return const SizedBox.shrink();
-          }
-          for (MonthExpense month in snapshot.data!.months) {
-            _monthExpenses.add(MonthExpense(
-                date: month.date, cost: month.cost, total: month.total));
-          }
-          log(name: 'DEBUG', 'Found ${_monthExpenses.length} month(s)');
-          double currentPrice = _monthExpenses.last.cost;
-          return Column(
-            children: [
-              drawExpensesTitle(),
-              const SizedBox(height: 24.0),
-              Text(
-                "Current price: $currentPrice €",
-                style: const TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 20.0,
-                    color: Colors.black),
-              ),
-              const SizedBox(height: 24.0),
-            ],
-          );
-        } else if (snapshot.hasError) {
-          return const SizedBox.shrink();
-        }
-        return const SizedBox.shrink();
       },
     );
   }

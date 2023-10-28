@@ -11,16 +11,16 @@ class AddHouseResponse {
   factory AddHouseResponse.fromResponse(Response response) {
     dynamic dhouse = jsonDecode(response.body);
     House house = House(
-        house_id: dhouse['house_id'],
-        user_id: dhouse['user_id'],
-        total_liters: dhouse['total_liters'],
-        total_gas: dhouse['total_gas'],
-        future_total_liters: dhouse['future_total_liters'],
-        future_total_gas: dhouse['future_total_gas'],
-        name: dhouse['name'],
-        address: dhouse['address'],
-        city: dhouse['city'],
-        house_type: dhouse['house_type']);
+      house_id: dhouse['house_id'],
+      user_id: dhouse['user_id'],
+      name: dhouse['name'],
+      country: dhouse['country'],
+      region: dhouse['region'],
+      city: dhouse['city'],
+      house_type: dhouse['house_type'],
+      address: dhouse['address'],
+    );
+
     return AddHouseResponse(
       code: response.statusCode,
       house: house,

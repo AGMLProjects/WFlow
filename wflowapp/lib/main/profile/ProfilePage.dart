@@ -20,13 +20,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final dateOfBirthController = TextEditingController();
-  final cityController = TextEditingController();
   String? occupation;
   String? status;
   int? family_members;
-  String _selectedRegion = '';
-  List<String> cities = [];
-  String _selectedCity = '';
 
   final ProfileClient profileClient = ProfileClient(
       url: AppConfig.getBaseUrl(), path: AppConfig.getUsersPath());
@@ -80,7 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
           firstNameController.text = snapshot.data!.first_name;
           lastNameController.text = snapshot.data!.last_name;
           dateOfBirthController.text = snapshot.data!.date_of_birth;
-          cityController.text = snapshot.data!.city;
 
           if (snapshot.data!.occupation.isEmpty) {
             occupation ??= 'NON';
@@ -145,107 +140,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   border: OutlineInputBorder(),
                   labelText: "Date of birth",
                 ),
-              ),
-              SizedBox(height: spaceBetween),
-              TextField(
-                enabled: true,
-                controller: cityController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "City (TODO: remove)",
-                ),
-              ),
-              SizedBox(height: spaceBetween),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 4, bottom: 4),
-                    child: Text('Country'),
-                  ),
-                ],
-              ),
-              DropdownSearch<String>(
-                mode: Mode.BOTTOM_SHEET,
-                showSelectedItems: true,
-                items: const ["Italy"],
-                showSearchBox: true,
-                selectedItem: "Italy",
-              ),
-              SizedBox(height: spaceBetween),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 4, bottom: 4),
-                    child: Text('Region'),
-                  ),
-                ],
-              ),
-              DropdownSearch<String>(
-                mode: Mode.BOTTOM_SHEET,
-                showSelectedItems: true,
-                items: const [
-                  "Lombardia",
-                  "Lazio",
-                  "Campania",
-                  "Veneto",
-                  "Sicilia",
-                  "Emilia-Romagna",
-                  "Piemonte",
-                  "Puglia",
-                  "Toscana",
-                  "Calabria",
-                  "Sardegna",
-                  "Liguria",
-                  "Marche",
-                  "Abruzzo",
-                  "Friuli-Venezia Giulia",
-                  "Trentino-Alto Adige",
-                  "Umbria",
-                  "Basilicata",
-                  "Molise",
-                  "Valle d'Aosta"
-                ],
-                showSearchBox: true,
-                showClearButton: true,
-                onChanged: (value) async {
-                  if (_selectedRegion.toUpperCase() != value!.toUpperCase()) {
-                    setState(() {
-                      _selectedCity = '';
-                    });
-                  }
-                  _selectedRegion = value.toUpperCase();
-                  var data =
-                      await rootBundle.loadString('assets/locations.json');
-                  final citiesInJson = json.decode(data);
-                  log('Selected region: $_selectedRegion');
-                  setState(() {
-                    cities = List<String>.from(
-                        citiesInJson[_selectedRegion] as List);
-                  });
-                  log('Selected city: $_selectedCity');
-                },
-              ),
-              SizedBox(height: spaceBetween),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 4, bottom: 4),
-                    child: Text('City (comune)'),
-                  ),
-                ],
-              ),
-              DropdownSearch<String>(
-                selectedItem: _selectedCity,
-                mode: Mode.BOTTOM_SHEET,
-                items: cities,
-                showSearchBox: true,
-                showClearButton: true,
-                filterFn: (item, filter) {
-                  return item!.toUpperCase().startsWith(filter!.toUpperCase());
-                },
               ),
               SizedBox(height: spaceBetween),
               Row(
@@ -461,7 +355,6 @@ class _ProfilePageState extends State<ProfilePage> {
             String first_name = firstNameController.text;
             String last_name = lastNameController.text;
             String date_of_birth = dateOfBirthController.text;
-            String city = cityController.text;
             String? key = AppConfig.getUserToken();
             log(name: 'CONFIG', 'Read user key from config: ${key!}');
             _futureProfileResponsePut = profileClient.setUserInfo(
@@ -470,7 +363,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 first_name,
                 last_name,
                 date_of_birth,
-                city,
                 occupation!,
                 status!,
                 family_members!);
@@ -478,7 +370,6 @@ class _ProfilePageState extends State<ProfilePage> {
             firstNameController.text = first_name;
             lastNameController.text = last_name;
             dateOfBirthController.text = date_of_birth;
-            cityController.text = city;
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
                 "Successfully saved user information",

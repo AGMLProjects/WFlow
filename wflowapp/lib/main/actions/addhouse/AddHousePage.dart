@@ -29,7 +29,6 @@ class _AddHousePageState extends State<AddHousePage> {
   String _selectedCity = '';
 
   final nameController = TextEditingController();
-  final cityController = TextEditingController();
   final addressController = TextEditingController();
 
   final AddHouseClient addHousesClient = AddHouseClient(
@@ -48,7 +47,6 @@ class _AddHousePageState extends State<AddHousePage> {
   @override
   void dispose() {
     nameController.dispose();
-    cityController.dispose();
     addressController.dispose();
     super.dispose();
   }
@@ -96,9 +94,9 @@ class _AddHousePageState extends State<AddHousePage> {
                 DropdownSearch<String>(
                   mode: Mode.BOTTOM_SHEET,
                   showSelectedItems: true,
-                  items: const ["Italy"],
+                  items: const ["ITALY"],
                   showSearchBox: true,
-                  selectedItem: "Italy",
+                  selectedItem: "ITALY",
                 ),
                 const SizedBox(height: 20),
                 const Row(
@@ -114,26 +112,26 @@ class _AddHousePageState extends State<AddHousePage> {
                   mode: Mode.BOTTOM_SHEET,
                   showSelectedItems: true,
                   items: const [
-                    "Lombardia",
-                    "Lazio",
-                    "Campania",
-                    "Veneto",
-                    "Sicilia",
-                    "Emilia-Romagna",
-                    "Piemonte",
-                    "Puglia",
-                    "Toscana",
-                    "Calabria",
-                    "Sardegna",
-                    "Liguria",
-                    "Marche",
-                    "Abruzzo",
-                    "Friuli-Venezia Giulia",
-                    "Trentino-Alto Adige",
-                    "Umbria",
-                    "Basilicata",
-                    "Molise",
-                    "Valle d'Aosta"
+                    "LOMBARDIA",
+                    "LAZIO",
+                    "CAMPANIA",
+                    "VENETO",
+                    "SICILIA",
+                    "EMILIA-ROMAGNA",
+                    "PIEMONTE",
+                    "PUGLIA",
+                    "TOSCANA",
+                    "CALABRIA",
+                    "SARDEGNA",
+                    "LIGURIA",
+                    "MARCHE",
+                    "ABRUZZO",
+                    "FRIULI-VENEZIA GIULA",
+                    "TRENTINO-ALTO ADIGE",
+                    "UMBRIA",
+                    "BASILICATA",
+                    "MOLISE",
+                    "VALLE D'AOSTA"
                   ],
                   showSearchBox: true,
                   showClearButton: true,
@@ -176,8 +174,25 @@ class _AddHousePageState extends State<AddHousePage> {
                         .toUpperCase()
                         .startsWith(filter!.toUpperCase());
                   },
+                  onChanged: (value) async {
+                    if (value != null) {
+                      setState(() {
+                        _selectedCity = value;
+                      });
+                    }
+                    log('Selected city: $_selectedCity');
+                  },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
+                TextField(
+                  enabled: true,
+                  controller: addressController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Address",
+                  ),
+                ),
+                const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -307,17 +322,7 @@ class _AddHousePageState extends State<AddHousePage> {
                   ],
                 ),
                 const SizedBox(height: 20.0),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Delete this house',
-                        style: TextStyle(
-                            fontSize: 14.0,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold))
-                  ],
-                ),
-                const SizedBox(height: 20.0)
+                drawAddHouseResponse()
               ],
             ),
           ),
@@ -338,11 +343,10 @@ class _AddHousePageState extends State<AddHousePage> {
     setState(() {
       //validate
       String name = nameController.text;
-      String city = cityController.text;
       String address = addressController.text;
       String type = houseType!;
-      _futureAddHouseResponse =
-          addHousesClient.addHouse(token!, name, city, address, type);
+      _futureAddHouseResponse = addHousesClient.addHouse(
+          token!, name, 'ITALY', _selectedRegion, _selectedCity, address, type);
     });
   }
 
@@ -372,7 +376,7 @@ class _AddHousePageState extends State<AddHousePage> {
                 fontSize: 14.0,
               ));
         }
-        return const CircularProgressIndicator();
+        return const SizedBox.shrink();
       },
     );
   }

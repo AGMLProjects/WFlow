@@ -9,18 +9,16 @@ class AddHouseClient {
 
   const AddHouseClient({required this.url, required this.path});
 
-  Future<AddHouseResponse> addHouse(
-      String key, String name, String city, String address, String type) async {
+  Future<AddHouseResponse> addHouse(String key, String name, String country,
+      String region, String city, String address, String type) async {
     Uri uri = Uri.https(url, path);
     String body = jsonEncode(<String, dynamic>{
       'name': name,
+      'country': country,
+      'region': region,
       'city': city,
       'address': address,
-      'house_type': type,
-      'total_liters': 0.0,
-      'total_gas': 0.0,
-      'future_total_liters': 0.0,
-      'future_total_gas': 0.0
+      'house_type': type
     });
     log(name: 'HTTP', 'Calling $path');
     log(name: 'HTTP', 'Body: $body');

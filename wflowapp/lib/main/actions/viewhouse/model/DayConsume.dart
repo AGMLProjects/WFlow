@@ -1,7 +1,7 @@
 class DayConsume {
   final String date;
-  final int total_water_liters;
-  final int total_gas_volumes;
+  final double total_water_liters;
+  final double total_gas_volumes;
 
   DayConsume(
       {required this.date,
@@ -9,9 +9,11 @@ class DayConsume {
       required this.total_gas_volumes});
 
   factory DayConsume.fromJson(Map<String, dynamic> json) {
+    // TODO
+    double gas = 0;
     return DayConsume(
-        date: json['data'],
+        date: json['date'],
         total_water_liters: json['total_water_liters'],
-        total_gas_volumes: json['total_gas_volumes']);
+        total_gas_volumes: gas);
   }
 }

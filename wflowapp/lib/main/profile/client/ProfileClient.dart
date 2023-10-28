@@ -30,7 +30,6 @@ class ProfileClient {
       String first_name,
       String last_name,
       String date_of_birth,
-      String city,
       String occupation,
       String status,
       int family_members) async {
@@ -38,7 +37,6 @@ class ProfileClient {
       'email': email,
       'first_name': first_name,
       'last_name': last_name,
-      'city': city,
       'family_members': family_members,
     };
     if (date_of_birth.isNotEmpty) {

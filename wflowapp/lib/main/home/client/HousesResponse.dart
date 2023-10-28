@@ -34,8 +34,6 @@ class HousesResponse {
           user_id: dhouse['user_id'],
           total_liters: total_liters,
           total_gas: total_gas,
-          future_total_liters: future_total_liters,
-          future_total_gas: future_total_gas,
           name: dhouse['name'],
           address: dhouse['address'],
           city: dhouse['city'],

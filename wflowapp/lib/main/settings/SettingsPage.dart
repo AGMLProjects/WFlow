@@ -89,7 +89,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                 result.first_name,
                                 result.last_name,
                                 result.date_of_birth,
-                                result.city,
                                 result.occupation,
                                 result.status,
                                 result.family_members);

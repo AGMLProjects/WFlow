@@ -9,12 +9,21 @@ class EditHouseClient {
 
   EditHouseClient({required this.url, this.path = ''});
 
-  Future<EditHouseResponse> editHouse(String key, int house, String name,
-      String city, String address, String type) async {
+  Future<EditHouseResponse> editHouse(
+      String key,
+      int house,
+      String name,
+      String country,
+      String region,
+      String city,
+      String address,
+      String type) async {
     Uri uri = Uri.https(url, path);
     String body = jsonEncode(<String, dynamic>{
       'house_id': house,
       'name': name,
+      'region': region.toUpperCase(),
+      'country': country.toUpperCase(),
       'city': city,
       'address': address,
       'house_type': type
