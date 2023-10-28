@@ -74,6 +74,7 @@ if __name__ == "__main__":
 	# Register the sensors to the ControlSingals handler
 	for sensor in devices_list["sensors"]:
 		try:
+			# Add the control signal because only sensor have to send back data
 			controlSignals.addSensors(id = int(sensor["id"]), pin = int(sensor["GPIO"]))
 			
 			if serialInterface.addDevice(id = int(sensor["id"]), port = sensor["UART"]) == True:
@@ -172,7 +173,7 @@ if __name__ == "__main__":
 						start = start.strftime("%Y-%m-%d %H:%M:%S")
 						end = end.strftime("%Y-%m-%d %H:%M:%S")
 						
-						serverHandler.sendSensorData(sensor_id = sensor_id, start_timestamp = start, end_timestamp = end, payload = {"water_liters": 20.0})
+						serverHandler.sendSensorData(sensor_id = sensor_id, start_timestamp = start, end_timestamp = end, payload = {"water_liters": 30.0})
 
 
 		if actuator_res is True:

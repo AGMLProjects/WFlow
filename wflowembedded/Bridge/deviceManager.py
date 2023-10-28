@@ -69,16 +69,25 @@ class SerialInterface():
         self._timeout = 1
 
         self._devices = dict()
+        self._usedPort = dict()
 
     def addDevice(self, id: int, port: str) -> bool:
         if type(id) != int or type(port) != str:
             raise TypeError
         
+        # Check if this device has already been registred
         if id in self._devices:
             return False
         
+        # If not, register it and open the serial port
         try:
-            self._devices[id] = serial.Serial(port = port, baudrate = self._baudrate, timeout = self._timeout)
+            # If this serial port has never been opened, open it and register the device
+            if port not in self._usedPort:
+                self._devices[id] = serial.Serial(port = port, baudrate = self._baudrate, timeout = self._timeout)
+                self._usedPort[port] = id
+            else:
+                # If the port is already in use, just link the new device to the original handler
+                self._devices[id] = self._devices[self._usedPort[port]]
             return True
         except Exception as e:
             self._logger.record(msg = "Error occurred while trying to add device to serial interface", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exception = e)

@@ -1,9 +1,15 @@
 {
     "sensors": [
         {
-            "id": 1111,
+            "id": 100,
             "type": "FLO",
             "UART": "/dev/ttyACM0",
+            "GPIO": 24
+        },
+        {
+            "id": 200,
+            "type": "LEV",
+            "UART": "/dev/ttyACM3",
             "GPIO": 23
         }
     ],
