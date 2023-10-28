@@ -132,14 +132,14 @@ class SensorDataConsumesSerializer(serializers.Serializer):
         # Load the weather data from the CSV file into a DataFrame
         weather_df = pd.read_csv("weather_data.csv")
 
+        print(obj)
+
         # Find the closest date and time in the weather data
-        sensor_timestamp = obj.start_timestamp  # Assuming it's a datetime object
-        sensor_date_str = sensor_timestamp.strftime("%Y-%m-%d")
-        sensor_time_str = sensor_timestamp.strftime("%H:%M")
+        sensor_date = obj['date']  # Assuming it's a date object
 
         def calculate_date_difference(x):
             weather_date = datetime.strptime(x, "%Y-%m-%d")
-            return abs((sensor_timestamp.date() - weather_date.date()).days)
+            return abs((sensor_date - weather_date.date()).days)
 
         closest_index = weather_df['Date'].apply(
             calculate_date_difference).idxmin()
