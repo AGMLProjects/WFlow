@@ -7,6 +7,7 @@
 #define SA      0x5341          // Set address
 #define SD      0x5344          // Send SensorInput data
 #define EX      0x4558          // Set actuator state
+#define OK      0x4F4B          // Acknowledge
 
 uint32_t intDecode(uint8_t *, uint32_t);                // Convert an integer into a string
 void intEncode(uint32_t, uint8_t *, uint8_t);           // Convert a string into an integer

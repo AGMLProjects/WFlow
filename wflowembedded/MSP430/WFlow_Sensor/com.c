@@ -204,6 +204,14 @@ void parse_ex_command(uint8_t *message, ActuatorState *actuator_state)
     if (actuator_state->active == true)
     {
         actuator_state->active = false;
+
+        // Set the HOT WATER level output
+        P6OUT = 0;
+        P1OUT &= ~BIT0;
+
+        P3OUT = 0;
+        P4OUT &= ~BIT7;
+
         return;
     }
     else
@@ -222,7 +230,6 @@ void parse_ex_command(uint8_t *message, ActuatorState *actuator_state)
 
 void set_water_output(uint8_t hot_value, uint8_t cold_value)
 {
-    uint8_t bitmask;
 
     // Ensure that the values are correct
     if (hot_value + cold_value != 10)
@@ -231,9 +238,7 @@ void set_water_output(uint8_t hot_value, uint8_t cold_value)
     }
 
     // Set the HOT WATER level output
-    bitmask = 0b00001111;
-    bitmask &= ~(1 << hot_value);
-    P6OUT = bitmask;
+    P6OUT = hot_value;
 
     // Update the indicator
     if (hot_value > 0)
@@ -246,9 +251,7 @@ void set_water_output(uint8_t hot_value, uint8_t cold_value)
     }
 
     // Set the COLD WATER level output
-    bitmask = 0b00001111;
-    bitmask &= ~(1 << cold_value);
-    P3OUT = bitmask;
+    P3OUT = cold_value;
 
     // Update the indicator
     if (cold_value > 0)

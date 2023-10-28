@@ -235,6 +235,10 @@ void main (void)
                 __enable_interrupt();
                 create_ack_message(dataBuffer, device_address, &count);
             }
+            else if (message_code == OK)
+            {
+                create_ack_message(dataBuffer, device_address, &count);
+            }
             else if (message_code == SD)
             {
                 // Check if there are data to be sent
