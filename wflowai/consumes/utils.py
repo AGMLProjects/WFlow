@@ -7,7 +7,20 @@ def parse_response(data):
     family_members = data['user']['family_members']
     if family_members is None:
         family_members = 1
-    sensor_data = data['sensor_data']
+
+    transformed_data = {
+        "sensor_data": [
+            {
+                **item,
+                "temperature": item["weather"]["Temperature_2m"],
+                "rain": item["weather"]["Rain"],
+            }
+            for item in data["sensor_data"]
+        ]
+    }
+
+    sensor_data = transformed_data['sensor_data']
+
     df = pd.DataFrame(sensor_data)
     df['date'] = df['day_of_month'].astype(str) + '/' + df['month'].astype(str) + '/2023'
 
@@ -20,7 +33,7 @@ def parse_response(data):
         'temperature',
         'rain',
         'total_water_liters',
-        'total_gas_volumes',
+        'total_gas_volume',
     ]
     df = df.reindex(columns=columns)
 
@@ -35,6 +48,7 @@ def parse_response(data):
     }
 
     df['day_of_week'] = df['day_of_week'].map(day_of_week_mapping)
+    df["rain"] = df["rain"].astype(int)
     df['family_members'] = family_members
     df.set_index("date", inplace=True)
 
