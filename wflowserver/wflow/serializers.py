@@ -23,3 +23,11 @@ class PredictedConsumesSerializer(serializers.ModelSerializer):
         model = PredictedConsumes
         read_only_fields = ('id',)
         fields = ('date', 'predicted_liters', 'predicted_volumes')
+
+
+class UploadPredictedConsumesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PredictedConsumes
+        read_only_fields = ('id',)
+        fields = ('house_id', 'date', 'predicted_liters', 'predicted_volumes')

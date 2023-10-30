@@ -1,6 +1,7 @@
 from datetime import date, timedelta, datetime
 from calendar import monthrange
 import pandas as pd
+import requests
 
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
@@ -18,7 +19,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from .models import House, PredictedConsumes
-from .serializers import HouseSerializer, HouseIdSerializer, PredictedConsumesSerializer
+from .serializers import HouseSerializer, HouseIdSerializer, PredictedConsumesSerializer, UploadPredictedConsumesSerializer
 
 from users.models import CustomUser
 from users.serializers import CustomUserSerializer
@@ -112,7 +113,7 @@ class ListHousesAPIView(ListAPIView):
                 ).exclude(sensor_type="HEA"),
                 start_timestamp__date=current_date
             )
-            # sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
+            sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
 
             sensor_datas_gas = SensorData.objects.filter(
                 sensor_id__in=Sensor.objects.filter(
@@ -120,7 +121,7 @@ class ListHousesAPIView(ListAPIView):
                 ),
                 start_timestamp__date=current_date
             )
-            # sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
+            sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
 
             house['total_liters'] = sum(float(item['values'].get(
                 'water_liters', 0)) for item in sensor_datas_water)
@@ -176,7 +177,7 @@ class HousesDetailAPIView(RetrieveUpdateDestroyAPIView):
             ).exclude(sensor_type="HEA"),
             start_timestamp__gte=twenty_days_ago
         )
-        # sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
+        sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
 
         sensor_datas_gas = SensorData.objects.filter(
             sensor_id__in=Sensor.objects.filter(
@@ -184,7 +185,7 @@ class HousesDetailAPIView(RetrieveUpdateDestroyAPIView):
             ),
             start_timestamp__gte=twenty_days_ago
         )
-        # sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
+        sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
 
         response['mean_liters'] = sum(float(item.values.get('water_liters', 0)) for item in sensor_datas_water)/20
         response['mean_volume'] = sum(float(item.values.get('gas_volume', 0)) for item in sensor_datas_gas)/20
@@ -368,6 +369,75 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
                 end_timestamp__date=previous_day,
             )
 
+        sensor_data_query = list(sensor_data_query.values())
+
+        # weather forecast
+        # Define your API endpoint and location
+        api_endpoint = 'https://archive-api.open-meteo.com/v1/archive'
+
+        # Calculate the minimum and maximum dates in your data
+        min_date = min(item['start_timestamp'] for item in sensor_data_query)
+        max_date = max(item['start_timestamp'] for item in sensor_data_query)
+
+        # Prepare the API request parameters
+        params = {
+            'latitude': 44.64783,
+            'longitude': 10.92539,
+            'start_date': min_date.strftime('%Y-%m-%d'),
+            'end_date': max_date.strftime('%Y-%m-%d'),
+            'hourly': 'temperature_2m,precipitation',
+            'timezone': 'auto'
+        }
+        
+        # Make the API request
+        response = requests.get(api_endpoint, params=params)
+
+        if response.status_code == 200:
+            # Extract the daily weather data from the JSON response
+            weather_data = response.json()
+            hourly_data = weather_data.get('hourly', {})
+
+            if hourly_data:
+                # Extract the relevant data arrays from daily_data
+                date_list = hourly_data.get('time', [])
+                temperature_list = hourly_data.get('temperature_2m', [])
+                precipitation_list = hourly_data.get('precipitation', [])
+
+                # Create a dictionary to map date strings to weather information
+                date_to_weather = {}
+                for i in range(len(date_list)):
+                    date_str = date_list[i]
+                    rain = False
+                    if precipitation_list[i] == None:
+                        precipitation_list[i] = 0
+                    if temperature_list[i] == None:
+                        temperature_list[i] = 15
+                    if precipitation_list[i] >= 0.5:
+                        rain = True
+                    weather_info = {
+                        'Temperature': temperature_list[i],
+                        'Rain': rain
+                    }
+                    date_to_weather[date_str] = weather_info
+
+                # Assign the closest weather data to the values in the aggregated_data
+                for item in sensor_data_query:
+                    from django.utils import timezone
+                    # Assuming item['start_timestamp'] is a string
+                    item_timestamp = item['start_timestamp'].replace(tzinfo=None)
+
+                    # Find the closest weather timestamp in date_to_weather
+                    closest_weather_timestamp = min(date_to_weather.keys(), key=lambda x: abs(item_timestamp - datetime.strptime(x, '%Y-%m-%dT%H:%M')))
+
+                    # Assign the corresponding weather data to the item in aggregated_data
+                    item['weather'] = date_to_weather.get(closest_weather_timestamp)
+
+        else:
+            print(f"API request failed with status code {response.status_code}")
+        
+        # convert list of dicts names
+        sensor_data_query = [{'sensor_id' if key == 'sensor_id_id' else key: value for key, value in d.items()} for d in sensor_data_query]
+
         # Serialize the objects
         house_serializer = HouseSerializer(house)
         custom_user_serializer = CustomUserSerializer(user)
@@ -458,6 +528,64 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
                 combined_entry.update(item)
             aggregated_data.append(combined_entry)
 
+
+        # weather forecast
+        # Define your API endpoint and location
+        api_endpoint = 'https://archive-api.open-meteo.com/v1/archive'
+
+        # Calculate the minimum and maximum dates in your data
+        min_date = min(item['date'] for item in aggregated_data)
+        max_date = max(item['date'] for item in aggregated_data)
+
+        # Prepare the API request parameters
+        params = {
+            'latitude': 44.64783,
+            'longitude': 10.92539,
+            'start_date': min_date.strftime('%Y-%m-%d'),
+            'end_date': max_date.strftime('%Y-%m-%d'),
+            'daily': 'temperature_2m_mean,precipitation_sum',
+            'timezone': 'auto'
+        }
+        
+        # Make the API request
+        response = requests.get(api_endpoint, params=params)
+
+        if response.status_code == 200:
+            # Extract the daily weather data from the JSON response
+            weather_data = response.json()
+            daily_data = weather_data.get('daily', {})
+
+            if daily_data:
+                # Extract the relevant data arrays from daily_data
+                date_list = daily_data.get('time', [])
+                temperature_list = daily_data.get('temperature_2m_mean', [])
+                precipitation_list = daily_data.get('precipitation_sum', [])
+
+                # Create a dictionary to map date strings to weather information
+                date_to_weather = {}
+                for i in range(len(date_list)):
+                    date_str = date_list[i]
+                    if precipitation_list[i] == None:
+                        precipitation_list[i] = 0
+                    if temperature_list[i] == None:
+                        temperature_list[i] = 15
+                    rain = False
+                    if precipitation_list[i] >= 0.5:
+                        rain = True
+                    weather_info = {
+                        'Temperature': temperature_list[i],
+                        'Rain': rain
+                    }
+                    date_to_weather[date_str] = weather_info
+
+                # Update the list of dictionaries with weather information
+                for item in aggregated_data:
+                    date_str = item['date'].strftime('%Y-%m-%d')
+                    weather_info = date_to_weather.get(date_str, {})
+                    item['weather'] = weather_info
+        else:
+            print(f"API request failed with status code {response.status_code}")
+
         # Serialize the objects
         house_serializer = HouseSerializer(house)
         custom_user_serializer = CustomUserSerializer(user)
@@ -479,7 +607,7 @@ class CreatePredictedConsumesAPIView(CreateAPIView):
     This view is responsible for the creation of new data predictions
     for the specified house and day.
     """
-    serializer_class = PredictedConsumesSerializer
+    serializer_class = UploadPredictedConsumesSerializer
 
     def create(self, request, *args, **kwargs):
         requestlist = request.data['list']
