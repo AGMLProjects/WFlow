@@ -75,8 +75,8 @@ if __name__ == "__main__":
             row["day"] = int(entry["day_of_month"])
             row["month"] = int(entry["month"])
             row["holiday"] = int(bool(entry["holiday"]))
-            row["temperature"] = float(entry["weather"]["temperature"])
-            row["rain"] = int(bool(entry["weather"]["rain"]))
+            row["temperature"] = float(entry["weather"]["Temperature"])
+            row["rain"] = int(bool(entry["weather"]["Rain"]))
 
             # Import the date and time from string to DateTime
             start = datetime.datetime.strptime(entry["start_timestamp"], '%Y-%m-%dT%H:%M:%SZ')
@@ -155,8 +155,8 @@ if __name__ == "__main__":
         except:
             family_members = 4
 
-        df["water_liters"] = df["water_liters"] / (750 * family_members)
-        df["gas_volume"] = df["gas_volume"] / (10 * family_members)
+        df["water_liters"] = df["water_liters"] / (120)
+        df["gas_volume"] = df["gas_volume"] / (4)
 
         intervals_in_df = (df['start_hour'].astype(str) + ':' + df['start_minute'].astype(str)).tolist()
 
@@ -185,7 +185,8 @@ if __name__ == "__main__":
 
                 df_index += 1
 
-        df.set_index(['start_hour', 'start_minute', 'end_hour', 'end_minute'], inplace=True)
+        df.set_index(['month', 'day', 'start_hour', 'start_minute', 'end_hour', 'end_minute'], inplace=True)
+
         df.sort_index(inplace=True)
         df.reset_index(inplace=True)
 
@@ -244,8 +245,7 @@ if __name__ == "__main__":
             print(f'Request failed with status code {response.status_code}')
             # exit(1)
 
-        # data = response.json()
-        data = {'sensor_id': 555555555}
+        data = response.json()[0]
         sensor_id = data['sensor_id']
 
         inference_data = utils.create_inference_data(family_members)
@@ -258,8 +258,8 @@ if __name__ == "__main__":
         predicted_gas = relu(predicted_gas[:, 0])
         predicted_gas = torch.min(predicted_gas, torch.tensor(1.0))
 
-        heater_activation_threshold = 0.5
-        temperature_max = 40
+        heater_activation_threshold = 0.7
+        temperature_max = 45
         temperature_min = 24
         activation_consecutive_times_slot = 2
 

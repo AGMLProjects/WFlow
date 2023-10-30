@@ -12,7 +12,7 @@ def parse_response(data):
         "sensor_data": [
             {
                 **item,
-                "temperature": item["weather"]["Temperature_2m"],
+                "temperature": item["weather"]["Temperature"],
                 "rain": item["weather"]["Rain"],
             }
             for item in data["sensor_data"]
