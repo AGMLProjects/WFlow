@@ -295,9 +295,9 @@ void create_sd_message(uint8_t *message, float liters, float temperature, float 
 
     intEncode(start, &message[21], 10);
     intEncode(end, &message[31], 10);
-    message[46] = '\n';
+    message[41] = '\n';
 
-    *count = 47;
+    *count = 42;
 
 }
 
@@ -307,13 +307,17 @@ void parse_ex_command(uint8_t *message, HeaterSequence *heater_sequence)
     uint32_t start = 0, end = 0;
     uint16_t sequence_number = 0;
 
-    sequence_number = intDecode(&message[2], 3);
-    start = intDecode(&message[5], 10);
-    end = intDecode(&message[15], 10);
-    target = intDecode(&message[25], 3) / 10.0;
+    // If this message carries info, read them, otherwise it's a turn off message that will drop any other element
+    if(message[2] == '1')
+    {
+        sequence_number = intDecode(&message[3], 3);
+        start = intDecode(&message[6], 10);
+        end = intDecode(&message[16], 10);
+        target = intDecode(&message[26], 3) / 10.0;
+    }
 
-    // If the previous sequence was completed, clean all
-    if (heater_sequence->complete == true)
+    // If the previous sequence was completed or if this is a 'drop-all' message, clean all
+    if (heater_sequence->complete == true || message[2] == '0')
     {
         HeaterInterval empty = {.start = 0, .end = 0, .sequence_number = 0, .temperature = 0.0};
 
@@ -323,14 +327,17 @@ void parse_ex_command(uint8_t *message, HeaterSequence *heater_sequence)
         }
     }
 
-    // Search the slot to insert the new sequence
-    HeaterInterval new = {.sequence_number = sequence_number, .start = start, .end = end, .temperature = target};
-
-    for(int i = 0; i < 144; i = i + 1)
+    if(message[2] == '1')
     {
-        if (heater_sequence->timeslots[i].sequence_number == 0)
+        // Search the slot to insert the new sequence
+        HeaterInterval new = {.sequence_number = sequence_number, .start = start, .end = end, .temperature = target};
+
+        for(int i = 0; i < 144; i = i + 1)
         {
-            heater_sequence->timeslots[i] = new;
+            if (heater_sequence->timeslots[i].sequence_number == 0)
+            {
+                heater_sequence->timeslots[i] = new;
+            }
         }
     }
 
