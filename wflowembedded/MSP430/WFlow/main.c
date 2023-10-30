@@ -13,6 +13,8 @@
 #include "list.h"
 #include "ds18b20.h"
 
+#define TARGET_TEMPERATURE_TOLLERANCE 2.0
+
 // Global flags set by events
 volatile uint8_t bCDCDataReceived_event = FALSE;   // Flag set by event handler to
                                                    // indicate data has been
@@ -250,8 +252,10 @@ void main (void)
                     create_sd_message(dataBuffer, convert_hall_to_liters(data.hall_ticks, data.seconds), data.temperature, data.start, data.end, &count);
 #elif defined(LEV)
                     create_sd_message(dataBuffer, data.timestamp, &count);
+#elif defined(HEA)
+                    create_sd_message(dataBuffer, data.liters, data.temperature, data.gas_volume, data.start, data.end, &count);
 #else
-                    //TODO: Create SD message con i dati presi dal sensore
+                create_error_message(dataBuffer, device_address, &count);
 #endif
                 }
                 else
@@ -432,7 +436,102 @@ __interrupt void Timer_A_ISR(void)
             if (heater_sequence.timeslots[i].start >= timestamp && heater_sequence.timeslots[i].end <= timestamp)
             {
                 active = true;
-                //TODO: Completare la logica di gestione acqua calda
+
+                // If the heater off, just turn it on with and initialize the sensor input structure
+                if(sensor_input.ready == true)
+                {
+                    sensor_input.ready = false;             // Initialize a new sensor packet
+                    sensor_input.start = timestamp;
+
+                    sensor_input.temperature = 20.0;        // Mock room temperature to start with, it should be the water temperature before heating up (room temperature)
+                    sensor_input.gas_volume = 0.0;          // Start with no gas used
+
+                    // Initialize the actuator
+                    actuator_state.target_temperature = heater_sequence.timeslots[i].temperature;
+
+                    // Check if there is the need to heat up the water
+                    if (actuator_state.target_temperature - sensor_input.temperature >= TARGET_TEMPERATURE_TOLLERANCE)
+                    {
+                        actuator_state.warming_up = true;
+                    }
+
+                    // Turn on the POWER led anyway
+                    P4OUT |= BIT4;
+
+                    // If the warming up process is on, turn on the HEATING led and the level leds
+                    if(actuator_state.warming_up == false)
+                    {
+                        P1OUT &= ~BIT0;
+                        P6OUT &= ~(BIT0 | BIT1 | BIT2);
+                    }
+                    else
+                    {
+                        P1OUT |= BIT0;
+
+                        if((sensor_input.temperature - 20.0) <= ((actuator_state.target_temperature - 20.0) / 2))
+                        {
+                            // Water heating below 50% of the range
+                            P6OUT |= BIT0;
+                            P6OUT &= ~(BIT1 | BIT2);
+                            actuator_state.warming_up = true;
+                        }
+                        else if (((sensor_input.temperature - 20.0) >= (actuator_state.target_temperature - 20.0) / 2) || (actuator_state.target_temperature - sensor_input.temperature) >= TARGET_TEMPERATURE_TOLLERANCE)
+                        {
+                            // Water heating over 50% of the range but not at the target yet
+                            P6OUT |= (BIT0 | BIT1);
+                            P6OUT &= ~BIT2;
+                            actuator_state.warming_up = true;
+                        }
+                        else
+                        {
+                            // Water temperature reached the target, just maintain it and turn off the heating led
+                            P6OUT |= (BIT0 | BIT1 | BIT2);
+                            P1OUT &= ~BIT0;
+                            actuator_state.warming_up = false;
+                        }
+                    }
+                }
+                else
+                {
+                    // The heater was already on in this specific interval, add up the consumes
+                    if((sensor_input.temperature - 20.0) <= ((actuator_state.target_temperature - 20.0) / 2))
+                    {
+                        // Water heating below 50% of the range
+                        P6OUT |= BIT0;
+                        P6OUT &= ~(BIT1 | BIT2);
+                        actuator_state.warming_up = true;
+                    }
+                    else if (((sensor_input.temperature - 20.0) >= (actuator_state.target_temperature - 20.0) / 2) || (actuator_state.target_temperature - sensor_input.temperature) >= TARGET_TEMPERATURE_TOLLERANCE)
+                    {
+                        // Water heating over 50% of the range but not at the target yet
+                        P6OUT |= (BIT0 | BIT1);
+                        P6OUT &= ~BIT2;
+                        actuator_state.warming_up = true;
+                    }
+                    else
+                    {
+                        // Water temperature reached the target, just maintain it and turn off the heating led
+                        P6OUT |= (BIT0 | BIT1 | BIT2);
+                        P1OUT &= ~BIT0;
+                        actuator_state.warming_up = false;
+                    }
+
+                    // Depending on the actuator state, update the sensor input values (mock data)
+                    if(actuator_state.warming_up == true)
+                    {
+                        // Heater warming up, use a lot of gas but no water
+                        sensor_input.gas_volume = sensor_input.gas_volume + 0.03;
+
+                        // Increase the water temperature of 1° each sensor to mimic the heating up
+                        sensor_input.temperature = sensor_input.temperature + 1.0;
+                    }
+                    else
+                    {
+                        // The water has been heated up completely. Use less gas but consumes water, temperature remains stable
+                        sensor_input.gas_volume = sensor_input.gas_volume + 0.01;
+                        sensor_input.liters = sensor_input.liters + (10.0 * (((timestamp % 100) / 10) + (timestamp % 10)));
+                    }
+                }
                 break;
             }
         }
@@ -440,7 +539,19 @@ __interrupt void Timer_A_ISR(void)
         // If the heater is not active, turn it off if it was on
         if (active == false)
         {
-            //TODO: Spegni tutto, archivia i dati di consumo e mandalo al bridge
+            // Turn off all the leds
+            P1OUT &= ~BIT0;
+            P4OUT &= ~BIT4;
+            P6OUT &= ~(BIT0 | BIT1 | BIT2);
+
+            // Set the end timestamp (the sensor input ends here)
+            sensor_input.end = timestamp;
+
+            // Set the input packet as ready
+            sensor_input.ready = true;
+
+            // Insert the packet in the queue to be sent to bridge
+            insertNode(&input_list, sensor_input);
         }
     }
 #endif
