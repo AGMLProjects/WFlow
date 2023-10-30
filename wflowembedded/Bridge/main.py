@@ -1,8 +1,13 @@
+import os
+os.environ['PYTHONASYNCIODEBUG'] = '1'
+import pdb
+
 import sys, time, json, asyncio, datetime
 import data, event, diagnostic, server, deviceManager
 from constants import Resources, MainParameters, SensorEvents, NotifyActiveSensorRequest, ActuatorEvents, ActuatorType
 from parameters import Parameters, AuthLevel, AttributePrototype, AttributeType
-
+from constants import DeviceLoginRequest, NotifyActiveSensorRequest, SensorParameters, ServerParameters, SendSensorDataRequest, ServerAPI, ActuatorType, ShowerActuatorParameters
+from constants import HeaterActuatorParameters, ActuatorEvents
 _MODULE = "MAIN"
 defaultMainParam = {
 	MainParameters.TIMEOUT_TIMER_TO_AUTH_ATTEMPT: 1 * 60,
@@ -41,8 +46,7 @@ def init_system_object() -> tuple:
 
 	return eventHandler, dataHandler, logger
 
-if __name__ == "__main__":
-
+async def main() -> None:
 	eventInterface, dataInterface, logger = init_system_object()
 	serverHandler = server.ServerConnector(dataInterface = dataInterface, eventInterface = eventInterface, logger = logger)
 	controlSignals = deviceManager.ControlSignals(dataInterface = dataInterface, eventInterface = eventInterface, logger = logger)
@@ -83,7 +87,7 @@ if __name__ == "__main__":
 				serialInterface.send(id = int(sensor["id"]), message = f"SA{converted_uid}{current_time:010}")
 				resp = serialInterface.receive(id = int(sensor["id"]), timeout = 5)
 
-				if "OK" in resp:
+				if resp != None and "OK" in resp:
 					sensor_list[sensor["id"]] = sensor["type"]
 				else:
 					logger.record(msg = f"Sensor {sensor['id']} didn't respond OK the SA request", logLevel = diagnostic.ERROR, module = _MODULE, code = 1)
@@ -91,11 +95,11 @@ if __name__ == "__main__":
 			logger.record(msg = f"Error occurred while trying to register sensor {sensor['id']} ", logLevel = diagnostic.ERROR, module = _MODULE, code = 1, exc = e)
 			continue
 
+	# Register the actuator without the control signal because they will only take data, never send any
 	for actuator in devices_list["actuators"]:
 		try:
 			if serialInterface.addDevice(id = int(actuator["id"]), port = actuator["UART"]) == True:
-				converted_uid = f"{sensor['id']:010}"
-				serialInterface.send(id = int(sensor["id"]), msg = f"SA{converted_uid}")
+				serialInterface.send(id = int(sensor["id"]), message = f"OK")
 				resp = serialInterface.receive(id = int(sensor["id"]), timeout = 5)
 
 				if "OK" in resp:
@@ -126,6 +130,7 @@ if __name__ == "__main__":
 
 	# Open the WebSocket connection to server in order to get the actuators commands
 	loop = asyncio.get_event_loop()
+	loop.set_debug(True)
 	loop.create_task(serverHandler.getActuatorsCommands())
 
 	# Main messaging loop
@@ -133,6 +138,7 @@ if __name__ == "__main__":
 
 		# Wait until there is an event to process
 		try:
+			await asyncio.sleep(0.1)
 			sensor_res = eventInterface.pend(name = SensorEvents.SENSOR_REQUEST_TO_TALK, timeout = 1)
 			actuator_res = eventInterface.pend(name = ActuatorEvents.COMMAND_FOR_ACTUATOR, timeout = 1)
 		except Exception as e:
@@ -174,6 +180,16 @@ if __name__ == "__main__":
 						end = end.strftime("%Y-%m-%d %H:%M:%S")
 						
 						serverHandler.sendSensorData(sensor_id = sensor_id, start_timestamp = start, end_timestamp = end, payload = {"water_liters": 30.0})
+					elif sensor_list[sensor_id] == "HEA":
+						liters = float(resp[2:9])
+						temperature = float(resp[9:15])
+						gas = float(resp[15:21])
+
+						start = datetime.datetime.fromtimestamp(int(resp[21:31]))
+						end = datetime.datetime.fromtimestamp(int(resp[31:41]))
+
+						serverHandler.sendSensorData(sensor_id = sensor_id, start_timestamp = start, end_timestamp = end, payload = {"water_liters": liters, "temperature": temperature, "gas_volume": gas})
+
 
 
 		if actuator_res is True:
@@ -182,18 +198,20 @@ if __name__ == "__main__":
 
 				# Get the command
 				command = dataInterface.popQueue(name = ActuatorEvents.COMMAND_FOR_ACTUATOR)
-				type = command["type"]
+				actuator_type = command["type"]
 
-				if type == ActuatorType.SHOWER_ACTUATOR:
-					id = command["id"]
-					temperature = command["temperature"]
+				if actuator_type == ActuatorType.SHOWER_ACTUATOR:
+					id = command[ShowerActuatorParameters.ID]
+					temperature = int(command[ShowerActuatorParameters.TEMPERATURE] * 10)
 
 					# Send to the actuator this command with the format: EX<temperature>
-					serialInterface.send(id = id, msg = f"EX{temperature}")
+					serialInterface.send(id = id, message = f"EX{temperature}")
 					resp = serialInterface.receive(id = id, timeout = 5)
 
-					#TODO: Verificare la risposta
-				elif type == ActuatorType.HEATER_ACTUATOR:
+					if "OK" not in resp:
+						logger.record(msg = "The shower actuator responded with an error to a command", logLevel = diagnostic.WARNING, module = _MODULE, code = 1)
+						
+				elif actuator_type == ActuatorType.HEATER_ACTUATOR:
 					id = command["id"]
 					status = command["status"]
 					temperature = command["temperature"]
@@ -201,6 +219,40 @@ if __name__ == "__main__":
 					time_end = command["time_end"]
 					automatic = command["automatic"]
 
-					#TODO: Creare dei timer per gestire l'accensione e lo spegnimento del riscaldamento in base ai timestamps specificati
+					if status == True:
+						# Create the tuple for each timeslot
+						if len(temperature) != len(time_start) or len(temperature) != len(time_end):
+							logger.record(msg = "In heater actuator command, the three lists have different lengths", logLevel = diagnostic.WARNING, module = _MODULE, code = 1, exc = e)
+							continue
+						
+						timeslots = list()
+						for i in range(len(temperature)):
+							timeslots.append((temperature[i], time_start[i], time_end[i]))
 
-		
+						# Order the list with timestamp increasing order
+						timeslots.sort(key = lambda x: x[1])
+
+						# For each timeslot, send a command to the actuator
+						for i in range(len(timeslots)):
+							sequence_number = len(timeslots) - i - 1
+							temperature = int(timeslots[i][0] * 100)
+							message = f"EX1{sequence_number:03}{timeslots[i][1]}{timeslots[i][2]}{temperature:03}"
+
+							# Send to the actuator this command with the format: EX<temperature>
+							serialInterface.send(id = id, message = message)
+							resp = serialInterface.receive(id = id, timeout = 5)
+
+							if "OK" not in resp:
+								logger.record(msg = "The Heater actuator responded with an error to a command", logLevel = diagnostic.WARNING, module = _MODULE, code = 1)
+					else:
+						message = f"EX0"
+
+						# Send to the actuator this command with the format: EX<temperature>
+						serialInterface.send(id = id, message = message)
+						resp = serialInterface.receive(id = id, timeout = 5)
+
+						if "OK" not in resp:
+							logger.record(msg = "The Heater actuator responded with an error to a command", logLevel = diagnostic.WARNING, module = _MODULE, code = 1)
+								
+if __name__ == "__main__":
+	asyncio.run(main())

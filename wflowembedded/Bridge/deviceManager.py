@@ -90,7 +90,7 @@ class SerialInterface():
                 self._devices[id] = self._devices[self._usedPort[port]]
             return True
         except Exception as e:
-            self._logger.record(msg = "Error occurred while trying to add device to serial interface", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exception = e)
+            self._logger.record(msg = "Error occurred while trying to add device to serial interface", logLevel = diagnostic.ERROR, module = self._MODULE, code = 1, exc = e)
             return False
 
     def send(self, id: int, message: str) -> bool:

@@ -1,7 +1,0 @@
-water_level: water_liters (flow) fisso
-water_heater: water_liters, gas_volume
-flow_sensor: temperature, water_liters
-
-shower_actuator: temperature -> lo stato della doccia si gestisce a toggle
-heater_actuator: status, temperature (lista di temperature una per ogni intervallo), time_start (lista di timestamp), time_end (lista di timestamp), automatic (non serve)
-(se lo status è 0 butto tutto, se è 1 uso il payload)

@@ -60,11 +60,11 @@ class ActuatorType(_AbstractEnum):
 	HEATER_ACTUATOR = "heater_actuator"
 
 class ShowerActuatorParameters(_AbstractEnum):
-	ID = "id"
+	ID = "actuator_id"
 	TEMPERATURE = "temperature"
 
 class HeaterActuatorParameters(_AbstractEnum):
-	ID = "id"
+	ID = "actuator_id"
 	STATUS = "status"
 	TEMPERATURE = "temperature"
 	TIME_START = "time_start"
