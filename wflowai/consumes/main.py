@@ -49,8 +49,8 @@ for house in houses:
         if len(data['sensor_data']) == 0:
             print(f'Warning: no sensor data!')
         else:
-            # df = parse_response(data)
-            df = create_mock_dataframe(f'{BASE_PATH}/input.csv')
+            df = parse_response(data)
+            # df = create_mock_dataframe(f'{BASE_PATH}/input.csv')
 
             # Training
             training_set = df.values
@@ -74,20 +74,26 @@ for house in houses:
             # Upload predicted values
             url = 'https://wflow.online/AI/put_consumes_prediction'
             today = datetime.datetime.today()
+            prediction_list = []
             for i in range(1, 6):
                 day = today + datetime.timedelta(days=i)
 
                 json_data = {
                     'house_id': house,
-                    'date': day.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    'date': day.strftime("%Y-%m-%d"),
                     'predicted_liters': float(predictions_water[i - 1, :]),
                     'predicted_volumes': float(predictions_gas[i - 1, :])
                 }
-                response = requests.post(url, json=json_data)
 
-                if response.status_code != 201:
-                    print(f'Request failed with status code {response.status_code}')
-                    exit(1)
+                prediction_list.append(json_data)
+
+            response = requests.post(url, json={
+                'list': prediction_list
+            })
+
+            if response.status_code != 201:
+                print(f'Request failed with status code {response.status_code}')
+                exit(1)
 
             print(f'Successfully uploaded predicted data for house {house}')
 
@@ -130,19 +136,25 @@ for house in houses:
             # Upload predicted values
             url = 'https://wflow.online/AI/put_consumes_prediction'
             today = datetime.datetime.today()
+            prediction_list = []
             for i in range(1, 6):
                 day = today + datetime.timedelta(days=i)
 
                 json_data = {
                     'house_id': house,
-                    'date': day.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    'date': day.strftime("%Y-%m-%d"),
                     'predicted_liters': float(predictions_water[i - 1, :]),
                     'predicted_volumes': float(predictions_gas[i - 1, :])
                 }
-                response = requests.post(url, json=json_data)
 
-                if response.status_code != 201:
-                    print(f'Request failed with status code {response.status_code}')
-                    exit(1)
+                prediction_list.append(json_data)
+
+            response = requests.post(url, json={
+                'list': prediction_list
+            })
+
+            if response.status_code != 201:
+                print(f'Request failed with status code {response.status_code}')
+                exit(1)
 
             print(f'Successfully uploaded predicted data for house {house}')

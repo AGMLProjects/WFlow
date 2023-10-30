@@ -1,7 +1,7 @@
 seed: 0
 consume:
-  avgWater: 300
-  avgGas: 5
+  avgWater: 600
+  avgGas: 2
 hyperparams:
   sequence_length: 3
   epochs: 2000
