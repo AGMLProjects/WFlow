@@ -19,7 +19,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 from .models import House, PredictedConsumes
-from .serializers import HouseSerializer, HouseIdSerializer, PredictedConsumesSerializer
+from .serializers import HouseSerializer, HouseIdSerializer, PredictedConsumesSerializer, UploadPredictedConsumesSerializer
 
 from users.models import CustomUser
 from users.serializers import CustomUserSerializer
@@ -607,7 +607,7 @@ class CreatePredictedConsumesAPIView(CreateAPIView):
     This view is responsible for the creation of new data predictions
     for the specified house and day.
     """
-    serializer_class = PredictedConsumesSerializer
+    serializer_class = UploadPredictedConsumesSerializer
 
     def create(self, request, *args, **kwargs):
         requestlist = request.data['list']
