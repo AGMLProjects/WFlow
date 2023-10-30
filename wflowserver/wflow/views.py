@@ -408,6 +408,10 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
                 for i in range(len(date_list)):
                     date_str = date_list[i]
                     rain = False
+                    if precipitation_list[i] == None:
+                        precipitation_list[i] = 0
+                    if temperature_list[i] == None:
+                        temperature_list[i] = 15
                     if precipitation_list[i] >= 0.5:
                         rain = True
                     weather_info = {
@@ -561,6 +565,10 @@ class FetchTrainDataConsumesAPIView(RetrieveAPIView):
                 date_to_weather = {}
                 for i in range(len(date_list)):
                     date_str = date_list[i]
+                    if precipitation_list[i] == None:
+                        precipitation_list[i] = 0
+                    if temperature_list[i] == None:
+                        temperature_list[i] = 15
                     rain = False
                     if precipitation_list[i] >= 0.5:
                         rain = True
