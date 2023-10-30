@@ -433,7 +433,7 @@ __interrupt void Timer_A_ISR(void)
         for(int i = 0; i < 144; i = i + 1)
         {
             // This element is the current one
-            if (heater_sequence.timeslots[i].start >= timestamp && heater_sequence.timeslots[i].end <= timestamp)
+            if (heater_sequence.timeslots[i].start <= timestamp && heater_sequence.timeslots[i].end >= timestamp)
             {
                 active = true;
 
@@ -456,7 +456,7 @@ __interrupt void Timer_A_ISR(void)
                     }
 
                     // Turn on the POWER led anyway
-                    P4OUT |= BIT4;
+                    P4OUT |= BIT7;
 
                     // If the warming up process is on, turn on the HEATING led and the level leds
                     if(actuator_state.warming_up == false)
@@ -501,7 +501,7 @@ __interrupt void Timer_A_ISR(void)
                         P6OUT &= ~(BIT1 | BIT2);
                         actuator_state.warming_up = true;
                     }
-                    else if (((sensor_input.temperature - 20.0) >= (actuator_state.target_temperature - 20.0) / 2) || (actuator_state.target_temperature - sensor_input.temperature) >= TARGET_TEMPERATURE_TOLLERANCE)
+                    else if (((sensor_input.temperature - 20.0) >= (actuator_state.target_temperature - 20.0) / 2) && (actuator_state.target_temperature - sensor_input.temperature) >= TARGET_TEMPERATURE_TOLLERANCE)
                     {
                         // Water heating over 50% of the range but not at the target yet
                         P6OUT |= (BIT0 | BIT1);
@@ -520,7 +520,7 @@ __interrupt void Timer_A_ISR(void)
                     if(actuator_state.warming_up == true)
                     {
                         // Heater warming up, use a lot of gas but no water
-                        sensor_input.gas_volume = sensor_input.gas_volume + 0.03;
+                        sensor_input.gas_volume = sensor_input.gas_volume + 0.003;
 
                         // Increase the water temperature of 1° each sensor to mimic the heating up
                         sensor_input.temperature = sensor_input.temperature + 1.0;
@@ -528,30 +528,40 @@ __interrupt void Timer_A_ISR(void)
                     else
                     {
                         // The water has been heated up completely. Use less gas but consumes water, temperature remains stable
-                        sensor_input.gas_volume = sensor_input.gas_volume + 0.01;
-                        sensor_input.liters = sensor_input.liters + (10.0 * (((timestamp % 100) / 10) + (timestamp % 10)));
+                        sensor_input.gas_volume = sensor_input.gas_volume + 0.001;
+                        sensor_input.liters = sensor_input.liters + 0.8;
                     }
                 }
                 break;
             }
+            else
+            {
+                if(heater_sequence.timeslots[i].sequence_number == 0)
+                {
+                    break;
+                }
+            }
         }
 
         // If the heater is not active, turn it off if it was on
-        if (active == false)
+        if (active == false && sensor_input.ready == false)
         {
             // Turn off all the leds
             P1OUT &= ~BIT0;
-            P4OUT &= ~BIT4;
+            P4OUT &= ~BIT7;
             P6OUT &= ~(BIT0 | BIT1 | BIT2);
 
-            // Set the end timestamp (the sensor input ends here)
-            sensor_input.end = timestamp;
+            if(sensor_input.liters > 0.0 || sensor_input.gas_volume > 0.0)
+            {
+                // Set the end timestamp (the sensor input ends here)
+                sensor_input.end = timestamp;
 
-            // Set the input packet as ready
-            sensor_input.ready = true;
+                // Set the input packet as ready
+                sensor_input.ready = true;
 
-            // Insert the packet in the queue to be sent to bridge
-            insertNode(&input_list, sensor_input);
+                // Insert the packet in the queue to be sent to bridge
+                insertNode(&input_list, sensor_input);
+            }
         }
     }
 #endif

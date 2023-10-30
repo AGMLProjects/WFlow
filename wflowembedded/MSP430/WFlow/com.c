@@ -337,6 +337,7 @@ void parse_ex_command(uint8_t *message, HeaterSequence *heater_sequence)
             if (heater_sequence->timeslots[i].sequence_number == 0)
             {
                 heater_sequence->timeslots[i] = new;
+                break;
             }
         }
     }
