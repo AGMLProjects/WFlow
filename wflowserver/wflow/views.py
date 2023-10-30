@@ -177,7 +177,7 @@ class HousesDetailAPIView(RetrieveUpdateDestroyAPIView):
             ).exclude(sensor_type="HEA"),
             start_timestamp__gte=twenty_days_ago
         )
-        # sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
+        sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
 
         sensor_datas_gas = SensorData.objects.filter(
             sensor_id__in=Sensor.objects.filter(
@@ -185,7 +185,7 @@ class HousesDetailAPIView(RetrieveUpdateDestroyAPIView):
             ),
             start_timestamp__gte=twenty_days_ago
         )
-        # sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
+        sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
 
         response['mean_liters'] = sum(float(item.values.get('water_liters', 0)) for item in sensor_datas_water)/20
         response['mean_volume'] = sum(float(item.values.get('gas_volume', 0)) for item in sensor_datas_gas)/20
