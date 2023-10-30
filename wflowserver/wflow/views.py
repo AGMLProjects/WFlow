@@ -113,7 +113,7 @@ class ListHousesAPIView(ListAPIView):
                 ).exclude(sensor_type="HEA"),
                 start_timestamp__date=current_date
             )
-            # sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
+            sensor_datas_water = SensorDataSerializer(sensor_datas_water, many=True).data
 
             sensor_datas_gas = SensorData.objects.filter(
                 sensor_id__in=Sensor.objects.filter(
@@ -121,7 +121,7 @@ class ListHousesAPIView(ListAPIView):
                 ),
                 start_timestamp__date=current_date
             )
-            # sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
+            sensor_datas_gas = SensorDataSerializer(sensor_datas_gas, many=True).data
 
             house['total_liters'] = sum(float(item['values'].get(
                 'water_liters', 0)) for item in sensor_datas_water)
