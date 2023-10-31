@@ -420,11 +420,12 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
                     }
                     date_to_weather[date_str] = weather_info
 
-                # Assign the closest weather data to the values in the aggregated_data
+                # Precompute datetime objects for sensor_data_query items
                 for item in sensor_data_query:
-                    from django.utils import timezone
-                    # Assuming item['start_timestamp'] is a string
-                    item_timestamp = item['start_timestamp'].replace(tzinfo=None)
+                    item['start_timestamp'] = datetime.strptime(item['start_timestamp'], '%Y-%m-%dT%H:%M')
+
+                for item in sensor_data_query:
+                    item_timestamp = item['start_timestamp']
 
                     # Find the closest weather timestamp in date_to_weather
                     closest_weather_timestamp = min(date_to_weather.keys(), key=lambda x: abs(item_timestamp - datetime.strptime(x, '%Y-%m-%dT%H:%M')))
