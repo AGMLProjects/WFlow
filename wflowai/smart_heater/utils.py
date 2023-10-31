@@ -68,10 +68,10 @@ def create_inference_data(family_members):
                 end_hour = start_hour + 1
                 end_minute = 0
 
-            x = torch.tensor(data=[start_hour, start_minute, end_hour, end_minute, day_of_week, day, month, holiday,
+            x = torch.tensor(data=[month, day, start_hour, start_minute, end_hour, end_minute, day_of_week, holiday,
                                    temperature, rain, 0])
             X.append(x)
     X = torch.stack(X)
     X = X.float()
-    X, _ = create_sliding_window_dataset(X, X, 10)
+    X, _ = create_sliding_window_dataset(X, X, 3)
     return X

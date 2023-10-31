@@ -94,8 +94,8 @@ if __name__ == "__main__":
             gas_volume = float(entry["values"]["gas_volume"])
 
             # Distribute the values among bins with the normal distribution
-            random_values_liters = np.random.normal(liters / duration, 1, int(duration))
-            random_values_gas = np.random.normal(gas_volume / duration, 0.2, int(duration))
+            random_values_liters = np.clip(np.random.normal(liters / duration, 1, int(duration)), 0, None)
+            random_values_gas = np.clip(np.random.normal(gas_volume / duration, 0.2, int(duration)), 0.02, None)
 
             # Order the values
             random_values_liters.sort()
@@ -155,8 +155,8 @@ if __name__ == "__main__":
         except:
             family_members = 4
 
-        df["water_liters"] = df["water_liters"] / (120)
-        df["gas_volume"] = df["gas_volume"] / (4)
+        df["water_liters"] = df["water_liters"] / 150
+        df["gas_volume"] = df["gas_volume"] / 1
 
         intervals_in_df = (df['start_hour'].astype(str) + ':' + df['start_minute'].astype(str)).tolist()
 
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         seq_length = config["hyperparameters"]["sequence_length"]
 
         # Create the sliding window dataset
-        X, y = utils.create_sliding_window_dataset(X, y, 10)
+        X, y = utils.create_sliding_window_dataset(X, y, seq_length)
 
         # Define the model topology
         input_size = X.shape[2]
@@ -258,7 +258,7 @@ if __name__ == "__main__":
         predicted_gas = relu(predicted_gas[:, 0])
         predicted_gas = torch.min(predicted_gas, torch.tensor(1.0))
 
-        heater_activation_threshold = 0.7
+        heater_activation_threshold = 0.5
         temperature_max = 45
         temperature_min = 24
         activation_consecutive_times_slot = 2
