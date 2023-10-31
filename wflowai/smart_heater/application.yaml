@@ -5,7 +5,7 @@ consume:
   min: 350
 hyperparameters:
   sequence_length: 3
-  epochs: 0
+  epochs: 500
   learning_rate: 0.005
   lstm_depth: 2
   epochs_retraining: 10
