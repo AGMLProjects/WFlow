@@ -385,7 +385,7 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
             'longitude': 10.92539,
             'start_date': min_date.strftime('%Y-%m-%d'),
             'end_date': max_date.strftime('%Y-%m-%d'),
-            'hourly': 'temperature_2m,precipitation',
+            'daily': 'temperature_2m_mean,precipitation_sum',
             'timezone': 'auto'
         }
         
@@ -395,23 +395,23 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
         if response.status_code == 200:
             # Extract the daily weather data from the JSON response
             weather_data = response.json()
-            hourly_data = weather_data.get('hourly', {})
+            daily_data = weather_data.get('daily', {})
 
-            if hourly_data:
+            if daily_data:
                 # Extract the relevant data arrays from daily_data
-                date_list = hourly_data.get('time', [])
-                temperature_list = hourly_data.get('temperature_2m', [])
-                precipitation_list = hourly_data.get('precipitation', [])
+                date_list = daily_data.get('time', [])
+                temperature_list = daily_data.get('temperature_2m_mean', [])
+                precipitation_list = daily_data.get('precipitation_sum', [])
 
                 # Create a dictionary to map date strings to weather information
                 date_to_weather = {}
                 for i in range(len(date_list)):
                     date_str = date_list[i]
-                    rain = False
                     if precipitation_list[i] == None:
                         precipitation_list[i] = 0
                     if temperature_list[i] == None:
                         temperature_list[i] = 15
+                    rain = False
                     if precipitation_list[i] >= 0.5:
                         rain = True
                     weather_info = {
@@ -420,20 +420,14 @@ class FetchTrainDataDailyAPIView(RetrieveAPIView):
                     }
                     date_to_weather[date_str] = weather_info
 
-                # Assign the closest weather data to the values in the aggregated_data
+                # Update the list of dictionaries with weather information
                 for item in sensor_data_query:
-                    from django.utils import timezone
-                    # Assuming item['start_timestamp'] is a string
-                    item_timestamp = item['start_timestamp'].replace(tzinfo=None)
-
-                    # Find the closest weather timestamp in date_to_weather
-                    closest_weather_timestamp = min(date_to_weather.keys(), key=lambda x: abs(item_timestamp - datetime.strptime(x, '%Y-%m-%dT%H:%M')))
-
-                    # Assign the corresponding weather data to the item in aggregated_data
-                    item['weather'] = date_to_weather.get(closest_weather_timestamp)
-
+                    date_str = item['start_timestamp'].strftime('%Y-%m-%d')
+                    weather_info = date_to_weather.get(date_str, {})
+                    item['weather'] = weather_info
         else:
             print(f"API request failed with status code {response.status_code}")
+
         
         # convert list of dicts names
         sensor_data_query = [{'sensor_id' if key == 'sensor_id_id' else key: value for key, value in d.items()} for d in sensor_data_query]
