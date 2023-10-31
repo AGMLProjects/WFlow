@@ -69,7 +69,7 @@ def create_inference_data(family_members):
                 end_minute = 0
 
             x = torch.tensor(data=[month, day, start_hour, start_minute, end_hour, end_minute, day_of_week, holiday,
-                                   temperature, rain, 0])
+                                   temperature, rain, 0, 1])
             X.append(x)
     X = torch.stack(X)
     X = X.float()

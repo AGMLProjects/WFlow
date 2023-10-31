@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
+import torch.nn.functional as F
 
 
 class LSTM(nn.Module):
@@ -33,7 +34,7 @@ class LSTM(nn.Module):
         h_out = h_out.view(-1, self.hidden_size)
 
         # Do the prediction
-        out1 = self.fc1(h_out)
-        out2 = self.fc2(h_out)
+        out1 = F.relu(self.fc1(h_out))
+        out2 = F.relu(self.fc2(h_out))
 
         return out1, out2

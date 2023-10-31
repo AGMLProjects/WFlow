@@ -78,6 +78,9 @@ if __name__ == "__main__":
             row["temperature"] = float(entry["weather"]["Temperature"])
             row["rain"] = int(bool(entry["weather"]["Rain"]))
 
+            if row["day"] == 30 and row["month"] == 10:
+                print("ECCO")
+
             # Import the date and time from string to DateTime
             start = datetime.datetime.strptime(entry["start_timestamp"], '%Y-%m-%dT%H:%M:%SZ')
             end = datetime.datetime.strptime(entry["end_timestamp"], '%Y-%m-%dT%H:%M:%SZ')
@@ -91,7 +94,7 @@ if __name__ == "__main__":
 
             # Get the values of liters and gas volume
             liters = float(entry["values"]["water_liters"])
-            gas_volume = float(entry["values"]["gas_volume"])
+            gas_volume = float(entry["values"]["gas_volume"]) * 100
 
             # Distribute the values among bins with the normal distribution
             random_values_liters = np.clip(np.random.normal(liters / duration, 1, int(duration)), 0, None)
@@ -135,6 +138,7 @@ if __name__ == "__main__":
 
                 # The duration is the number of bins left
                 row["duration"] = int(duration) - i
+                row["active"] = 1.0
 
                 # Add the row to the parsed data
                 parsed_data.append(copy.deepcopy(row))
@@ -155,8 +159,8 @@ if __name__ == "__main__":
         except:
             family_members = 4
 
-        df["water_liters"] = df["water_liters"] / 150
-        df["gas_volume"] = df["gas_volume"] / 1
+        df["water_liters"] = df["water_liters"] / df["water_liters"].max()
+        df["gas_volume"] = df["gas_volume"] / df["gas_volume"].max()
 
         intervals_in_df = (df['start_hour'].astype(str) + ':' + df['start_minute'].astype(str)).tolist()
 
@@ -181,6 +185,7 @@ if __name__ == "__main__":
                     line['water_liters'] = 0
                     line['gas_volume'] = 0
                     line['duration'] = 0
+                    line['active'] = 0.0
                     df = pd.concat([df.iloc[:df_index], line, df.iloc[df_index:]]).reset_index(drop=True)
 
                 df_index += 1
@@ -190,6 +195,7 @@ if __name__ == "__main__":
         df.sort_index(inplace=True)
         df.reset_index(inplace=True)
 
+        df.to_csv(f't.csv', index=False)
         # Convert the dataframe to a tensor splitting the data and the labels
         X = df.drop(["water_liters", "gas_volume"], axis = 1).values
         X = torch.from_numpy(X).float()
@@ -224,7 +230,7 @@ if __name__ == "__main__":
             outputs_water, outputs_gas = model(X)
             loss_water = criterion_water(outputs_water[:, 0], y[:, 0])
             loss_gas = criterion_gas(outputs_gas[:, 0], y[:, 1])
-            loss = loss_water + loss_gas
+            loss = (loss_water * 0.7) + (loss_gas * 2.75)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -253,12 +259,13 @@ if __name__ == "__main__":
         # TODO: capire perché vengono dei numeri negativi e maggiori di 1
         relu = torch.nn.ReLU()
         predicted_water, predicted_gas = model(inference_data)
-        predicted_water = relu(predicted_water[:, 0])
-        predicted_water = torch.min(predicted_water, torch.tensor(1.0))
-        predicted_gas = relu(predicted_gas[:, 0])
-        predicted_gas = torch.min(predicted_gas, torch.tensor(1.0))
 
-        heater_activation_threshold = 0.5
+        if torch.max(predicted_water) > 1:
+            predicted_water = torch.min(predicted_water, torch.tensor(1.0))
+        if torch.max(predicted_gas) > 1:
+            predicted_gas = torch.min(predicted_gas, torch.tensor(1.0))
+
+        heater_activation_threshold = float(torch.mean(predicted_water))
         temperature_max = 45
         temperature_min = 24
         activation_consecutive_times_slot = 2
@@ -284,7 +291,7 @@ if __name__ == "__main__":
                     predicted_gas_value = predicted_gas[index].item()
                     # We activate the heater only if the predicted consumed water
                     # is higher than a certain threshold
-                    if predicted_water_value >= heater_activation_threshold:
+                    if predicted_water_value >= heater_activation_threshold and predicted_gas_value > 0:
                         # We set the temperature based on the predicted consumed gas
                         temperature = predicted_gas_value * (temperature_max - temperature_min) + temperature_min
                         activations.append((f'{start_hour}:{start_minute}', temperature))
