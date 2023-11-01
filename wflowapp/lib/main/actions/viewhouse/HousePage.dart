@@ -289,8 +289,8 @@ class _HousePageState extends State<HousePage> {
       );
     } else {
       return ListTile(
-        title: const Text('Generic event'),
-        subtitle: const Text('null'),
+        title: const Text('Smart heater event'),
+        subtitle: const Text('Change of status'),
         trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
       );
     }

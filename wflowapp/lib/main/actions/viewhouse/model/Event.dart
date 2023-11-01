@@ -5,6 +5,7 @@ class Event {
   final double water_liters;
   final double gas_volume;
   final double temperature;
+  final bool status;
 
   Event(
       {required this.sensor_id,
@@ -12,7 +13,8 @@ class Event {
       required this.end_timestamp,
       required this.water_liters,
       required this.gas_volume,
-      required this.temperature});
+      required this.temperature,
+      required this.status});
 
   factory Event.fromJson(Map<String, dynamic> json) {
     double water_liters = -1.0;
@@ -23,9 +25,15 @@ class Event {
     if (json['values']['gas_volume'] != null) {
       gas_volume = json['values']['gas_volume'];
     }
+
     double temperature = -1.0;
-    if (json['values']['temperature'] != null) {
-      temperature = json['values']['temperature'];
+    bool status = false;
+    if (json['values']['status'] != null) {
+      status = json['values']['status'];
+    } else {
+      if (json['values']['temperature'] != null) {
+        temperature = json['values']['temperature'];
+      }
     }
     return Event(
         sensor_id: json['sensor_id'],
@@ -33,6 +41,7 @@ class Event {
         end_timestamp: json['end_timestamp'],
         water_liters: water_liters,
         gas_volume: gas_volume,
-        temperature: temperature);
+        temperature: temperature,
+        status: status);
   }
 }

@@ -1,13 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:wflowapp/main/actions/actuator/HeaterActuatorActivation.dart';
 import 'package:wflowapp/main/actions/actuator/client/HeaterActuatorClient.dart';
-import 'package:wflowapp/main/actions/actuator/client/HeaterActuatorResponse.dart';
-import 'package:wflowapp/main/actions/actuator/client/ShowerActuatorResponse.dart';
-import 'package:wflowapp/main/actions/viewhouse/client/HouseClient.dart';
 
 import '../../../config/AppConfig.dart';
+import 'client/HeaterActuatorResponseGet.dart';
 
 class HeaterActuatorPage extends StatefulWidget {
   const HeaterActuatorPage({super.key});
@@ -22,33 +20,42 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
   int sensorId = -1;
   int deviceId = -1;
   String deviceName = '';
+
   bool automatic = false;
   bool manuallySet = false;
-  bool active = false;
-
-  List<int> temperatures = [];
+  bool status = false;
+  List<double> temperatures = [];
   List<DateTime> starts = [];
   List<DateTime> ends = [];
 
+  List<HeaterActuatorActivation> activations = [];
+
+  bool fetched = false;
+
   final HeaterActuatorClient client = HeaterActuatorClient(
-      url: AppConfig.getBaseUrl(), path: AppConfig.getPostActuatorPath());
+      url: AppConfig.getBaseUrl(),
+      get_path: AppConfig.getGetActuatorPath(),
+      post_path: AppConfig.getPostActuatorPath());
 
-  Future<HeaterActuatorResponse>? _futureGetResponse;
-  Future<HeaterActuatorResponse>? _futurePostResponse;
+  Future<HeaterActuatorResponseGet>? _futureGetResponse;
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
+  void fetchData() {
+    if (!fetched) {
       token = AppConfig.getUserToken();
       log(name: 'CONFIG', 'Token: ${token!}');
       log(name: 'CONFIG', 'House ID: $id');
       log(name: 'CONFIG', 'Device ID: $deviceId');
       log(name: 'CONFIG', 'Sensor ID: $sensorId');
       setState(() {
-        _futureGetResponse = client.getHeater(token!, sensorId, deviceId);
+        _futureGetResponse = client.getHeater(token!, sensorId);
       });
-    });
+    }
+  }
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, fetchData);
+    super.initState();
   }
 
   @override
@@ -78,8 +85,8 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
     );
   }
 
-  FutureBuilder<HeaterActuatorResponse> buildActions() {
-    return FutureBuilder<HeaterActuatorResponse>(
+  FutureBuilder<HeaterActuatorResponseGet> buildActions() {
+    return FutureBuilder<HeaterActuatorResponseGet>(
       future: _futureGetResponse,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -87,11 +94,15 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
             return const SizedBox.shrink();
           }
           log('Request ok');
-          active = snapshot.data!.active;
-          automatic = snapshot.data!.automatic;
-          temperatures = snapshot.data!.temperatures;
-          starts = snapshot.data!.starts;
-          ends = snapshot.data!.ends;
+          if (!fetched) {
+            status = snapshot.data!.status;
+            automatic = snapshot.data!.automatic;
+            temperatures = snapshot.data!.temperatures;
+            starts = snapshot.data!.starts;
+            ends = snapshot.data!.ends;
+
+            fetched = true;
+          }
           return buildSmartHeaterAction();
         } else if (snapshot.hasError) {
           log(name: 'DEBUG', 'Request in error: ${snapshot.error.toString()}');
@@ -117,13 +128,13 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
               Row(
                 children: [
                   Text(
-                    active ? 'ON' : 'OFF',
+                    status ? 'ON' : 'OFF',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 2),
                   Icon(
                     Icons.brightness_1_rounded,
-                    color: active ? Colors.green : Colors.red,
+                    color: status ? Colors.green : Colors.red,
                   ),
                   const SizedBox(width: 10),
                 ],
@@ -136,19 +147,59 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // TODO: request
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text(
-                      "Successfully sent information",
-                      textAlign: TextAlign.center,
-                    ),
-                  ));
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Confirmation'),
+                        content: Text('Are you sure you want to turn ' +
+                            (status ? 'OFF' : 'ON') +
+                            ' the smart heater?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('No'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                              child: const Text('Yes'),
+                              onPressed: () {
+                                setState(() {
+                                  temperatures = [];
+                                  starts = [];
+                                  ends = [];
+                                  for (HeaterActuatorActivation activation
+                                      in activations) {
+                                    temperatures
+                                        .add(activation.temperature.toDouble());
+                                    starts.add(activation.start_timestamp);
+                                    ends.add(activation.end_timestamp);
+                                  }
+                                  status = !status;
+                                  log('Locally updated values');
+                                  client.setHeater(token!, sensorId, status,
+                                      automatic, temperatures, starts, ends);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text(
+                                      "Successfully sent information",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ));
+                                });
+                                Navigator.of(context).pop();
+                              })
+                        ],
+                      );
+                    },
+                  );
                 },
                 style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
                 child: Padding(
                   padding: const EdgeInsets.all(4),
                   child: Text(
-                    active ? 'Turn OFF' : 'Turn ON',
+                    status ? 'Turn OFF' : 'Turn ON',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -218,8 +269,22 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
                 ),
                 onPressed: () {
                   if (manuallySet) {
-                    // TODO
-                    log('Add activation');
+                    setState(() {
+                      HeaterActuatorActivation last =
+                          activations[activations.length - 1];
+                      HeaterActuatorActivation activation =
+                          HeaterActuatorActivation(
+                              index: last.index + 1,
+                              temperature: 30,
+                              start_timestamp: last.end_timestamp,
+                              end_timestamp: DateTime(
+                                  last.end_timestamp.year,
+                                  last.end_timestamp.month,
+                                  last.end_timestamp.hour + 1,
+                                  last.end_timestamp.minute),
+                              to_delete: false);
+                      activations.add(activation);
+                    });
                   }
                 },
               )
@@ -233,7 +298,17 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // TODO: request
+                  temperatures = [];
+                  starts = [];
+                  ends = [];
+                  for (HeaterActuatorActivation activation in activations) {
+                    temperatures.add(activation.temperature.toDouble());
+                    starts.add(activation.start_timestamp);
+                    ends.add(activation.end_timestamp);
+                  }
+                  log('Locally updated values');
+                  client.setHeater(token!, sensorId, status, automatic,
+                      temperatures, starts, ends);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
                       "Successfully saved information",
@@ -260,213 +335,19 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
 
   Widget buildActivations() {
     int n_activations = temperatures.length;
-    List<Widget> activations = [];
-    for (var i = 0; i < n_activations; i++) {
-      activations.add(buildActivation(i));
+    if (activations.isEmpty) {
+      for (var i = 0; i < n_activations; i++) {
+        HeaterActuatorActivation activation = HeaterActuatorActivation(
+            index: i + 1,
+            temperature: temperatures[i].toInt(),
+            start_timestamp: starts[i],
+            end_timestamp: ends[i],
+            to_delete: false);
+        activations.add(activation);
+      }
     }
-    return Container(
-        color: !manuallySet
-            ? const Color.fromARGB(50, 204, 204, 204)
-            : const Color.fromARGB(0, 0, 0, 0),
-        padding: const EdgeInsets.only(top: 20, bottom: 20),
-        child: Column(
-          children: activations,
-        ));
-  }
-
-  Widget buildActivation(int index) {
     return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(width: 10),
-            Text(
-              (index + 1).toString(),
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 20),
-            Column(
-              children: [
-                const Row(
-                  children: [
-                    Text(
-                      'Temperature',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        NumberPicker(
-                            value: temperatures[index],
-                            minValue: 10,
-                            maxValue: 30,
-                            step: 1,
-                            itemHeight: 25,
-                            itemWidth: 30,
-                            itemCount: 3,
-                            axis: Axis.vertical,
-                            haptics: true,
-                            textStyle: const TextStyle(fontSize: 14),
-                            selectedTextStyle: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            onChanged: (value) => setState(() {
-                                  temperatures[index] = value;
-                                })),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(width: 20),
-            Column(
-              children: [
-                const Row(
-                  children: [
-                    Text(
-                      'Start',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        NumberPicker(
-                            value: starts[index].hour,
-                            minValue: 0,
-                            maxValue: 23,
-                            step: 1,
-                            itemHeight: 25,
-                            itemWidth: 30,
-                            itemCount: 3,
-                            zeroPad: true,
-                            axis: Axis.vertical,
-                            haptics: true,
-                            textStyle: const TextStyle(fontSize: 14),
-                            selectedTextStyle: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            onChanged: (value) => setState(() {
-                                  starts[index] = DateTime(
-                                      2023, 1, 1, value, starts[index].minute);
-                                })),
-                        const Text(
-                          ':',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        NumberPicker(
-                            value: starts[index].minute,
-                            minValue: 0,
-                            maxValue: 59,
-                            step: 1,
-                            itemHeight: 25,
-                            itemWidth: 30,
-                            itemCount: 3,
-                            zeroPad: true,
-                            axis: Axis.vertical,
-                            haptics: true,
-                            textStyle: const TextStyle(fontSize: 14),
-                            selectedTextStyle: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            onChanged: (value) => setState(() {
-                                  starts[index] = DateTime(
-                                      2023, 1, 1, starts[index].hour, value);
-                                })),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(width: 20),
-            Column(
-              children: [
-                const Row(
-                  children: [
-                    Text(
-                      'End',
-                      style: TextStyle(fontSize: 18),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        NumberPicker(
-                            value: ends[index].hour,
-                            minValue: 0,
-                            maxValue: 23,
-                            step: 1,
-                            itemHeight: 25,
-                            itemWidth: 30,
-                            itemCount: 3,
-                            zeroPad: true,
-                            axis: Axis.vertical,
-                            haptics: true,
-                            textStyle: const TextStyle(fontSize: 14),
-                            selectedTextStyle: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            onChanged: (value) => setState(() {
-                                  ends[index] = DateTime(
-                                      2023, 1, 1, value, ends[index].minute);
-                                })),
-                        const Text(
-                          ':',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        NumberPicker(
-                            value: ends[index].minute,
-                            minValue: 0,
-                            maxValue: 59,
-                            step: 1,
-                            itemHeight: 25,
-                            itemWidth: 30,
-                            itemCount: 3,
-                            zeroPad: true,
-                            axis: Axis.vertical,
-                            haptics: true,
-                            textStyle: const TextStyle(fontSize: 14),
-                            selectedTextStyle: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                            onChanged: (value) => setState(() {
-                                  ends[index] = DateTime(
-                                      2023, 1, 1, ends[index].hour, value);
-                                })),
-                      ],
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 38)
-      ],
+      children: activations,
     );
-  }
-
-  Color getColorFromTemperature(int temp) {
-    if (temp < 14) {
-      return const Color.fromARGB(255, 0, 217, 255);
-    } else if (temp >= 14 && temp < 18) {
-      return const Color.fromARGB(255, 0, 136, 255);
-    } else if (temp >= 18 && temp < 22) {
-      return const Color.fromARGB(255, 255, 157, 0);
-    } else if (temp >= 22 && temp < 26) {
-      return const Color.fromARGB(255, 255, 102, 0);
-    } else {
-      return const Color.fromARGB(255, 255, 47, 0);
-    }
   }
 }

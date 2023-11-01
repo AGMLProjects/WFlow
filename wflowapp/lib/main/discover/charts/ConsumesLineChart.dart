@@ -106,7 +106,7 @@ class ConsumesLineChart extends StatelessWidget {
 
   SideTitles leftTitles() {
     return SideTitles(
-      showTitles: true,
+      showTitles: false,
       reservedSize: 30,
       interval: 20,
       getTitlesWidget: leftTitleWidgets,

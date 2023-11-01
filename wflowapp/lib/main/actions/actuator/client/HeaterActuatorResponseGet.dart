@@ -3,37 +3,37 @@ import 'dart:developer';
 
 import 'package:http/http.dart';
 
-class HeaterActuatorResponse {
+class HeaterActuatorResponseGet {
   final int code;
-  final bool active;
+  final bool status;
   final bool automatic;
-  final List<int> temperatures;
+  final List<double> temperatures;
   final List<DateTime> starts;
   final List<DateTime> ends;
 
-  HeaterActuatorResponse(
+  HeaterActuatorResponseGet(
       {required this.code,
-      required this.active,
+      required this.status,
       required this.automatic,
       required this.temperatures,
       required this.starts,
       required this.ends});
 
-  factory HeaterActuatorResponse.fromResponse(Response response) {
+  factory HeaterActuatorResponseGet.fromResponse(Response response) {
     if (response.statusCode == 200) {
       dynamic json = jsonDecode(response.body);
       log(json.toString());
-      HeaterActuatorResponse res = HeaterActuatorResponse(
+      HeaterActuatorResponseGet res = HeaterActuatorResponseGet(
           code: response.statusCode,
-          active: json['active'],
-          automatic: json['automatic'],
-          temperatures: json['temperatures'],
-          starts: json['starts'],
-          ends: json['ends']);
+          status: json['values']['status'],
+          automatic: json['values']['automatic'],
+          temperatures: json['values']['temperature'],
+          starts: json['values']['time_start'],
+          ends: json['values']['time_end']);
       return res;
     } else {
-      bool active = true, automatic = true;
-      List<int> temperatures = [24, 26, 24];
+      bool status = true, automatic = true;
+      List<double> temperatures = [24.0, 26.0, 24.0];
       List<DateTime> starts = [
         DateTime(2023, 1, 1, 8, 0),
         DateTime(2023, 1, 1, 17, 30),
@@ -44,9 +44,9 @@ class HeaterActuatorResponse {
         DateTime(2023, 1, 1, 18, 30),
         DateTime(2023, 1, 1, 21, 0),
       ];
-      HeaterActuatorResponse res = HeaterActuatorResponse(
+      HeaterActuatorResponseGet res = HeaterActuatorResponseGet(
           code: 200,
-          active: active,
+          status: status,
           automatic: automatic,
           temperatures: temperatures,
           starts: starts,

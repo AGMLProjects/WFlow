@@ -276,10 +276,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Widget _buildChartsCityRegion(var snapshot) {
     List<Consume> month_city_consume = snapshot.data!.month_city_consume;
     List<Consume> month_region_consume = snapshot.data!.month_region_consume;
-    //List<Consume> regionConsume = snapshot.data!.regionConsume;
-    //List<Consume> averageCountryConsume = snapshot.data!.averageCountryConsume;
-    //List<Consume> monthRegionConsume = snapshot.data!.monthRegionConsume;
-    //List<Consume> regionsToConsider = filterRegions(_selectedRegion, monthRegionConsume);
+
     String zone = getRegionZone(_selectedRegion);
     String measurement = _selectedStatistic == 'Water' ? 'L' : 'm3';
     return Column(

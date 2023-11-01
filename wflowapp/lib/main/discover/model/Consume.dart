@@ -21,10 +21,14 @@ class Consume {
     if (json['city'] != null) {
       city = json['city'];
     }
+    double consume = 0.0;
+    if (json['consume'] != 0) {
+      consume = json['consume'];
+    }
     return Consume(
         year: json['year'],
         month: json['month'],
-        consume: json['consume'],
+        consume: consume,
         region: region,
         city: city);
   }

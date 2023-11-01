@@ -13,9 +13,15 @@ class DayConsume {
     if (json['total_water_liters'] != null) {
       water = json['total_water_liters'];
     }
+    if (json['predicted_liters'] != null) {
+      water = json['predicted_liters'];
+    }
     double gas = 0.0;
     if (json['total_gas_volume'] != null) {
       gas = json['total_gas_volume'];
+    }
+    if (json['predicted_volumes'] != null) {
+      gas = json['predicted_volumes'];
     }
     return DayConsume(
         date: json['date'], total_water_liters: water, total_gas_volume: gas);

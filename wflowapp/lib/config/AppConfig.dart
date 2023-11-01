@@ -52,6 +52,10 @@ class AppConfig {
     return '/API/global/all_regions_data';
   }
 
+  static String getGetActuatorPath() {
+    return '/sensors/get/';
+  }
+
   static String getPostActuatorPath() {
     return '/sensors/set/';
   }

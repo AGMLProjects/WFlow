@@ -140,7 +140,7 @@ class HouseWidget extends StatelessWidget {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${house.total_liters} L',
+                      '${house.total_liters.toStringAsFixed(2)} L',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.normal),
@@ -166,7 +166,7 @@ class HouseWidget extends StatelessWidget {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${house.total_gas} m3',
+                      '${house.total_gas.toStringAsFixed(2)} m3',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.normal),
