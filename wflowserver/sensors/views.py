@@ -204,22 +204,21 @@ class UploadPredictedActuatorDataAPIView(CreateAPIView):
         serializer.save()
 
 
-# TODO: endpoint to get the last sensordata based on id
-class GetLastActuatorData(ListAPIView):
+class GetLastActuatorData(GenericAPIView):
     """
-    This view should return a list of all the actuators
-    last data for the given actuator id.
+    This view should return the last data for the given actuator id.
     """
     permission_classes = (IsAuthenticated,)
     serializer_class = SensorDataSerializer
 
-    def get_queryset(self):
-        # Use query parameter to get sensor_id
-        sensor_id = self.request.data.get('sensor_id')
-        print(f"sensor_id: {sensor_id}")  # Debugging line
+    def post(self, request):
+        # Extract 'sensor_id' from the POST request data
+        sensor_id = request.data.get('sensor_id')
         if sensor_id:
             # Filter and order the queryset by timestamp in descending order and limit it to 1 item
-            return SensorData.objects.filter(sensor_id=sensor_id).order_by('-end_timestamp')[:1]
+            sensor_data = SensorData.objects.filter(sensor_id=sensor_id).order_by('-end_timestamp')[:1]
+            serializer = SensorDataSerializer(sensor_data, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            # Handle the case where 'sensor_id' query parameter is not provided
-            return SensorData.objects.none()
+            # Handle the case where 'sensor_id' is not provided in the request
+            return Response({'message': 'sensor_id is required in the POST request data'}, status=status.HTTP_400_BAD_REQUEST)
