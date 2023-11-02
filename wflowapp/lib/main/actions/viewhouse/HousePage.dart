@@ -283,7 +283,7 @@ class _HousePageState extends State<HousePage> {
         event.temperature > 0) {
       // Shower activation
       return ListTile(
-        title: const Text('Shower activation'),
+        title: const Text('Shower toggling'),
         subtitle: Text('${event.temperature} °C'),
         trailing: Text('$hour:$minute ($day ${toStringMonth(month)})'),
       );

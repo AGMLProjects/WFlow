@@ -57,9 +57,9 @@ class _RegisterPageState extends State<RegisterPage> {
         children: [
           // Logo
           const SizedBox(height: 40.0),
-          const Text('wFlow',
+          Text('wFlow',
               style: TextStyle(
-                color: Colors.blue,
+                color: AppConfig.getAppThemeColor(),
                 fontWeight: FontWeight.bold,
                 fontSize: 32.0,
               )),
@@ -132,10 +132,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 onTap: () {
                   Navigator.pushNamed(context, '/login');
                 },
-                child: const Text(
+                child: Text(
                   ' Click here',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.blue),
+                      fontWeight: FontWeight.bold,
+                      color: AppConfig.getAppThemeColor()),
                 ),
               )
             ],
@@ -152,13 +153,14 @@ class _RegisterPageState extends State<RegisterPage> {
       height: 40.0,
       width: 140.0,
       decoration: BoxDecoration(
-          color: Colors.blue, borderRadius: BorderRadius.circular(20.0)),
+          color: AppConfig.getAppThemeColor(),
+          borderRadius: BorderRadius.circular(20.0)),
       child: ElevatedButton(
           style: ButtonStyle(
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
-                      side: const BorderSide(color: Colors.blue)))),
+                      side: BorderSide(color: AppConfig.getAppThemeColor())))),
           onPressed: () {
             setState(() {
               String email = emailController.text;

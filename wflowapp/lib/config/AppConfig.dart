@@ -64,6 +64,10 @@ class AppConfig {
     return Colors.lightBlue;
   }
 
+  static Color getAppThemeColor() {
+    return Color.fromARGB(255, 0, 173, 181);
+  }
+
   static Future setUserKey(String key) async {
     return await _preferences.setString('key', key);
   }

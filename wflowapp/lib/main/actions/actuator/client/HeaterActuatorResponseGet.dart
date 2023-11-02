@@ -21,15 +21,36 @@ class HeaterActuatorResponseGet {
 
   factory HeaterActuatorResponseGet.fromResponse(Response response) {
     if (response.statusCode == 200) {
-      dynamic json = jsonDecode(response.body);
+      if (jsonDecode(response.body).length == 0) {
+        return HeaterActuatorResponseGet(
+            code: response.statusCode,
+            status: false,
+            automatic: true,
+            temperatures: List.empty(),
+            starts: List.empty(),
+            ends: List.empty());
+      }
+      dynamic json = jsonDecode(response.body)[0];
       log(json.toString());
+      List<double> temperatures = [];
+      for (double str in json['values']['temperature']) {
+        temperatures.add(str);
+      }
+      List<DateTime> starts = [];
+      for (String str in json['values']['time_start']) {
+        starts.add(DateTime.parse(str));
+      }
+      List<DateTime> ends = [];
+      for (String str in json['values']['time_end']) {
+        ends.add(DateTime.parse(str));
+      }
       HeaterActuatorResponseGet res = HeaterActuatorResponseGet(
           code: response.statusCode,
           status: json['values']['status'],
           automatic: json['values']['automatic'],
-          temperatures: json['values']['temperature'],
-          starts: json['values']['time_start'],
-          ends: json['values']['time_end']);
+          temperatures: temperatures,
+          starts: starts,
+          ends: ends);
       return res;
     } else {
       bool status = true, automatic = true;

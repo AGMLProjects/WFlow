@@ -30,7 +30,7 @@ class _EditHousePageState extends State<EditHousePage> {
   List<String> cities = [];
   String _selectedCity = '';
 
-  Color houseColor = AppConfig.getDefaultColor();
+  Color houseColor = AppConfig.getAppThemeColor();
   final nameController = TextEditingController();
   final cityController = TextEditingController();
   final addressController = TextEditingController();

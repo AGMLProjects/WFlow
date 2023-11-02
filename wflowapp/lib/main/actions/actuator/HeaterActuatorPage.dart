@@ -96,6 +96,7 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
           log('Request ok');
           if (!fetched) {
             status = snapshot.data!.status;
+            status = false;
             automatic = snapshot.data!.automatic;
             temperatures = snapshot.data!.temperatures;
             starts = snapshot.data!.starts;
@@ -264,26 +265,37 @@ class _HeaterActuatorPageState extends State<HeaterActuatorPage> {
                 icon: Icon(
                   Icons.add_circle_outline,
                   color:
-                      manuallySet ? AppConfig.getDefaultColor() : Colors.grey,
+                      manuallySet ? AppConfig.getAppThemeColor() : Colors.grey,
                   size: 28,
                 ),
                 onPressed: () {
                   if (manuallySet) {
                     setState(() {
-                      HeaterActuatorActivation last =
-                          activations[activations.length - 1];
-                      HeaterActuatorActivation activation =
-                          HeaterActuatorActivation(
-                              index: last.index + 1,
-                              temperature: 30,
-                              start_timestamp: last.end_timestamp,
-                              end_timestamp: DateTime(
-                                  last.end_timestamp.year,
-                                  last.end_timestamp.month,
-                                  last.end_timestamp.hour + 1,
-                                  last.end_timestamp.minute),
-                              to_delete: false);
-                      activations.add(activation);
+                      if (activations.length == 0) {
+                        HeaterActuatorActivation activation =
+                            HeaterActuatorActivation(
+                                index: 1,
+                                temperature: 30,
+                                start_timestamp: DateTime.now(),
+                                end_timestamp: DateTime.now(),
+                                to_delete: false);
+                        activations.add(activation);
+                      } else {
+                        HeaterActuatorActivation last =
+                            activations[activations.length - 1];
+                        HeaterActuatorActivation activation =
+                            HeaterActuatorActivation(
+                                index: last.index + 1,
+                                temperature: 30,
+                                start_timestamp: last.end_timestamp,
+                                end_timestamp: DateTime(
+                                    last.end_timestamp.year,
+                                    last.end_timestamp.month,
+                                    last.end_timestamp.hour + 1,
+                                    last.end_timestamp.minute),
+                                to_delete: false);
+                        activations.add(activation);
+                      }
                     });
                   }
                 },

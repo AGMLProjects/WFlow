@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: _buildLightTheme(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/splash',
       routes: {
@@ -46,5 +47,24 @@ class MyApp extends StatelessWidget {
         '/discover': (context) => const DiscoverPage()
       },
     );
+  }
+
+  ThemeData _buildLightTheme() {
+    final ThemeData base = ThemeData.light();
+    return base.copyWith(
+        colorScheme: ColorScheme(
+          brightness: Brightness.light,
+          primary: AppConfig.getAppThemeColor(),
+          onPrimary: Color(0xFFFFFFFF),
+          secondary: AppConfig.getAppThemeColor(),
+          onSecondary: Color(0xFFFFFFFF),
+          error: Color(0xFFBA1A1A),
+          onError: Color(0xFFFFFFFF),
+          background: Color(0xFFFEFFFF),
+          onBackground: Color(0xFF3b3b3b),
+          surface: Color(0xFFFEFFFF),
+          onSurface: Color(0xFF3b3b3b),
+        ),
+        primaryColor: Colors.green);
   }
 }

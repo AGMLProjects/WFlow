@@ -14,7 +14,7 @@ class ShowerActuatorClient {
   Future<ShowerActuatorResponse> activateShower(
       String key, int sensorId, int deviceId, double temperature) async {
     var now = DateTime.now();
-    var formatter = DateFormat('yyyy-MM-dd hh:mm:ss');
+    var formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
     String timestamp = formatter.format(now);
     Map<String, dynamic> map = {
       'sensor_id': sensorId,

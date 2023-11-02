@@ -40,10 +40,14 @@ class HeaterActuatorClient {
       List<DateTime> ends) async {
     List<String> time_start = starts.map((d) {
       DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
+      DateTime now = DateTime.now();
+      d = DateTime(now.year, now.month, now.day, d.hour, d.minute, 0);
       return format.format(d);
     }).toList();
     List<String> time_end = ends.map((d) {
       DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
+      DateTime now = DateTime.now();
+      d = DateTime(now.year, now.month, now.day, d.hour, d.minute, 0);
       return format.format(d);
     }).toList();
     Map<String, dynamic> values = {
