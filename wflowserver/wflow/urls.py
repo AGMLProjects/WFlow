@@ -23,6 +23,8 @@ from users import views as users_views
 
 from dj_rest_auth.views import PasswordResetView, PasswordResetConfirmView
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
 urlpatterns = [
     # server management endpoint for administrator
     path('admin/', admin.site.urls),
@@ -63,6 +65,14 @@ urlpatterns = [
     path('API/global/city_region_data', APIviews.GlobalConsumesAPIView.as_view()),
     path('API/global/all_regions_data',
          APIviews.GlobalConsumesEveryRegionAPIView.as_view()),
+
+    # API documentation
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/docs/',
+         SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redocs/',
+         SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -1,0 +1,2339 @@
+openapi: 3.0.3
+info:
+  title: WFlow API
+  version: 1.0.0
+  description: Wflow official API documentation
+paths:
+  /AI/fetch_train_data_consumes:
+    get:
+      operationId: AI_fetch_train_data_consumes_retrieve
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /AI/fetch_train_data_consumes{format}:
+    get:
+      operationId: AI_fetch_train_data_consumes_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /AI/fetch_train_data_daily:
+    get:
+      operationId: AI_fetch_train_data_daily_retrieve
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /AI/fetch_train_data_daily{format}:
+    get:
+      operationId: AI_fetch_train_data_daily_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /AI/get_hac_id/{house_id}:
+    get:
+      operationId: AI_get_hac_id_retrieve
+      parameters:
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+          description: ''
+  /AI/get_hac_id/{house_id}{format}:
+    get:
+      operationId: AI_get_hac_id_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+          description: ''
+  /AI/get_house_id_list:
+    get:
+      operationId: AI_get_house_id_list_list
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HouseId'
+          description: ''
+  /AI/get_house_id_list{format}:
+    get:
+      operationId: AI_get_house_id_list_formatted_list
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - AI
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HouseId'
+          description: ''
+  /AI/put_consumes_prediction:
+    post:
+      operationId: AI_put_consumes_prediction_create
+      description: |-
+        This view is responsible for the creation of new data predictions
+        for the specified house and day.
+      tags:
+      - AI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadPredictedConsumes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadPredictedConsumes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadPredictedConsumes'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadPredictedConsumes'
+          description: ''
+  /AI/put_consumes_prediction{format}:
+    post:
+      operationId: AI_put_consumes_prediction_formatted_create
+      description: |-
+        This view is responsible for the creation of new data predictions
+        for the specified house and day.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - AI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadPredictedConsumes'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadPredictedConsumes'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadPredictedConsumes'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadPredictedConsumes'
+          description: ''
+  /AI/put_daily_prediction:
+    post:
+      operationId: AI_put_daily_prediction_create
+      description: |-
+        This view is responsible for the upload of new data sent
+        from the app for the specified actuator for the currently authenticated user
+      tags:
+      - AI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictedSensorData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PredictedSensorData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PredictedSensorData'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictedSensorData'
+          description: ''
+  /AI/put_daily_prediction{format}:
+    post:
+      operationId: AI_put_daily_prediction_formatted_create
+      description: |-
+        This view is responsible for the upload of new data sent
+        from the app for the specified actuator for the currently authenticated user
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - AI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PredictedSensorData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PredictedSensorData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PredictedSensorData'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictedSensorData'
+          description: ''
+  /API/control_actuators/{actuator_id}:
+    post:
+      operationId: API_control_actuators_create
+      description: |-
+        This view is responsible for the forwarding of messages from the app
+        to the actuators by using django channels
+      parameters:
+      - in: path
+        name: actuator_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /API/control_actuators/{actuator_id}{format}:
+    post:
+      operationId: API_control_actuators_formatted_create
+      description: |-
+        This view is responsible for the forwarding of messages from the app
+        to the actuators by using django channels
+      parameters:
+      - in: path
+        name: actuator_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /API/global/all_regions_data:
+    get:
+      operationId: API_global_all_regions_data_retrieve
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /API/global/all_regions_data{format}:
+    get:
+      operationId: API_global_all_regions_data_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /API/global/city_region_data:
+    post:
+      operationId: API_global_city_region_data_create
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /API/global/city_region_data{format}:
+    post:
+      operationId: API_global_city_region_data_formatted_create
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /API/houses/{house_id}:
+    get:
+      operationId: API_houses_retrieve
+      parameters:
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+    put:
+      operationId: API_houses_update
+      parameters:
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/House'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/House'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+    patch:
+      operationId: API_houses_partial_update
+      parameters:
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHouse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHouse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHouse'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+    delete:
+      operationId: API_houses_destroy
+      parameters:
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /API/houses/{house_id}{format}:
+    get:
+      operationId: API_houses_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+    put:
+      operationId: API_houses_formatted_update
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/House'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/House'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+    patch:
+      operationId: API_houses_formatted_partial_update
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedHouse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedHouse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedHouse'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+    delete:
+      operationId: API_houses_formatted_destroy
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /API/houses/add:
+    post:
+      operationId: API_houses_add_create
+      description: |-
+        This view is responsible for the creation of
+        a new house for the currently authenticated user.
+      tags:
+      - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/House'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/House'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+  /API/houses/add{format}:
+    post:
+      operationId: API_houses_add_formatted_create
+      description: |-
+        This view is responsible for the creation of
+        a new house for the currently authenticated user.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/House'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/House'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/House'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+  /API/houses/list:
+    get:
+      operationId: API_houses_list_list
+      description: |-
+        This view should return a list of all the houses
+        for the currently authenticated user.
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/House'
+          description: ''
+  /API/houses/list{format}:
+    get:
+      operationId: API_houses_list_formatted_list
+      description: |-
+        This view should return a list of all the houses
+        for the currently authenticated user.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/House'
+          description: ''
+  /API/houses/specific/{house_id}:
+    get:
+      operationId: API_houses_specific_retrieve
+      parameters:
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+  /API/houses/specific/{house_id}{format}:
+    get:
+      operationId: API_houses_specific_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: house_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - API
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+          description: ''
+  /devices/login/:
+    post:
+      operationId: devices_login_create
+      description: |-
+        This view is responsible for the login of a device
+        performed by the bridge itself.
+
+        Accept the following POST parameters: device_id, password (SAME FOR EVERY DEVICE _api_key)
+        Return the Device Token Object's key.
+      tags:
+      - devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceLogin'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceLogin'
+          description: ''
+  /devices/login{format}:
+    post:
+      operationId: devices_login_formatted_create
+      description: |-
+        This view is responsible for the login of a device
+        performed by the bridge itself.
+
+        Accept the following POST parameters: device_id, password (SAME FOR EVERY DEVICE _api_key)
+        Return the Device Token Object's key.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceLogin'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceLogin'
+          description: ''
+  /devices/register/:
+    post:
+      operationId: devices_register_create
+      description: |-
+        This view is responsible for the registration of
+        a new device for the currently authenticated user.
+      tags:
+      - devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceRegister'
+          description: ''
+  /devices/register{format}:
+    post:
+      operationId: devices_register_formatted_create
+      description: |-
+        This view is responsible for the registration of
+        a new device for the currently authenticated user.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeviceRegister'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceRegister'
+          description: ''
+  /password-reset/:
+    post:
+      operationId: password_reset_create
+      description: |-
+        Calls Django Auth PasswordResetForm save method.
+
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      tags:
+      - password-reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /password-reset{format}:
+    post:
+      operationId: password_reset_formatted_create
+      description: |-
+        Calls Django Auth PasswordResetForm save method.
+
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - password-reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /password-reset-confirm/{uidb64}/{token}/:
+    post:
+      operationId: password_reset_confirm_create
+      description: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uidb64
+        schema:
+          type: string
+        required: true
+      tags:
+      - password-reset-confirm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /password-reset-confirm/{uidb64}/{token}{format}:
+    post:
+      operationId: password_reset_confirm_formatted_create
+      description: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uidb64
+        schema:
+          type: string
+        required: true
+      tags:
+      - password-reset-confirm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /sensors/get/:
+    get:
+      operationId: sensors_get_list
+      description: |-
+        This view should return a list of all the actuators
+        last data for the given actuator id.
+      tags:
+      - sensors
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorData'
+          description: ''
+  /sensors/get{format}:
+    get:
+      operationId: sensors_get_formatted_list
+      description: |-
+        This view should return a list of all the actuators
+        last data for the given actuator id.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - sensors
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorData'
+          description: ''
+  /sensors/register/:
+    post:
+      operationId: sensors_register_create
+      description: |-
+        This view is responsible for the registration of
+        a new sensor for the currently authenticated device.
+      tags:
+      - sensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+          description: ''
+  /sensors/register{format}:
+    post:
+      operationId: sensors_register_formatted_create
+      description: |-
+        This view is responsible for the registration of
+        a new sensor for the currently authenticated device.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - sensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Sensor'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+          description: ''
+  /sensors/set/:
+    post:
+      operationId: sensors_set_create
+      description: |-
+        This view is responsible for the upload of new data sent
+        from the app for the specified actuator for the currently authenticated user
+      tags:
+      - sensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorData'
+          description: ''
+  /sensors/set{format}:
+    post:
+      operationId: sensors_set_formatted_create
+      description: |-
+        This view is responsible for the upload of new data sent
+        from the app for the specified actuator for the currently authenticated user
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - sensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorData'
+          description: ''
+  /sensors/upload/:
+    post:
+      operationId: sensors_upload_create
+      description: |-
+        This view is responsible for the upload of new data recorded
+        from the specified sensor for the currently authenticated device
+      tags:
+      - sensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorData'
+          description: ''
+  /sensors/upload{format}:
+    post:
+      operationId: sensors_upload_formatted_create
+      description: |-
+        This view is responsible for the upload of new data recorded
+        from the specified sensor for the currently authenticated device
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - sensors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SensorData'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorData'
+          description: ''
+  /users/:
+    get:
+      operationId: users_retrieve
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - users
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    put:
+      operationId: users_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    patch:
+      operationId: users_partial_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+  /users/{format}:
+    get:
+      operationId: users_formatted_retrieve
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    put:
+      operationId: users_formatted_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    patch:
+      operationId: users_formatted_partial_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+  /users/account-confirm-email/:
+    post:
+      operationId: users_account_confirm_email_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /users/account-confirm-email{format}:
+    post:
+      operationId: users_account_confirm_email_formatted_create
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /users/account-confirm-email/{key}/:
+    post:
+      operationId: users_account_confirm_email_create_2
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+          pattern: ^[-:\w]+$
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /users/login/:
+    post:
+      operationId: users_login_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /users/login{format}:
+    post:
+      operationId: users_login_formatted_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /users/logout/:
+    post:
+      operationId: users_logout_create
+      description: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+
+        Accepts/Returns nothing.
+      tags:
+      - users
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /users/logout{format}:
+    post:
+      operationId: users_logout_formatted_create
+      description: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+
+        Accepts/Returns nothing.
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /users/register/:
+    post:
+      operationId: users_register_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /users/register{format}:
+    post:
+      operationId: users_register_formatted_create
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /users/verify-email/:
+    post:
+      operationId: users_verify_email_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /users/verify-email{format}:
+    post:
+      operationId: users_verify_email_formatted_create
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    CustomUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        occupation:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/OccupationEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        status:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        family_members:
+          type: integer
+          nullable: true
+        personal_data:
+          type: boolean
+      required:
+      - email
+    DeviceLogin:
+      type: object
+      properties:
+        device_id:
+          type: integer
+        password:
+          type: string
+      required:
+      - device_id
+      - password
+    DeviceRegister:
+      type: object
+      properties:
+        device_id:
+          type: integer
+        house_id:
+          type: integer
+        name:
+          type: string
+          maxLength: 200
+      required:
+      - device_id
+      - house_id
+      - name
+    House:
+      type: object
+      properties:
+        house_id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        address:
+          type: string
+          maxLength: 200
+        city:
+          type: string
+          maxLength: 200
+        region:
+          type: string
+          maxLength: 200
+        country:
+          type: string
+          maxLength: 200
+        house_type:
+          $ref: '#/components/schemas/HouseTypeEnum'
+      required:
+      - address
+      - city
+      - country
+      - house_id
+      - house_type
+      - name
+      - region
+      - user_id
+    HouseId:
+      type: object
+      properties:
+        house_id:
+          type: integer
+          readOnly: true
+      required:
+      - house_id
+    HouseTypeEnum:
+      enum:
+      - SFH
+      - SDH
+      - MFH
+      - APA
+      - CON
+      - COP
+      - TIN
+      - MAN
+      type: string
+      description: |-
+        * `SFH` - Single-Family House
+        * `SDH` - Semi-Detached House
+        * `MFH` - Multifamily House
+        * `APA` - Apartment
+        * `CON` - Condominium
+        * `COP` - Co-Op
+        * `TIN` - Tiny House
+        * `MAN` - Manufactured House
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+      - password
+    NullEnum:
+      enum:
+      - null
+    OccupationEnum:
+      enum:
+      - EMP
+      - UNE
+      - STU
+      - RET
+      - ENT
+      - FRE
+      type: string
+      description: |-
+        * `EMP` - Employee
+        * `UNE` - Unemployed
+        * `STU` - Student
+        * `RET` - Retired
+        * `ENT` - Entepreneur
+        * `FRE` - Freelancer
+    PasswordReset:
+      type: object
+      description: Serializer for requesting a password reset e-mail.
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    PasswordResetConfirm:
+      type: object
+      description: Serializer for confirming a password reset attempt.
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+      - new_password1
+      - new_password2
+      - token
+      - uid
+    PatchedCustomUser:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        occupation:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/OccupationEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        status:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        family_members:
+          type: integer
+          nullable: true
+        personal_data:
+          type: boolean
+    PatchedHouse:
+      type: object
+      properties:
+        house_id:
+          type: integer
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        address:
+          type: string
+          maxLength: 200
+        city:
+          type: string
+          maxLength: 200
+        region:
+          type: string
+          maxLength: 200
+        country:
+          type: string
+          maxLength: 200
+        house_type:
+          $ref: '#/components/schemas/HouseTypeEnum'
+    PredictedSensorData:
+      type: object
+      properties:
+        sensor_id:
+          type: integer
+        start_timestamp:
+          type: string
+          format: date-time
+        end_timestamp:
+          type: string
+          format: date-time
+        values:
+          type: object
+          additionalProperties: {}
+      required:
+      - end_timestamp
+      - sensor_id
+      - start_timestamp
+      - values
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 150
+          minLength: 1
+        email:
+          type: string
+          format: email
+        password1:
+          type: string
+          writeOnly: true
+        password2:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password1
+      - password2
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
+    Sensor:
+      type: object
+      properties:
+        sensor_id:
+          type: integer
+        sensor_type:
+          $ref: '#/components/schemas/SensorTypeEnum'
+      required:
+      - sensor_id
+      - sensor_type
+    SensorData:
+      type: object
+      properties:
+        sensor_id:
+          type: integer
+        start_timestamp:
+          type: string
+          format: date-time
+        end_timestamp:
+          type: string
+          format: date-time
+        values:
+          type: object
+          additionalProperties: {}
+      required:
+      - end_timestamp
+      - sensor_id
+      - start_timestamp
+      - values
+    SensorTypeEnum:
+      enum:
+      - FLO
+      - LEV
+      - HEA
+      - SAC
+      - HAC
+      type: string
+      description: |-
+        * `FLO` - Flow Sensor
+        * `LEV` - Water Level
+        * `HEA` - Water Heater
+        * `SAC` - Shower Actuator
+        * `HAC` - Heater Actuator
+    StatusEnum:
+      enum:
+      - SIN
+      - REL
+      - ENG
+      - MAR
+      type: string
+      description: |-
+        * `SIN` - Single
+        * `REL` - In a relationship
+        * `ENG` - Engaged
+        * `MAR` - Married
+    Token:
+      type: object
+      description: Serializer for Token model.
+      properties:
+        key:
+          type: string
+          maxLength: 40
+      required:
+      - key
+    UploadPredictedConsumes:
+      type: object
+      properties:
+        house_id:
+          type: integer
+        date:
+          type: string
+          format: date
+        predicted_liters:
+          type: number
+          format: double
+        predicted_volumes:
+          type: number
+          format: double
+      required:
+      - date
+      - house_id
+      - predicted_liters
+      - predicted_volumes
+    VerifyEmail:
+      type: object
+      properties:
+        key:
+          type: string
+          writeOnly: true
+      required:
+      - key
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

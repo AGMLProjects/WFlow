@@ -34,6 +34,7 @@ CSRF_TRUSTED_ORIGINS = ['https://wflow.online']
 
 INSTALLED_APPS = [
     'daphne',
+    'drf_spectacular',
     # BASIC
     'django.contrib.admin',
     'django.contrib.auth',
@@ -168,6 +169,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # REST_AUTH_REGISTER_SERIALIZERS = {
@@ -199,3 +201,12 @@ ACCOUNT_USERNAME_REQUIRED = False
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DATE_INPUT_FORMATS = ['%d/%m/%Y']
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'WFlow API',
+    'DESCRIPTION': 'Wflow official API documentation',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
