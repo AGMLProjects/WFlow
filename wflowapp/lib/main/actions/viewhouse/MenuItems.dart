@@ -1,0 +1,1 @@
+enum MenuItems { EDIT, ACTIONS }

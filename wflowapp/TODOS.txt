@@ -1,0 +1,6 @@
+https://wflow.online/admin/login/?next=/admin/
+[X] aggiornare pagina info utente: togliere regione e città
+[X] nella gestione della casa, mettere l'address
+[X] aggiustare specific house information
+[ ] global page con le 2 API
+[ ] fix in day gas consume
