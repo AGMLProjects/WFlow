@@ -14,6 +14,7 @@
 #include "ds18b20.h"
 
 #define TARGET_TEMPERATURE_TOLLERANCE 2.0
+#define MAIN_SENSOR_INPUT BIT2
 
 // Global flags set by events
 volatile uint8_t bCDCDataReceived_event = FALSE;   // Flag set by event handler to
@@ -84,11 +85,11 @@ void main (void)
 
 #ifdef FLO
     // Configure the P1.3 as input for the water flow sensor
-    P1DIR &= ~BIT3;     // P1.3 as input
-    P1REN |= BIT3;      // Enable pull-up resistor
-    P1IES |= BIT3;      // Falling edge trigger
-    P1IFG &= ~BIT3;     // Clear the interrupt flag
-    P1IE |= BIT3;       // Enable the interrupt
+    P1DIR &= ~MAIN_SENSOR_INPUT;     // P1.2 as input
+    P1REN |= MAIN_SENSOR_INPUT;      // Enable pull-up resistor
+    P1IES |= MAIN_SENSOR_INPUT;      // Falling edge trigger
+    P1IFG &= ~MAIN_SENSOR_INPUT;     // Clear the interrupt flag
+    P1IE |= MAIN_SENSOR_INPUT;       // Enable the interrupt
 
     // Configure the P1.4 as output. Will be used for 1-Wire communication with temperature sensor
     P1DIR |= BIT4;
@@ -111,12 +112,12 @@ void main (void)
     P3OUT &= ~(BIT0 | BIT1 | BIT2 | BIT3);
 
 #elif defined(LEV)
-    // Configure the P1.3 as input for the sensor
-    P1DIR &= ~BIT3;     // P1.3 as input
-    P1REN |= BIT3;      // Enable pull-up resistor
-    P1IES |= BIT3;      // Falling edge trigger
-    P1IFG &= ~BIT3;     // Clear the interrupt flag
-    P1IE |= BIT3;       // Enable the interrupt
+    // Configure the P1.2 as input for the sensor
+    P1DIR &= ~MAIN_SENSOR_INPUT;     // P1.2 as input
+    P1REN |= MAIN_SENSOR_INPUT;      // Enable pull-up resistor
+    P1IES |= MAIN_SENSOR_INPUT;      // Falling edge trigger
+    P1IFG &= ~MAIN_SENSOR_INPUT;     // Clear the interrupt flag
+    P1IE |= MAIN_SENSOR_INPUT;       // Enable the interrupt
 #elif defined(HEA)
     // Configure RED LED P1.0 to mimic 'water is warming up'
     P1DIR |= BIT0;
@@ -132,8 +133,13 @@ void main (void)
 #endif
 
     // Configure P1.5 as output for signaling USB messages
+#ifdef LEV
+    P1DIR |= BIT4;
+    P1OUT |= BIT4;
+#else
     P1DIR |= BIT5;
     P1OUT |= BIT5;
+#endif
 
     // Set up Timer A to trigger an interrupt every second
     TA0CCTL0 = CCIE;           // Enable Timer A interrupt
@@ -198,12 +204,20 @@ void main (void)
         if(available_data(input_list) == true)
         {
             // There are data so we must raise the alert flag
+#ifdef LEV
+            P1OUT &= ~BIT4;
+#else
             P1OUT &= ~BIT5;
+#endif
         }
         else
         {
             // There is no message waiting to be sent, reset the flag
+#ifdef LEV
+            P1OUT |= BIT4;
+#else
             P1OUT |= BIT5;
+#endif
         }
 
         // Check if there is an USB incoming message
@@ -330,7 +344,7 @@ __interrupt void Port1_ISR(void)
 {
     // Sensor input interrupt
 #ifdef FLO
-    if(P1IFG & BIT3)
+    if(P1IFG & MAIN_SENSOR_INPUT)
     {
         // If the sensor input is new event, reset the structure
         if(sensor_input.ready == true)
@@ -346,10 +360,10 @@ __interrupt void Port1_ISR(void)
         // Increase hall ticks as there is another tick
         sensor_input.hall_ticks = sensor_input.hall_ticks + 1;
 
-        P1IFG &= ~BIT3;     // Clear the interrupt
+        P1IFG &= ~MAIN_SENSOR_INPUT;     // Clear the interrupt
     }
 #elif defined(LEV)
-    if(P1IFG & BIT3)
+    if(P1IFG & MAIN_SENSOR_INPUT)
     {
         // Save the timestamp of this event
         sensor_input.timestamp = timestamp;
@@ -357,7 +371,7 @@ __interrupt void Port1_ISR(void)
         // Store this item as the input is ready
         insertNode(&input_list, sensor_input);
 
-        P1IFG &= ~BIT3;     // Clear the interrupt
+        P1IFG &= ~MAIN_SENSOR_INPUT;     // Clear the interrupt
     }
 #endif
 }
