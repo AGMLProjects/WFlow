@@ -1,0 +1,10 @@
+seed: 0
+consume:
+  avgWater: 400
+  avgGas: 1.5
+hyperparams:
+  sequence_length: 3
+  epochs: 2000
+  learning_rate: 0.005
+  lstm_depth: 2
+  epochs_retraining: 10
